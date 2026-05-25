@@ -1,7 +1,7 @@
 import { jwtDecode } from 'jwt-decode';
 import { useEffect, useState } from 'react'
 import { Navigate, Outlet, useNavigate } from 'react-router';
-import Nav from '../components/Nav';
+import DashboardNav from '../components/DashboardNav';
 
 function Auth() {
 
@@ -46,8 +46,8 @@ catch(error){
 if(user === false) return <Navigate to = "/login"/>
 
   return (
-    <div className='flex'>
-        <Nav/>
+    <div className='flex'>s
+        <DashboardNav/>
         <div className='md:ml-64 flex-1'>
             <Outlet/>
         </div>

@@ -10,6 +10,7 @@ import Unauthorized from "../pages/Unauthorized";
 import Dashboard from "../pages/Dashboard";
 
 import Home from "../pages/Website/Home";
+import Services from "../pages/Website/Services";
 
 function CustomRouter() {
   return (
@@ -17,6 +18,8 @@ function CustomRouter() {
       <Routes>
         
         <Route path="/" element={<Home />} />
+        <Route path="/services" element={<Services />} />
+
 
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />

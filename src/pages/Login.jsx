@@ -105,7 +105,7 @@ function Login() {
     <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-orange-100 via-white to-orange-50 px-4">
    
       <div className="w-full max-w-sm bg-white/80 backdrop-blur-md border border-gray-200 shadow-lg rounded-2xl p-8 transition-all">
-         <ArrowLeft className="md:hidden" onClick={navigate(-1)}/>
+         <ArrowLeft className="md:hidden" onClick={() => navigate(-1)}/>
         {/* Header */}
         <div className="flex flex-col items-center mb-8">
           <img
