@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { userLogin } from "./Reducer";
 import { notify } from "../Utils/notify";
+import { useNavigate, useLocation, Outlet } from "react-router";
 
-function UserInitializer({ children }) {
-
+function UserInitializer() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,12 +21,16 @@ function UserInitializer({ children }) {
               "Content-Type": "application/json",
               Authorization: `${localStorage.getItem("token")}`,
             },
-          }
+          },
         );
         if (!response.ok) {
           localStorage.removeItem("token");
           notify("Session expired. Please log in again.", "error");
-          window.location.href = "/login";
+          navigate("/login", {
+            state: {
+              from: location.pathname,
+            },
+          });
           throw new Error("Failed to restor user");
         }
 
@@ -36,13 +42,11 @@ function UserInitializer({ children }) {
             name: data.firstName,
             phone: data.mobile,
             roles: data.roles,
-          })
+          }),
         );
 
-        localStorage.setItem("token",  `Bearer ${data.token}`);
-
+        localStorage.setItem("token", `Bearer ${data.token}`);
         setLoading(false);
-
       } catch (error) {
         console.error("Error restoring user:", error);
         notify("Session expired. Please log in again.", "error");
@@ -52,8 +56,7 @@ function UserInitializer({ children }) {
     };
 
     restoreUser();
-    
-  }, [dispatch]);
+  }, [dispatch, navigate, location.pathname]);
 
   if (loading) {
     return (
@@ -64,7 +67,8 @@ function UserInitializer({ children }) {
       </div>
     );
   }
-  return children;
+
+  return <Outlet />;
 }
 
 export default UserInitializer;

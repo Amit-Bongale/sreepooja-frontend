@@ -1,9 +1,14 @@
-import { Menu ,  X, User  } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import { Link } from "react-router";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
 function Nav() {
-   const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const token = localStorage.getItem("token");
+  const user = useSelector((state) => state.user.user);
+  const loggedIn = user || token;
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
@@ -42,13 +47,23 @@ function Nav() {
 
           {/* Desktop Login */}
           <div className="hidden md:flex items-center">
-            <Link
-              to="/login"
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-600 hover:text-brand-600 transition"
-            >
-              <User size={18} />
-              Login
-            </Link>
+            {loggedIn ? (
+              <Link
+                to="/account"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-600 hover:text-brand-600 transition"
+              >
+                <User size={18} />
+                Account
+              </Link>
+            ) : (
+              <Link
+                to="/login"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-600 hover:text-brand-600 transition"
+              >
+                <User size={18} />
+                Login
+              </Link>
+            )}
           </div>
 
           {/* Mobile Button */}
@@ -56,11 +71,7 @@ function Nav() {
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden text-gray-700"
           >
-            {isOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
+            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
@@ -68,11 +79,10 @@ function Nav() {
       {/* Mobile Menu */}
       <div
         className={`md:hidden overflow-hidden transition-all duration-300 ${
-          isOpen ? "max-h-80 border-t" : "max-h-0"
+          isOpen ? "max-h-80 border-t border-gray-300" : "max-h-0"
         }`}
       >
         <div className="bg-white px-6 py-4 flex flex-col gap-4">
-
           <Link
             to="/services"
             onClick={() => setIsOpen(false)}
@@ -97,14 +107,23 @@ function Nav() {
             Contact
           </Link>
 
-          <Link
-            to="/login"
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-2 text-gray-600 hover:text-brand-600 pt-2 border-t border-gray-300"
-          >
-            <User size={18} />
-            Login
-          </Link>
+          {loggedIn ? (
+            <Link
+              to="/account"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-600 hover:text-brand-600 transition"
+            >
+              <User size={18} />
+              Account
+            </Link>
+          ) : (
+            <Link
+              to="/login"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-600 hover:text-brand-600 transition"
+            >
+              <User size={18} />
+              Login
+            </Link>
+          )}
         </div>
       </div>
     </nav>

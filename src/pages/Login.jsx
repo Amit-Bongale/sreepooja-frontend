@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 import logo from "../assets/logo.jpg";
 import { Send, Phone, Lock, ArrowLeft } from "lucide-react";
 import { notify } from "../Utils/notify";
@@ -16,7 +16,10 @@ function Login() {
   const [otpSent, setOtpSent] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
+
+  const redirectPath = location.state?.from || "/";
 
   const handleChanges = (e) => {
     const { name, value } = e.target;
@@ -95,7 +98,7 @@ function Login() {
       setUserDetails({ phone: "", otp: "" });
 
       // navigate
-      navigate("/dashboard");
+      navigate(redirectPath);
     } catch (error) {
       notify(error.message, "error");
     }
@@ -103,16 +106,16 @@ function Login() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-orange-100 via-white to-orange-50 px-4">
-   
       <div className="w-full max-w-sm bg-white/80 backdrop-blur-md border border-gray-200 shadow-lg rounded-2xl p-8 transition-all">
-         <ArrowLeft className="md:hidden" onClick={() => navigate(-1)}/>
+        <ArrowLeft className="md:hidden" onClick={() => navigate(-1)} />
         {/* Header */}
         <div className="flex flex-col items-center mb-8">
+          <Link to="/" >
           <img
             src={logo}
             alt="logo"
             className="w-20 h-20 mb-4 rounded-full shadow-md"
-          />
+          /> </Link>
           <h2 className="text-3xl font-bold text-blue-950">Login</h2>
           <p className="text-gray-500 text-sm mt-1">
             {" "}
@@ -187,9 +190,9 @@ function Login() {
 
         <div className="w-full mt-6 text-center">
           Dont have an Account ?{" "}
-          <Link to={"/signup"} className="text-blue-600 underline">
+          <Link to={"/signup", { state: { from: redirectPath}} } className="text-blue-600 underline">
             {" "}
-            Register{" "}
+            Register
           </Link>
         </div>
       </div>

@@ -37,12 +37,9 @@ function DashboardNav() {
         icon: FileText,
         path: "/staff/bookings",
       },
-      
     ],
 
-  
-
-    ADMIN : [
+    ADMIN: [
       {
         name: " dashboard",
         icon: FileText,
@@ -62,12 +59,9 @@ function DashboardNav() {
         path: "/manage/users/all",
       },
     ],
-
-    
   };
 
   const roles = Array.isArray(user?.roles) ? user.roles : [];
-
 
   const menuItems = roles
     .flatMap((role) => roleMenus[role] || [])
@@ -77,10 +71,10 @@ function DashboardNav() {
     );
 
   const handleLogout = () => {
+    localStorage.removeItem("token");
     dispatch(userLogout());
-    navigate("/login");
+    navigate("/");
   };
-  
 
   return (
     <div className="fixed inset-y-0 left-0 w-72">
@@ -110,7 +104,10 @@ function DashboardNav() {
                     <p className="text-xs text-blue-200 capitalize">
                       {/* {user?.roles?.filter(role => role !== "USER").join(", ")} */}
                       {user?.roles?.length === 1 && user.roles[0] === "USER"
-                        ? "USER" : user?.roles?.filter((role) => role !== "USER").join(", ")}
+                        ? "USER"
+                        : user?.roles
+                            ?.filter((role) => role !== "USER")
+                            .join(", ")}
                     </p>
                   </>
                 )}
@@ -147,7 +144,6 @@ function DashboardNav() {
               );
             })}
           </nav>
-
         </div>
 
         {/* Logout */}

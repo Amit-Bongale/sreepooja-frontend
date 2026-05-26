@@ -1,58 +1,53 @@
-import { jwtDecode } from 'jwt-decode';
-import { useEffect, useState } from 'react'
-import { Navigate, Outlet, useNavigate } from 'react-router';
-import DashboardNav from '../components/DashboardNav';
+import { jwtDecode } from "jwt-decode";
+import { useEffect, useState } from "react";
+import { Navigate, useNavigate } from "react-router";
 
-function Auth() {
+import { useSelector } from "react-redux";
 
-const navigate = useNavigate();
-const[user, setUser] = useState(null);
+function Auth({children}) {
+  const navigate = useNavigate();
+  const LoggedInUser = useSelector((state) => state.user.user);
+  const [user, setUser] = useState(null);
 
-useEffect(()=>{
-let token = localStorage.getItem("token");
-if(token  && token.startsWith("Bearer ")){
-    token = token.split(" ")[1];
-}
+  useEffect(() => {
+    const checkAuth = async () => {
 
-if(!token){
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setUser(false);
-    navigate("/login");
-    return;
-}
+      let token = localStorage.getItem("token");
+      if (token && token.startsWith("Bearer ")) {
+        token = token.split(" ")[1];
+      }
 
-try{
-    const decodedToken = jwtDecode(token);
+      if (!token) {
+        setUser(false);
+        navigate("/login");
+        return;
+      }
 
-    if(decodedToken.exp * 1000 < Date.now()){
+      try {
+        const decodedToken = jwtDecode(token);
+
+        if (decodedToken.exp * 1000 < Date.now()) {
+          localStorage.removeItem("token");
+          setUser(false);
+          navigate("/login");
+        } else {
+          setUser(true);
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
         localStorage.removeItem("token");
         setUser(false);
         navigate("/login");
-        
-    }
-    else{
-        setUser(true);
-    }
-}
-catch(error){
-    console.error("Error decoding token:", error);
-    localStorage.removeItem("token");
-    setUser(false);
-    navigate("/login");
-}
+      }
 
-},[navigate])
+    };
+    checkAuth();
+  }, [navigate , LoggedInUser]);
 
-if(user === false) return <Navigate to = "/login"/>
+  if (user === false) return <Navigate to="/login" />;
 
-  return (
-    <div className='flex'>s
-        <DashboardNav/>
-        <div className='md:ml-64 flex-1'>
-            <Outlet/>
-        </div>
-    </div>
-  )
+  return children;
+
 }
 
-export default Auth
+export default Auth;

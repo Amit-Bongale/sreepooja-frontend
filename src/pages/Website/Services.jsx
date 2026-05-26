@@ -10,8 +10,10 @@ import {
   Clock,
   IndianRupee,
   Star,
+  Command,
 } from "lucide-react";
 import Nav from "../../components/Nav";
+import { Link } from "react-router";
 
 // --- DUMMY DATA --- //
 const LOCATIONS = [
@@ -30,6 +32,16 @@ const LANGUAGES = [
   "Kannada",
   "Malayalam",
   "Sanskrit",
+];
+const COMMUNITY = [
+  "All Communities",
+  "Brahmin",
+  "Iyengar",
+  "Iyer",
+  "Namboodiri",
+  "Deshastha",
+  "Madhwa",
+  "Smartha",
 ];
 const CATEGORIES = [
   "All Services",
@@ -206,7 +218,7 @@ export default function Services() {
       {/* --- FILTERS SECTION (Moved down) --- */}
       <div className="bg-white border-b border-gray-200 py-3 z-40 relative mt-16 md:mt-22">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
+          <div className="flex flex-col md:flex-row items-center gap-3 w-full">
             {/* Search Bar */}
             <div className="flex w-full">
               <div className="relative w-full flex-1">
@@ -231,7 +243,7 @@ export default function Services() {
 
             <div className="flex w-full sm:w-auto gap-3">
               {/* Location Dropdown */}
-              <div className="relative w-1/2 sm:w-48 shrink-0">
+              <div className="relative w-1/2 sm:w-48">
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-orange-500" />
                 <select
                   value={selectedLocation}
@@ -248,7 +260,7 @@ export default function Services() {
               </div>
 
               {/* Language Dropdown */}
-              <div className="relative w-1/2 sm:w-48 flex-shrink-0">
+              <div className="relative w-1/2 sm:w-48">
                 <Languages className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-orange-500" />
                 <select
                   value={selectedLanguage}
@@ -258,6 +270,23 @@ export default function Services() {
                   {LANGUAGES.map((lang) => (
                     <option key={lang} value={lang}>
                       {lang}
+                    </option>
+                  ))}
+                </select>
+                <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 rotate-90 pointer-events-none" />
+              </div>
+
+              {/* Community  Dropdown */}
+              <div className="relative w-1/2 sm:w-48 ">
+                <Command className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-orange-500" />
+                <select
+                  value={selectedLanguage}
+                  onChange={(e) => setSelectedLanguage(e.target.value)}
+                  className="w-full pl-9 pr-8 py-2.5 bg-white border border-gray-200 hover:border-orange-300 focus:border-orange-500 rounded-xl text-sm transition-all outline-none appearance-none cursor-pointer text-gray-700 font-medium"
+                >
+                  {COMMUNITY.map((community) => (
+                    <option key={community} value={community}>
+                      {community}
                     </option>
                   ))}
                 </select>
@@ -297,7 +326,7 @@ export default function Services() {
         <aside
           className={`
                 fixed inset-y-0 left-0 z-50 w-72 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out
-                md:sticky md:top-36 md:translate-x-0 md:z-10 md:w-64 md:bg-transparent md:shadow-none md:flex-shrink-0 md:block
+                md:sticky md:top-36 md:translate-x-0 md:z-10 md:w-64 md:bg-transparent md:shadow-none md:shrink-0 md:block
                 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
             `}
         >
@@ -394,7 +423,7 @@ export default function Services() {
                     className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col"
                   >
                     {/* Image Container */}
-                    <div className="relative aspect-[4/3] overflow-hidden bg-orange-50">
+                    <div className="relative aspect-4/3 overflow-hidden bg-orange-50">
                       <img
                         src={service.image}
                         alt={service.title}
@@ -442,9 +471,10 @@ export default function Services() {
                             <IndianRupee className="h-4 w-4" /> {service.price}
                           </div>
                         </div>
+                        <Link to={"/services/1"}>
                         <button className="bg-orange-50 text-orange-600 hover:bg-orange-600 hover:text-white px-5 py-2 rounded-xl text-sm font-bold transition-colors">
-                          Book Now
-                        </button>
+                          View Details
+                        </button> </Link>
                       </div>
                     </div>
                   </div>

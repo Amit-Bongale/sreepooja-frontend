@@ -4,6 +4,10 @@ import logo from "../assets/logo.jpg";
 import { useState } from "react";
 import { notify } from "../Utils/notify";
 
+import { useDispatch } from "react-redux";
+import { userLogin } from "../Redux/Reducer";
+import { jwtDecode } from "jwt-decode";
+
 function Signup() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -18,6 +22,7 @@ function Signup() {
   });
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -80,8 +85,25 @@ function Signup() {
 
       notify("User registered successfully", "success");
 
+      // store token
+      localStorage.setItem("token", `Bearer ${data.token}`);
+
+      // decode token
+      const decodedToken = jwtDecode(data.token);
+
+      // dispatch normalized user data
+      dispatch(
+        userLogin({
+          // id: decodedToken.userid,
+          name: decodedToken.username,
+          phone: decodedToken.sub,
+          roles: decodedToken.userrole,
+        }),
+      );
+
       // Optional: redirect back after successful registration
-      navigate(-1);
+      // navigate(-1);
+      navigate("/");
     } catch (error) {
       notify(error.message, "error");
     } finally {
