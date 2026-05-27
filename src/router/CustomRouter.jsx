@@ -16,6 +16,9 @@ import CheckOut from "../pages/Website/CheckOut";
 
 import UserInitilizer from "../redux/UserInitializer";
 import UserDashboard from "../pages/User/UserDashboard";
+import Bookings from "../pages/User/Bookings";
+
+import Profile from "../pages/User/Profile";
 
 function CustomRouter() {
   return (
@@ -31,29 +34,22 @@ function CustomRouter() {
 
         {/* Protected Routes */}
         <Route
-          path="/"
           element={
             <Auth>
               <UserInitilizer />
             </Auth>
           }
         >
-          <Route path="checkout" element={<CheckOut />} />
+          <Route path="/checkout" element={<CheckOut />} />
 
           {/* Dashboard Routes */}
-          <Route path="/" element={<Dashboard />}>
-
-            {/*user*/}
-            <Route
-              path="account"
-              element={
-                <ProtectedRoutes allowedRoles={["USER"]}>
-                  <UserDashboard />
-                </ProtectedRoutes>
-              }
-            />
-
-
+          <Route element={<Dashboard />}>
+            {/*user protected routes*/}
+            <Route element={<ProtectedRoutes allowedRoles={["USER"]} />}>
+              <Route path="/account" element={<UserDashboard />} />
+              <Route path="/user/bookings" element={<Bookings />} />
+              <Route path="/user/profile" element={<Profile />} />
+            </Route>
           </Route>
         </Route>
       </Routes>

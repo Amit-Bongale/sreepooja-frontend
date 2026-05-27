@@ -1,13 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
+  Menu,
+  X,
   FileText,
   LogOut,
   User,
   CalendarCheck,
   Users2,
   LayoutDashboard,
-  MessageCircleQuestionMark,
   CalendarDays,
+  Home,
+  // MessageCircleQuestionMark,
+  // Heart,
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
@@ -21,6 +25,8 @@ function DashboardNav() {
   const user = useSelector((state) => state.user.user);
   const isAuth = useSelector((state) => state.user.isAuthenticated);
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   useEffect(() => {
     if (!isAuth) {
       navigate("/login");
@@ -29,11 +35,12 @@ function DashboardNav() {
 
   const roleMenus = {
     USER: [
+      { name: "Home", icon: Home, path: "/" },
       { name: "Dashboard", icon: LayoutDashboard, path: "/account" },
-      { name: "My Bookings", icon: CalendarDays, path: "/bookings" },
-      { name: "Queries", icon: MessageCircleQuestionMark, path: "/user/queries" },
+      { name: "My Bookings", icon: CalendarDays, path: "/user/bookings" },
       { name: "Profile Details", icon: User, path: "/user/profile" },
-
+      // { name: "Wishlist", icon: Heart, path: "/user/wishlist" },
+      // { name: "Queries", icon: MessageCircleQuestionMark, path: "/user/queries" },
     ],
 
     STAFF: [
@@ -102,63 +109,183 @@ function DashboardNav() {
   };
 
   return (
-    <div className="fixed inset-y-0 left-0 w-64">
-      <div className="h-full bg-white flex flex-col border-r border-gray-200">
-        {/* Header */}
-        <div className="p-5 border-b border-gray-200">
-          <div className="flex items-center space-x-3">
-            <img src={logo} alt="SreePooja" className="size-10 rounded-full" />
-            <div>
-              <span class="font-serif font-bold text-2xl tracking-tight text-gray-900">
-                Sree<span class="text-brand-600">Pooja</span>
-              </span>
-            </div>
+    // <div className="fixed inset-y-0 left-0 w-64">
+    //   <div className="h-full bg-white flex flex-col border-r border-gray-200">
+    //     {/* Header */}
+    //     <div className="p-5 border-b border-gray-200">
+    //       <div className="flex items-center space-x-3">
+    //         <img src={logo} alt="SreePooja" className="size-10 rounded-full" />
+    //         <div>
+    //           <span class="font-serif font-bold text-2xl tracking-tight text-gray-900">
+    //             Sree<span class="text-brand-600">Pooja</span>
+    //           </span>
+    //         </div>
+    //       </div>
+    //     </div>
+
+    //     {/* Menu */}
+
+    //     <div className="flex-1 py-6 px-4 overflow-y-auto scrollbar-modern">
+    //       <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 px-3">
+    //         Menu
+    //       </div>
+
+    //       <nav className="space-y-1">
+    //         {menuItems.map((item) => {
+    //           const Icon = item.icon;
+    //           return (
+    //             <NavLink
+    //               key={item.path}
+    //               to={item.path}
+    //               className={({ isActive }) =>
+    //                 `group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all
+    //                 ${isActive ? "bg-brand-50 text-brand-700" : "hover:bg-gray-50 hover:text-brand-600 text-gray-600"}`
+    //               }
+    //             >
+    //               <div className="flex items-center space-x-3 ">
+    //                 <Icon className="w-5 h-5" />
+    //                 <span className="font-medium">{item.name}</span>
+    //               </div>
+    //             </NavLink>
+    //           );
+    //         })}
+    //       </nav>
+    //     </div>
+
+    //     {/* Logout */}
+    //     <div className="p-4 flex flex-col justify-center items-center ">
+    //       <button
+    //         onClick={handleLogout}
+    //         className="w-full flex items-center justify-center gap-2 p-3 rounded-xl hover:bg-red-100 hover:text-red-600 transition-all cursor-pointer"
+    //       >
+    //         <LogOut className="w-5 h-5" />
+    //         Logout
+    //       </button>
+
+    //       <p className="text-xs text-gray-400 mt-2">© Developed By thincnext</p>
+    //     </div>
+    //   </div>
+    // </div>
+
+    <>
+      {/* ================= TOP NAVBAR ================= */}
+      <div className="fixed top-0 left-0 right-0 h-18 bg-white border-b border-gray-200 z-40 md:hidden">
+        <div className="h-full px-6 flex items-center justify-between">
+          {/* Logo */}
+          <div className="flex items-center gap-3">
+
+            {/* Optional Image Logo */}
+            {/* <img src={logo} alt="logo" className="size-10 rounded-full" /> */}
+
+            <h1 className="font-serif text-xl font-bold text-gray-900">
+              Sree<span className="text-brand-600">Pooja</span>
+            </h1>
           </div>
-        </div>
 
-        {/* Menu */}
-
-        <div className="flex-1 py-6 px-4 overflow-y-auto scrollbar-modern">
-          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 px-3">
-            Menu
-          </div>
-
-          <nav className="space-y-1">
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className={({ isActive }) =>
-                    `group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all
-                    ${isActive ? "bg-brand-50 text-brand-700" : "hover:bg-gray-50 hover:text-brand-600 text-gray-600"}`
-                  }
-                >
-                  <div className="flex items-center space-x-3 ">
-                    <Icon className="w-5 h-5" />
-                    <span className="font-medium">{item.name}</span>
-                  </div>
-                </NavLink>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* Logout */}
-        <div className="p-4 flex flex-col justify-center items-center ">
+          {/* Menu Button */}
           <button
-            onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 p-3 rounded-xl hover:bg-red-100 hover:text-red-600 transition-all cursor-pointer"
+            onClick={() => setSidebarOpen(true)}
+            className="p-2 rounded-lg"
           >
-            <LogOut className="w-5 h-5" />
-            Logout
+            <Menu className="w-6 h-6 text-gray-700" />
           </button>
-
-          <p className="text-xs text-gray-400 mt-2">© Developed By thincnext</p>
         </div>
       </div>
-    </div>
+
+      {/* MOBILE nav background OVERLAY */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* ================= SIDEBAR ================= */}
+      <div
+        className={`fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300
+        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+        md:translate-x-0`}
+      >
+        <div className="h-full bg-white flex flex-col border-r border-gray-200">
+          {/* Sidebar Header */}
+          <div className="p-5 border-b border-gray-200 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <img
+                src={logo}
+                alt="SreePooja"
+                className="size-10 rounded-full"
+              />
+
+              <div>
+                <span className="font-serif font-bold text-2xl tracking-tight text-gray-900">
+                  Sree<span className="text-brand-600">Pooja</span>
+                </span>
+              </div>
+            </div>
+
+            {/* Close Button Mobile */}
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="md:hidden p-1 rounded-lg hover:bg-gray-100"
+            >
+              <X className="w-5 h-5 text-gray-700" />
+            </button>
+          </div>
+
+          {/* Menu */}
+          <div className="flex-1 py-6 px-4 overflow-y-auto scrollbar-modern">
+            <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 px-3">
+              Menu
+            </div>
+
+            <nav className="space-y-1">
+              {menuItems.map((item) => {
+                const Icon = item.icon;
+
+                return (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setSidebarOpen(false)}
+                    className={({ isActive }) =>
+                      `group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all
+                      ${
+                        isActive
+                          ? "bg-brand-50 text-brand-700"
+                          : "hover:bg-gray-50 hover:text-brand-600 text-gray-600"
+                      }`
+                    }
+                  >
+                    <div className="flex items-center space-x-3">
+                      <Icon className="w-5 h-5 shrink-0" />
+
+                      <span className="font-medium text-sm sm:text-base">
+                        {item.name}
+                      </span>
+                    </div>
+                  </NavLink>
+                );
+              })}
+            </nav>
+          </div>
+
+          {/* Logout */}
+          <div className="p-4 flex flex-col justify-center items-center border-t border-gray-100">
+            <button
+              onClick={handleLogout}
+              className="w-full text-sm md:text-md flex items-center justify-center gap-2 p-3 rounded-xl hover:bg-red-100 hover:text-red-600 transition-all cursor-pointer"
+            >
+              <LogOut className="size-4 md:size-5" />
+              Logout
+            </button>
+
+            <p className="text-[11px] sm:text-xs text-gray-400 mt-2 text-center">
+              © Developed By thincnext
+            </p>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 

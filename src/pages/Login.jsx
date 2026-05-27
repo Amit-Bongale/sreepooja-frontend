@@ -190,8 +190,7 @@ function Login() {
 
         <div className="w-full mt-6 text-center">
           Dont have an Account ?{" "}
-          <Link to={"/signup", { state: { from: redirectPath}} } className="text-blue-600 underline">
-            {" "}
+          <Link to={"/signup"} state={{ from: redirectPath }} className="text-blue-600 underline">
             Register
           </Link>
         </div>

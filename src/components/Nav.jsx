@@ -13,7 +13,7 @@ function Nav() {
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16 md:h-20">
+        <div className="flex justify-between items-center h-18 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center shrink-0">
             <span className="font-serif font-bold text-xl md:text-2xl tracking-tight text-gray-900">
@@ -110,7 +110,7 @@ function Nav() {
           {loggedIn ? (
             <Link
               to="/account"
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-600 hover:text-brand-600 transition"
+              className="flex items-center gap-2  py-2 rounded-lg text-gray-600 hover:text-brand-600 transition"
             >
               <User size={18} />
               Account
@@ -118,7 +118,7 @@ function Nav() {
           ) : (
             <Link
               to="/login"
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-600 hover:text-brand-600 transition"
+              className="flex items-center gap-2 py-2 rounded-lg text-gray-600 hover:text-brand-600 transition"
             >
               <User size={18} />
               Login
