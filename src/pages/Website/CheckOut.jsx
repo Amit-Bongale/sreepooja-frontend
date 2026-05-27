@@ -8,11 +8,13 @@ import {
   ShieldCheck,
   Check,
   CreditCard,
-  Plus,
   Info,
   ChevronDown,
+  Languages,
+  Command,
 } from "lucide-react";
-import {startPayment} from "../../utils/Payment";
+import { startPayment } from "../../utils/Payment";
+import Nav from "../../components/Nav";
 
 // --- DUMMY DATA FOR CHECKOUT ---
 const BOOKING_SUMMARY = {
@@ -26,24 +28,36 @@ const BOOKING_SUMMARY = {
   advancePercentage: 40, // 40% advance required to book
 };
 
-const SAVED_ADDRESSES = [
-  {
-    id: "addr_1",
-    label: "Home",
-    name: "Rahul Sharma",
-    street: "Apt 4B, Shanti Nilayam, 4th Cross, Indiranagar",
-    city: "Bengaluru",
-    state: "Karnataka",
-    pincode: "560038",
-    phone: "+91 98765 43210",
-  },
+const LOCATIONS = ["Bengaluru Urban", "Bengaluru Rural", "Mysuru"];
+
+const STATES = ["Karnataka"];
+
+const LANGUAGES = [
+  "All Languages",
+  "Tamil",
+  "Telugu",
+  "Hindi",
+  "Kannada",
+  "Malayalam",
+  "Sanskrit",
+];
+
+const COMMUNITY = [
+  "All Communities",
+  "smartha",
+  "Vaishnava",
+  "Sri Vaishnava",
+  "Veerashaiva Lingayatha",
+  "Arya Vasya",
 ];
 
 export default function CheckOut() {
   // --- STATE ---
-  const [selectedAddressId, setSelectedAddressId] = useState("addr_1");
   const [isBillingSame, setIsBillingSame] = useState(true);
   const [paymentMode, setPaymentMode] = useState("advance");
+  const [selectedLocation, setSelectedLocation] = useState("All Locations");
+  // const [selectedLanguage, setSelectedLanguage] = useState("All Languages");
+  // const [selectedCommunity, setSelectedCommunity] = useState("All Communities");
 
   // Form state
   // eslint-disable-next-line no-unused-vars
@@ -61,25 +75,10 @@ export default function CheckOut() {
 
   return (
     <div className="font-sans text-gray-800 antialiased min-h-screen bg-gray-50 flex flex-col">
-      {/* --- SIMPLIFIED CHECKOUT HEADER --- */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between py-4">
-            <a href="/" className="flex items-center gap-2">
-              <span className="font-serif font-bold text-2xl tracking-tight text-gray-900">
-                Sree<span className="text-orange-600">Pooja</span>
-              </span>
-            </a>
-            <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
-              <ShieldCheck className="h-5 w-5 text-green-500" />
-              <span className="hidden sm:inline">Secure Checkout</span>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Nav />
 
       {/* --- MAIN CONTENT --- */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 max-w-7xl mt-18 mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-serif font-bold text-gray-900">
             Complete Your Booking
@@ -98,12 +97,12 @@ export default function CheckOut() {
                 <span className="bg-orange-100 text-orange-600 w-8 h-8 rounded-full flex items-center justify-center text-sm">
                   1
                 </span>
-                Pooja Date & Time
+                Preferred Pooja Date & Time
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Preferred Date <span className="text-red-500">*</span>
+                    Date <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -115,7 +114,7 @@ export default function CheckOut() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Preferred Time Slot <span className="text-red-500">*</span>
+                    Time Slot <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -128,12 +127,46 @@ export default function CheckOut() {
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
                   </div>
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Priest Language <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <Languages className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <select className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none appearance-none cursor-pointer">
+                      {LANGUAGES.map((lang) => (
+                        <option key={lang} value={lang}>
+                          {lang}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Priest Community <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <Command className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <select className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none appearance-none cursor-pointer">
+                      {COMMUNITY.map((community) => (
+                        <option key={community} value={community}>
+                          {community}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+                  </div>
+                </div>
               </div>
               <div className="mt-4 p-3 bg-blue-50 rounded-xl border border-blue-100 flex gap-3 text-sm text-blue-800">
                 <Info className="h-5 w-5 shrink-0 mt-0.5" />
                 <p>
-                  The exact auspicious timing (Muhurtham) will be finalized
-                  after consulting with the assigned priest.
+                  Priest assignment, Muhurtham timing, and selected date/time
+                  are subject to priest and Muhurtham availability and may change after
+                  confirmation. Selected preferences are considered as preferred
+                  options only.
                 </p>
               </div>
             </section>
@@ -176,7 +209,6 @@ export default function CheckOut() {
               </div>
 
               {/* extra cutomer Fields here if required */}
-              
             </section>
 
             {/* Section 3: Location */}
@@ -188,117 +220,61 @@ export default function CheckOut() {
                 Pooja Location
               </h2>
 
-              {/* Saved Addresses (Simulated backend fetch) */}
-              <div className="space-y-3 mb-5">
-                {SAVED_ADDRESSES.map((addr) => (
-                  <label
-                    key={addr.id}
-                    onClick={() => setSelectedAddressId(addr.id)}
-                    className={`
-                                            flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200
-                                            ${
-                                              selectedAddressId === addr.id
-                                                ? "border-orange-500 bg-orange-50/30 shadow-sm"
-                                                : "border-gray-200 hover:border-orange-200 bg-white"
-                                            }
-                                        `}
-                  >
-                    <div className="pt-1">
-                      <div
-                        className={`w-5 h-5 rounded-full border flex items-center justify-center ${selectedAddressId === addr.id ? "border-orange-500" : "border-gray-300"}`}
-                      >
-                        {selectedAddressId === addr.id && (
-                          <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="font-bold text-gray-900">
-                          {addr.name}
-                        </span>
-                        <span className="bg-gray-200 text-gray-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-                          {addr.label}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600 leading-relaxed mb-1">
-                        {addr.street}, {addr.city}, {addr.state} -{" "}
-                        {addr.pincode}
-                      </p>
-                      <p className="text-sm text-gray-500 flex items-center gap-1">
-                        <Phone className="h-3 w-3" /> {addr.phone}
-                      </p>
-                    </div>
-                  </label>
-                ))}
-
-                {/* Add New Address Option */}
-                <label
-                  onClick={() => setSelectedAddressId("new")}
-                  className={`
-                                        flex items-center gap-3 p-4 rounded-xl border-2 border-dashed cursor-pointer transition-all duration-200
-                                        ${
-                                          selectedAddressId === "new"
-                                            ? "border-orange-500 bg-orange-50/30"
-                                            : "border-gray-300 hover:border-orange-300 bg-white text-gray-600"
-                                        }
-                                    `}
-                >
-                  <div
-                    className={`w-5 h-5 rounded-full border flex items-center justify-center ${selectedAddressId === "new" ? "border-orange-500" : "border-gray-300"}`}
-                  >
-                    {selectedAddressId === "new" && (
-                      <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-                    )}
+              {/*  Address Form */}
+              <div className="bg-gray-50 p-5 rounded-xl border border-gray-200 mt-4 animate-in fade-in slide-in-from-top-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-medium text-gray-600 mb-1">
+                      Street Address
+                    </label>
+                    <textarea
+                      className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-200 outline-none resize-none"
+                      rows="2"
+                    ></textarea>
                   </div>
-                  <Plus className="h-5 w-5" />
-                  <span className="font-bold">Add New Location</span>
-                </label>
-              </div>
-
-              {/* New Address Form (Expands if 'new' is selected) */}
-              {selectedAddressId === "new" && (
-                <div className="bg-gray-50 p-5 rounded-xl border border-gray-200 mt-4 animate-in fade-in slide-in-from-top-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="md:col-span-2">
-                      <label className="block text-xs font-medium text-gray-600 mb-1">
-                        Street Address
-                      </label>
-                      <textarea
-                        className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-200 outline-none resize-none"
-                        rows="2"
-                      ></textarea>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">
-                        City
-                      </label>
-                      <input
-                        type="text"
-                        className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-200 outline-none"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">
-                        State
-                      </label>
-                      <input
-                        type="text"
-                        className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-200 outline-none"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">
-                        Pincode
-                      </label>
-                      <input
-                        type="text"
-                        className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-200 outline-none"
-                      />
-                    </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">
+                      City
+                    </label>
+                    <select
+                      value={selectedLocation}
+                      onChange={(e) => setSelectedLocation(e.target.value)}
+                      className="w-full pl-4 pr-8 py-2.5 bg-white border border-gray-200 hover:border-orange-300 focus:border-orange-500 rounded-xl text-sm transition-all outline-none cursor-pointer text-gray-700 font-medium"
+                    >
+                      {LOCATIONS.map((loc) => (
+                        <option key={loc} value={loc}>
+                          {loc}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">
+                      State
+                    </label>
+                    <select
+                      value={selectedLocation}
+                      onChange={(e) => setSelectedLocation(e.target.value)}
+                      className="w-full pl-4 pr-8 py-2.5 bg-white border border-gray-200 hover:border-orange-300 focus:border-orange-500 rounded-xl text-sm transition-all outline-none cursor-pointer text-gray-700 font-medium"
+                    >
+                      {STATES.map((loc) => (
+                        <option key={loc} value={loc}>
+                          {loc}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">
+                      Pincode
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-200 outline-none"
+                    />
                   </div>
                 </div>
-              )}
+              </div>
 
               {/* Billing Address Checkbox */}
               <div className="mt-6 pt-5 border-t border-gray-100">
@@ -462,7 +438,10 @@ export default function CheckOut() {
                   )}
                 </div>
 
-                <button onClick={() => startPayment("module" , "appId")} className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-all flex justify-center items-center gap-2">
+                <button
+                  onClick={() => startPayment("module", "appId")}
+                  className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-all flex justify-center items-center gap-2"
+                >
                   <CreditCard className="h-5 w-5" />
                   {paymentMode === "advance"
                     ? "Pay Advance & Book"

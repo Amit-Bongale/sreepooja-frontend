@@ -18,12 +18,11 @@ import { Link } from "react-router";
 // --- DUMMY DATA --- //
 const LOCATIONS = [
   "All Locations",
-  "Bengaluru",
-  "Chennai",
-  "Hyderabad",
-  "Mumbai",
-  "Delhi",
+  "Bengaluru Urban",
+  "Bengaluru Rural",
+  "Mysuru",
 ];
+
 const LANGUAGES = [
   "All Languages",
   "Tamil",
@@ -33,16 +32,16 @@ const LANGUAGES = [
   "Malayalam",
   "Sanskrit",
 ];
+
 const COMMUNITY = [
   "All Communities",
-  "Brahmin",
-  "Iyengar",
-  "Iyer",
-  "Namboodiri",
-  "Deshastha",
-  "Madhwa",
-  "Smartha",
+  "smartha",
+  "Vaishnava",
+  "Sri Vaishnava",
+  "Veerashaiva Lingayatha",
+  "Arya Vasya",
 ];
+
 const CATEGORIES = [
   "All Services",
   "Ceremonies",
@@ -190,21 +189,10 @@ export default function Services() {
       const matchesSearch =
         service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         service.category.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesLocation =
-        selectedLocation === "All Locations" ||
-        service.location.includes(selectedLocation);
-      const matchesLanguage =
-        selectedLanguage === "All Languages" ||
-        service.languages.includes(selectedLanguage);
-      const matchesCategory =
-        selectedCategory === "All Services" ||
-        service.category === selectedCategory;
 
-      return (
-        matchesSearch && matchesLocation && matchesLanguage && matchesCategory
-      );
+      return matchesSearch;
     });
-  }, [searchQuery, selectedLocation, selectedLanguage, selectedCategory]);
+  }, [searchQuery]);
 
   const totalPages = Math.ceil(filteredServices.length / ITEMS_PER_PAGE);
   const paginatedServices = filteredServices.slice(
@@ -472,9 +460,10 @@ export default function Services() {
                           </div>
                         </div>
                         <Link to={"/services/1"}>
-                        <button className="bg-orange-50 text-orange-600 hover:bg-orange-600 hover:text-white px-5 py-2 rounded-xl text-sm font-bold transition-colors">
-                          View Details
-                        </button> </Link>
+                          <button className="bg-orange-50 text-orange-600 hover:bg-orange-600 hover:text-white px-5 py-2 rounded-xl text-sm font-bold transition-colors">
+                            View Details
+                          </button>{" "}
+                        </Link>
                       </div>
                     </div>
                   </div>
