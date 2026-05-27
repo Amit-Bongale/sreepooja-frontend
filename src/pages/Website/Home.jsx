@@ -14,6 +14,7 @@ import {
 import Nav from "../../components/Nav";
 import FeaturedServices from "../../components/website/FeaturedServices";
 import Footer from "../../components/website/Footer";
+import { Link } from "react-router";
 
 function Home() {
   return (
@@ -36,13 +37,13 @@ function Home() {
           </p>
 
           <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
-            <a
-              href="#services"
+            <Link
+              to="/services"
               class="w-full sm:w-auto bg-brand-600 hover:bg-brand-700 text-white px-8 py-4 rounded-full font-medium text-lg transition-all shadow-lg shadow-brand-500/30 hover:shadow-brand-500/50 flex items-center justify-center gap-2"
             >
               Browse Poojas
               <Sparkles className="h-5 w-5" />
-            </a>
+            </Link>
           </div>
 
           <div class="mt-16 pt-8 border-t border-brand-100/50 flex flex-wrap justify-center gap-8 md:gap-16 opacity-80">

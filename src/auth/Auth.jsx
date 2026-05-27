@@ -1,53 +1,41 @@
 import { jwtDecode } from "jwt-decode";
-import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router";
+import { useMemo } from "react";
+import { Navigate, useLocation } from "react-router";
+import { notify } from "../Utils/notify";
 
-import { useSelector } from "react-redux";
+const getToken = () => {
+  const token = localStorage.getItem("token");
+  if (!token) return null;
+  return token.startsWith("Bearer ") ? token.split(" ")[1] : token;
+};
 
-function Auth({children}) {
-  const navigate = useNavigate();
-  const LoggedInUser = useSelector((state) => state.user.user);
-  const [user, setUser] = useState(null);
+const isTokenValid = (token) => {
+  try {
+    const { exp } = jwtDecode(token);
+    return exp * 1000 > Date.now();
+  } catch {
+    return false;
+  }
+};
 
-  useEffect(() => {
-    const checkAuth = async () => {
+function Auth({ children }) {
+  const location = useLocation();
 
-      let token = localStorage.getItem("token");
-      if (token && token.startsWith("Bearer ")) {
-        token = token.split(" ")[1];
-      }
+  const isAuthenticated = useMemo(() => {
+    const token = getToken();
+    if (!token) return false;
 
-      if (!token) {
-        setUser(false);
-        navigate("/login");
-        return;
-      }
+    const valid = isTokenValid(token);
+    if (!valid) localStorage.removeItem("token");
+    return valid;
+  }, []);
 
-      try {
-        const decodedToken = jwtDecode(token);
-
-        if (decodedToken.exp * 1000 < Date.now()) {
-          localStorage.removeItem("token");
-          setUser(false);
-          navigate("/login");
-        } else {
-          setUser(true);
-        }
-      } catch (error) {
-        console.error("Error decoding token:", error);
-        localStorage.removeItem("token");
-        setUser(false);
-        navigate("/login");
-      }
-
-    };
-    checkAuth();
-  }, [navigate , LoggedInUser]);
-
-  if (user === false) return <Navigate to="/login" />;
+  if (!isAuthenticated) {
+    notify("Please log in to Continue.", "error");
+    return <Navigate to="/login" state={{ from: location.pathname }} replace />;
+  }
 
   return children;
-
 }
 
 export default Auth;

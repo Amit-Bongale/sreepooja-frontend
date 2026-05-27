@@ -40,6 +40,7 @@ function CustomRouter() {
         >
           <Route path="checkout" element={<CheckOut />} />
 
+          {/* Dashboard Routes */}
           <Route path="/" element={<Dashboard />}>
 
             {/*user*/}
@@ -51,9 +52,9 @@ function CustomRouter() {
                 </ProtectedRoutes>
               }
             />
+
+
           </Route>
-
-
         </Route>
       </Routes>
     </div>

@@ -2,12 +2,14 @@ import { useEffect } from "react";
 import {
   FileText,
   LogOut,
-  ChevronRight,
   User,
-  BarChart3,
+  CalendarCheck,
   Users2,
+  LayoutDashboard,
+  MessageCircleQuestionMark,
+  CalendarDays,
 } from "lucide-react";
-import { NavLink, useNavigate, Link } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import { userLogout } from "../Redux/Reducer";
 import logo from "../assets/logo.jpg";
@@ -27,22 +29,45 @@ function DashboardNav() {
 
   const roleMenus = {
     USER: [
-      { name: "Dashboard", icon: BarChart3, path: "/user/dashboard" },
-      { name: "profile", icon: FileText, path: "/user/profile" },
+      { name: "Dashboard", icon: LayoutDashboard, path: "/account" },
+      { name: "My Bookings", icon: CalendarDays, path: "/bookings" },
+      { name: "Queries", icon: MessageCircleQuestionMark, path: "/user/queries" },
+      { name: "Profile Details", icon: User, path: "/user/profile" },
+
     ],
 
     STAFF: [
       {
-        name: "bookings",
+        name: "Dashboard",
+        icon: LayoutDashboard,
+        path: "/staff/dashboard",
+      },
+      {
+        name: "Booking Requests",
         icon: FileText,
         path: "/staff/bookings",
+      },
+      {
+        name: "All Booking",
+        icon: CalendarCheck,
+        path: "/staff/bookings",
+      },
+      {
+        name: "Priests List",
+        icon: Users2,
+        path: "/staff/priests",
+      },
+      {
+        name: "Customer Support",
+        icon: Users2,
+        path: "/staff/customer-support",
       },
     ],
 
     ADMIN: [
       {
-        name: " dashboard",
-        icon: FileText,
+        name: "Dashboard",
+        icon: LayoutDashboard,
         path: "/admin/dashboard",
       },
     ],
@@ -50,7 +75,7 @@ function DashboardNav() {
     SUPER_ADMIN: [
       {
         name: "Dashboard",
-        icon: BarChart3,
+        icon: LayoutDashboard,
         path: "/admin/dashboard",
       },
       {
@@ -77,53 +102,28 @@ function DashboardNav() {
   };
 
   return (
-    <div className="fixed inset-y-0 left-0 w-72">
-      <div className="h-full bg-linear-to-b from-blue-950 via-blue-900 to-blue-950 text-white flex flex-col shadow-2xl">
+    <div className="fixed inset-y-0 left-0 w-64">
+      <div className="h-full bg-white flex flex-col border-r border-gray-200">
         {/* Header */}
-        <div className="p-6 border-b border-blue-800">
+        <div className="p-5 border-b border-gray-200">
           <div className="flex items-center space-x-3">
-            <img src={logo} alt="KFCC" className="size-14 rounded-full" />
+            <img src={logo} alt="SreePooja" className="size-10 rounded-full" />
             <div>
-              <h1 className="text-2xl font-bold">Sree Pooja</h1>
-              {/* <p className="text-xs text-blue-200">Karnataka Film Chamber</p> */}
+              <span class="font-serif font-bold text-2xl tracking-tight text-gray-900">
+                Sree<span class="text-brand-600">Pooja</span>
+              </span>
             </div>
           </div>
         </div>
 
-        {/* User Info */}
-        <div className="p-6 border-b border-blue-800">
-          <Link to={"/user/account"}>
-            <div className="flex items-center space-x-3">
-              <div className="w-14 h-10 bg-blue-700 rounded-full flex items-center justify-center cursor-pointer">
-                <User className="w-5 h-5" />
-              </div>
-              <div>
-                {user && (
-                  <>
-                    <p className="font-medium">Welcome {user?.name}</p>
-                    <p className="text-xs text-blue-200 capitalize">
-                      {/* {user?.roles?.filter(role => role !== "USER").join(", ")} */}
-                      {user?.roles?.length === 1 && user.roles[0] === "USER"
-                        ? "USER"
-                        : user?.roles
-                            ?.filter((role) => role !== "USER")
-                            .join(", ")}
-                    </p>
-                  </>
-                )}
-              </div>
-            </div>
-          </Link>
-        </div>
-
         {/* Menu */}
 
-        <div className="flex-1 p-6 overflow-y-auto scrollbar-modern">
-          <p className="text-xs font-semibold text-blue-300 uppercase mb-4">
-            Main Menu
-          </p>
+        <div className="flex-1 py-6 px-4 overflow-y-auto scrollbar-modern">
+          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 px-3">
+            Menu
+          </div>
 
-          <nav className="space-y-2">
+          <nav className="space-y-1">
             {menuItems.map((item) => {
               const Icon = item.icon;
               return (
@@ -131,15 +131,14 @@ function DashboardNav() {
                   key={item.path}
                   to={item.path}
                   className={({ isActive }) =>
-                    `group flex items-center justify-between p-4 rounded-xl transition-all
-                    ${isActive ? "bg-blue-800" : "hover:bg-blue-900"}`
+                    `group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all
+                    ${isActive ? "bg-brand-50 text-brand-700" : "hover:bg-gray-50 hover:text-brand-600 text-gray-600"}`
                   }
                 >
-                  <div className="flex items-center space-x-3">
-                    <Icon className="w-5 h-5 text-blue-300 group-hover:text-white" />
+                  <div className="flex items-center space-x-3 ">
+                    <Icon className="w-5 h-5" />
                     <span className="font-medium">{item.name}</span>
                   </div>
-                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition" />
                 </NavLink>
               );
             })}
@@ -150,7 +149,7 @@ function DashboardNav() {
         <div className="p-4 flex flex-col justify-center items-center ">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 p-3 rounded-xl hover:bg-red-600 transition-all cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 p-3 rounded-xl hover:bg-red-100 hover:text-red-600 transition-all cursor-pointer"
           >
             <LogOut className="w-5 h-5" />
             Logout
