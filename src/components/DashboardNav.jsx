@@ -16,7 +16,7 @@ import {
 import { NavLink, useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import { userLogout } from "../Redux/Reducer";
-import logo from "../assets/logo.jpg";
+import logo from "../assets/sreePooja.png";
 
 function DashboardNav() {
   const navigate = useNavigate();
@@ -109,18 +109,14 @@ function DashboardNav() {
   };
 
   return (
-  
     <>
       {/*  TOP NAVBAR */}
       <div className="fixed top-0 left-0 right-0 h-18 bg-white border-b border-gray-200 z-40 md:hidden">
         <div className="h-full px-6 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-3">
-
-            {/* Optional Image Logo */}
-            {/* <img src={logo} alt="logo" className="size-10 rounded-full" /> */}
-
-            <h1 className="font-serif text-xl font-bold text-gray-900">
+            <h1 className="font-serif text-xl font-bold text-gray-900 flex items-center">
+              <img src={logo} alt="logo" className="size-10 rounded-full" />
               Sree<span className="text-brand-600">Pooja</span>
             </h1>
           </div>
@@ -152,19 +148,10 @@ function DashboardNav() {
         <div className="h-full bg-white flex flex-col border-r border-gray-200">
           {/* Sidebar Header */}
           <div className="p-5 border-b border-gray-200 flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <img
-                src={logo}
-                alt="SreePooja"
-                className="size-10 rounded-full"
-              />
-
-              <div>
-                <span className="font-serif font-bold text-2xl tracking-tight text-gray-900">
-                  Sree<span className="text-brand-600">Pooja</span>
-                </span>
-              </div>
-            </div>
+            <h1 className="font-serif text-xl font-bold text-gray-900 flex items-center">
+              <img src={logo} alt="logo" className="size-10 rounded-full" />
+              Sree<span className="text-brand-600">Pooja</span>
+            </h1>
 
             {/* Close Button Mobile */}
             <button

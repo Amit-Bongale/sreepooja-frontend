@@ -101,7 +101,7 @@ function UserDashboard() {
                   Recent Bookings
                 </h3>
                 <Link
-                  to="/services"
+                  to="/user/bookings"
                   class="text-gray-500 hover:text-brand-600 text-sm font-medium transition-colors flex items-center gap-1"
                 >
                   View All <i data-lucide="arrow-right" class="h-4 w-4"></i>

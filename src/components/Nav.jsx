@@ -2,6 +2,7 @@ import { Menu, X, User } from "lucide-react";
 import { Link } from "react-router";
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import logo from "../assets/sreePooja.png";
 
 function Nav() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,9 +17,7 @@ function Nav() {
         <div className="flex justify-between items-center h-18 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center shrink-0">
-            <span className="font-serif font-bold text-xl md:text-2xl tracking-tight text-gray-900">
-              SreePooja
-            </span>
+            <img src={logo} alt="SreePooja" className="size-10 md:size-14" />
           </Link>
 
           {/* Desktop Menu */}

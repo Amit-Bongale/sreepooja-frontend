@@ -1,4 +1,5 @@
 import { Mail, MapPin } from "lucide-react";
+import logo from "../../assets/sreePooja.png";
 
 function Footer() {
   return (
@@ -6,10 +7,11 @@ function Footer() {
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div class="md:col-span-1">
-            <div class="flex items-center gap-2 mb-4">
-              <span class="font-serif font-bold text-xl text-white">
-                Sree<span class="text-brand-500">Pooja</span>
-              </span>
+            <div class="flex items-center  gap-2 mb-4">
+              <h1 className="font-serif text-xl font-bold text-white flex items-center ml-6">
+                <img src={logo} alt="logo" className="size-14 rounded-full" />
+                Sree<span className="text-brand-600">Pooja</span>
+              </h1>
             </div>
             <p class="text-sm text-gray-400 leading-relaxed">
               Your trusted partner for authentic Hindu rituals, connecting

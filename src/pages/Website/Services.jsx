@@ -9,8 +9,8 @@ import {
   Filter,
   Clock,
   IndianRupee,
-  Star,
   Command,
+  ShieldCheck,
 } from "lucide-react";
 import Nav from "../../components/Nav";
 import { Link } from "react-router";
@@ -383,12 +383,6 @@ export default function Services() {
                   ? "Explore Divine Services"
                   : selectedCategory}
               </h1>
-              <p className="text-gray-500 mt-1 text-sm">
-                Showing {paginatedServices.length} of {filteredServices.length}{" "}
-                {filteredServices.length === 1 ? "service" : "services"}
-                {selectedLocation !== "All Locations" &&
-                  ` in ${selectedLocation}`}
-              </p>
             </div>
 
             {/* Sort Dropdown (Visual Only for UI completeness) */}
@@ -417,12 +411,6 @@ export default function Services() {
                         alt={service.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md flex items-center gap-1 shadow-sm">
-                        <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                        <span className="text-xs font-bold text-gray-800">
-                          {service.rating}
-                        </span>
-                      </div>
                     </div>
 
                     {/* Content Container */}
@@ -444,10 +432,10 @@ export default function Services() {
                             </span>
                           </span>
                         </div>
-                        {/*<div className="flex items-center text-sm text-gray-600 gap-2">
+                        <div className="flex items-center text-sm text-gray-600 gap-2">
                           <ShieldCheck className="h-4 w-4 text-green-500" />
                           <span>Verified Priests</span>
-                        </div> */}
+                        </div>
                       </div>
 
                       <div className="pt-4 border-t border-gray-100 flex items-center justify-between mt-auto">
