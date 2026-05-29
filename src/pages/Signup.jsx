@@ -1,5 +1,5 @@
-import { Phone, Lock, Send, Mail, Calendar, ChevronLeft, ArrowLeft,  } from "lucide-react";
-import { Link, useNavigate } from "react-router";
+import { Phone, Lock, Send, Mail, Calendar, ChevronLeft } from "lucide-react";
+import { Link, useNavigate, useLocation} from "react-router";
 import logo from "../assets/logo.jpg";
 import { useState } from "react";
 import { notify } from "../Utils/notify";
@@ -7,10 +7,12 @@ import { notify } from "../Utils/notify";
 import { useDispatch } from "react-redux";
 import { userLogin } from "../Redux/Reducer";
 import { jwtDecode } from "jwt-decode";
+import Nav from "../components/Nav";
 
 function Signup() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -23,6 +25,7 @@ function Signup() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,7 +37,7 @@ function Signup() {
       return;
     }
 
-    if(formData.mobileNo.length !==10){
+    if (formData.mobileNo.length !== 10) {
       notify("Please enter a valid 10-digit mobile number", "warn");
       return;
     }
@@ -45,19 +48,18 @@ function Signup() {
         `${
           import.meta.env.VITE_API_BASE_URL
         }/auth/signup/request-otp?mobileNo=${formData.mobileNo}`,
-        { method: "POST" }
+        { method: "POST" },
       );
 
       const data = await response.json();
 
-      if (!response.ok){
+      if (!response.ok) {
         notify(data.message, "error");
         return;
-      } 
+      }
 
       notify("OTP sent successfully", "success");
       setStep(2);
-
     } catch (error) {
       notify(error.message, "error");
     } finally {
@@ -76,7 +78,7 @@ function Signup() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
-        }
+        },
       );
 
       const data = await response.json();
@@ -102,8 +104,9 @@ function Signup() {
       );
 
       // Optional: redirect back after successful registration
-      // navigate(-1);
-      navigate("/");
+      const redirectPath = location.state?.from || "/";
+      navigate(redirectPath);
+
     } catch (error) {
       notify(error.message, "error");
     } finally {
@@ -113,10 +116,8 @@ function Signup() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-orange-100 via-white to-orange-50 px-4">
+      <Nav />
       <div className="bg-white/80 backdrop-blur-md border border-gray-200 shadow-lg rounded-2xl p-8 transition-all">
-        {/* Header */}
-
-        <ArrowLeft className="md:hidden" onClick={() => navigate(-1)} />
         {step === 1 && (
           <div className="flex w-full flex-col items-center mb-8">
             <img
@@ -169,14 +170,19 @@ function Signup() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-fadeIn max-w-5xl ">
             {/* LEFT SIDE – INFO */}
             <div className=" w-full flex flex-col justify-center place-items-center space-y-2">
-              <ChevronLeft className="h-6 w-6 text-gray-800 z-50 top-10 left-10 cursor-pointer absolute" onClick={() => setStep(1)} />
+              <ChevronLeft
+                className="h-6 w-6 text-gray-800 z-50 top-10 left-10 cursor-pointer absolute"
+                onClick={() => setStep(1)}
+              />
               <img
                 src={logo}
                 alt="logo"
                 className="w-16 h-16 rounded-full shadow-md"
               />
 
-              <h2 className="text-3xl font-bold text-blue-950 text-center">Create Account</h2>
+              <h2 className="text-3xl font-bold text-blue-950 text-center">
+                Create Account
+              </h2>
 
               <p className="text-gray-500 text-sm max-w-xs text-center p-2">
                 Register to access Sree Pooja services and manage your Bookings.
@@ -195,8 +201,6 @@ function Signup() {
 
             {/* RIGHT SIDE – FORM */}
             <form onSubmit={handleRegister} className="space-y-4 w-full">
-              
-
               {/* NAME ROW */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <input
@@ -208,7 +212,7 @@ function Signup() {
                   className="border border-gray-300 rounded-lg py-2.5 px-4 focus:ring-2 focus:ring-blue-500"
                   required
                 />
-                
+
                 <input
                   type="text"
                   name="lastName"
@@ -264,7 +268,8 @@ function Signup() {
               </div>
 
               <div className="text-sm text-gray-400">
-                By registering, you confirm that the information provided is accurate and belongs to you.
+                By registering, you confirm that the information provided is
+                accurate and belongs to you.
               </div>
 
               {/* SUBMIT */}
@@ -292,6 +297,5 @@ function Signup() {
     </div>
   );
 }
-
 
 export default Signup;

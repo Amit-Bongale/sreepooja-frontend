@@ -19,6 +19,8 @@ import UserDashboard from "../pages/User/UserDashboard";
 import Bookings from "../pages/User/Bookings";
 
 import Profile from "../pages/User/Profile";
+import ContentManagerDashboard from "../pages/Staff/contentManager/ContentManagerDashboard";
+import MangeServices from "../pages/Staff/contentManager/MangeServices";
 
 function CustomRouter() {
   return (
@@ -49,6 +51,16 @@ function CustomRouter() {
               <Route path="/account" element={<UserDashboard />} />
               <Route path="/user/bookings" element={<Bookings />} />
               <Route path="/user/profile" element={<Profile />} />
+            </Route>
+
+            <Route
+              element={<ProtectedRoutes allowedRoles={["Content_Manager"]} />}
+            >
+              <Route
+                path="/content-manager/dashboard"
+                element={<ContentManagerDashboard />}
+              />
+                <Route path="/staff/manage/services" element={<MangeServices />} />
             </Route>
           </Route>
         </Route>

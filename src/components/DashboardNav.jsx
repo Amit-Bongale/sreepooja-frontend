@@ -10,6 +10,10 @@ import {
   LayoutDashboard,
   CalendarDays,
   Home,
+  Book,
+  MapPin,
+  Bell,
+  Image,
   // MessageCircleQuestionMark,
   // Heart,
 } from "lucide-react";
@@ -68,6 +72,34 @@ function DashboardNav() {
         name: "Customer Support",
         icon: Users2,
         path: "/staff/customer-support",
+      },
+    ],
+
+    Content_Manager: [
+      {
+        name: "Dashboard",
+        icon: LayoutDashboard,
+        path: "/content-manager/dashboard",
+      },
+      {
+        name: "Services & Category",
+        icon: Book,
+        path: "/staff/manage/services",
+      },
+      {
+        name: "Serving Locations",
+        icon: MapPin,
+        path: "/staff/manage/locations",
+      },
+      {
+        name: "Notifications",
+        icon: Bell,
+        path: "/staff/manage/notifications",
+      },
+      {
+        name: "Banner and Blogs",
+        icon: Image,
+        path: "/staff/manage/ads",
       },
     ],
 
@@ -149,7 +181,7 @@ function DashboardNav() {
           {/* Sidebar Header */}
           <div className="p-5 border-b border-gray-200 flex items-center justify-between">
             <h1 className="font-serif text-xl font-bold text-gray-900 flex items-center">
-              <img src={logo} alt="logo" className="size-10 rounded-full" />
+              <img src={logo} alt="logo" className="size-8 rounded-full" />
               Sree<span className="text-brand-600">Pooja</span>
             </h1>
 

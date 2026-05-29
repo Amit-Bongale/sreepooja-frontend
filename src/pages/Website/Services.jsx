@@ -204,7 +204,7 @@ export default function Services() {
     <div className="font-sans text-gray-800 antialiased min-h-screen bg-gray-50 flex flex-col">
       <Nav />
       {/* --- FILTERS SECTION (Moved down) --- */}
-      <div className="bg-white border-b border-gray-200 py-3 z-40 relative mt-16 md:mt-22">
+      <div className="bg-white border-b border-gray-200 py-3 z-40 relative mt-17 md:mt-22">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center gap-3 w-full">
             {/* Search Bar */}

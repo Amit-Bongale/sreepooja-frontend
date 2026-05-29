@@ -6,6 +6,8 @@ import { notify } from "../Utils/notify";
 import { useDispatch } from "react-redux";
 import { userLogin } from "../Redux/Reducer";
 import { jwtDecode } from "jwt-decode";
+import Nav from "../components/Nav";
+import roleRoutes from "../router/roleRoutes";
 
 function Login() {
   const [userDetails, setUserDetails] = useState({
@@ -18,8 +20,6 @@ function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-
-  const redirectPath = location.state?.from || "/";
 
   const handleChanges = (e) => {
     const { name, value } = e.target;
@@ -97,6 +97,9 @@ function Login() {
       // clear form
       setUserDetails({ phone: "", otp: "" });
 
+      const redirectPath =
+        location.state?.from ||
+        navigate(roleRoutes[decodedToken.userrole?.[0]] || "/");
       // navigate
       navigate(redirectPath);
     } catch (error) {
@@ -106,16 +109,18 @@ function Login() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-orange-100 via-white to-orange-50 px-4">
+      <Nav />
       <div className="w-full max-w-sm bg-white/80 backdrop-blur-md border border-gray-200 shadow-lg rounded-2xl p-8 transition-all">
         <ArrowLeft className="md:hidden" onClick={() => navigate(-1)} />
         {/* Header */}
         <div className="flex flex-col items-center mb-8">
-          <Link to="/" >
-          <img
-            src={logo}
-            alt="logo"
-            className="w-20 h-20 mb-4 rounded-full shadow-md"
-          /> </Link>
+          <Link to="/">
+            <img
+              src={logo}
+              alt="logo"
+              className="w-20 h-20 mb-4 rounded-full shadow-md"
+            />{" "}
+          </Link>
           <h2 className="text-3xl font-bold text-blue-950">Login</h2>
           <p className="text-gray-500 text-sm mt-1">
             {" "}
@@ -190,7 +195,11 @@ function Login() {
 
         <div className="w-full mt-6 text-center">
           Dont have an Account ?{" "}
-          <Link to={"/signup"} state={{ from: redirectPath }} className="text-blue-600 underline">
+          <Link
+            to={"/signup"}
+            state={{ from: location.state?.from }}
+            className="text-blue-600 underline"
+          >
             Register
           </Link>
         </div>

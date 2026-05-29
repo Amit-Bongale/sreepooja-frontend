@@ -1,15 +1,27 @@
 import { Menu, X, User } from "lucide-react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import logo from "../assets/sreePooja.png";
+import roleRoutes from "../router/roleRoutes";
 
 function Nav() {
   const [isOpen, setIsOpen] = useState(false);
 
+  const navigate = useNavigate();
+
   const token = localStorage.getItem("token");
   const user = useSelector((state) => state.user.user);
   const loggedIn = user || token;
+
+  const handleAccountNavigation = () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    navigate(roleRoutes[user?.roles?.[0]] || "/");
+  };
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
@@ -47,13 +59,13 @@ function Nav() {
           {/* Desktop Login */}
           <div className="hidden md:flex items-center">
             {loggedIn ? (
-              <Link
-                to="/account"
+              <button
+                onClick={handleAccountNavigation}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-600 hover:text-brand-600 transition"
               >
                 <User size={18} />
                 Account
-              </Link>
+              </button>
             ) : (
               <Link
                 to="/login"

@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import handsIcon from "../../assets/icons/hands.png";
 
 function UserDashboard() {
+  
   const user = useSelector((state) => state.user.user);
 
   return (
