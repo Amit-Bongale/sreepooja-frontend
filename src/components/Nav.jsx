@@ -4,23 +4,36 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import logo from "../assets/sreePooja.png";
 import roleRoutes from "../router/roleRoutes";
+// import { jwtDecode } from "jwt-decode";
 
 function Nav() {
   const [isOpen, setIsOpen] = useState(false);
 
   const navigate = useNavigate();
 
-  const token = localStorage.getItem("token");
-  const user = useSelector((state) => state.user.user);
-  const loggedIn = user || token;
+  // const token = localStorage.getItem("token")?.split(" ")[1];
+
+  // const decodedToken = useMemo(() => {
+  //   if (!token) return null;
+
+  //   console.log("token decoding")
+  //   try {
+  //     return jwtDecode(token);
+  //   } catch (error) {
+  //     console.error("Invalid token:", error);
+  //     return null;
+  //   }
+  // }, [token]);
+
+  const loggedIn = useSelector((state) => state.user.user);
 
   const handleAccountNavigation = () => {
-    if (!user) {
+    if (!loggedIn) {
       navigate("/login");
       return;
     }
 
-    navigate(roleRoutes[user?.roles?.[0]] || "/");
+    navigate(roleRoutes[loggedIn?.roles?.[0]] || "/");
   };
 
   return (
