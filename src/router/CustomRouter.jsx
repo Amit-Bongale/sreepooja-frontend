@@ -21,6 +21,7 @@ import Bookings from "../pages/User/Bookings";
 import Profile from "../pages/User/Profile";
 import ContentManagerDashboard from "../pages/Staff/contentManager/ContentManagerDashboard";
 import MangeServices from "../pages/Staff/contentManager/MangeServices";
+import AddService from "../pages/Staff/contentManager/AddService";
 
 function CustomRouter() {
   return (
@@ -60,7 +61,9 @@ function CustomRouter() {
                 path="/content-manager/dashboard"
                 element={<ContentManagerDashboard />}
               />
-                <Route path="/staff/manage/services" element={<MangeServices />} />
+                <Route path="/staff/services" element={<MangeServices />} />
+                <Route path="/staff/services/add" element={<AddService />} />
+
             </Route>
           </Route>
         </Route>

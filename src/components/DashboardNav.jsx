@@ -84,7 +84,7 @@ function DashboardNav() {
       {
         name: "Services & Category",
         icon: Book,
-        path: "/staff/manage/services",
+        path: "/staff/services",
       },
       {
         name: "Serving Locations",
