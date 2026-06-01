@@ -22,6 +22,7 @@ import Profile from "../pages/User/Profile";
 import ContentManagerDashboard from "../pages/Staff/contentManager/ContentManagerDashboard";
 import MangeServices from "../pages/Staff/contentManager/MangeServices";
 import AddService from "../pages/Staff/contentManager/AddService";
+import ManageCategories from "../pages/Staff/contentManager/ManageCategories";
 
 function CustomRouter() {
   return (
@@ -61,10 +62,11 @@ function CustomRouter() {
                 path="/content-manager/dashboard"
                 element={<ContentManagerDashboard />}
               />
-                <Route path="/staff/services" element={<MangeServices />} />
-                <Route path="/staff/services/add" element={<AddService />} />
-
+              <Route path="/staff/services" element={<MangeServices />} />
+              <Route path="/staff/services/add" element={<AddService />} />
+              <Route path="/staff/categories" element={<ManageCategories />} />
             </Route>
+            
           </Route>
         </Route>
       </Routes>

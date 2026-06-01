@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import Nav from "../../components/Nav";
 import { Link } from "react-router";
+import { getCategories } from "../../api/Api";
 
 // --- DUMMY DATA --- //
 const LOCATIONS = [
@@ -42,17 +43,6 @@ const COMMUNITY = [
   "Arya Vasya",
 ];
 
-const CATEGORIES = [
-  "All Services",
-  "Ceremonies",
-  "Homam",
-  "Pariharam",
-  "Poojas",
-  "Powerful Devi Homam",
-  "Ancestor Rituals",
-  "Festival Poojas",
-  "Astrology",
-];
 
 const MOCK_SERVICES = [
   {
@@ -175,6 +165,18 @@ export default function Services() {
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 6;
 
+  const [CATEGORIES, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const data = await getCategories("/pooja-services/categories");
+      console.log("Fetched categories:", data);
+      setCategories(data);
+    };
+
+    fetchCategories();
+  }, []);
+
   // Reset to page 1 when filters change
   useEffect(() => {
     const resetPage = async () => {
@@ -287,17 +289,17 @@ export default function Services() {
 
       {/* Mobile Horizontal Category Chips (Quick Select) */}
       <div className="md:hidden border-b border-gray-100 bg-white overflow-x-auto hide-scrollbar px-4 py-3 flex gap-2">
-        {CATEGORIES.slice(0, 5).map((category) => (
+        {CATEGORIES.map((category) => (
           <button
-            key={category}
-            onClick={() => setSelectedCategory(category)}
+            key={category.id}
+            onClick={() => setSelectedCategory(category.id)}
             className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              selectedCategory === category
+              selectedCategory === category.id
                 ? "bg-orange-600 text-white shadow-sm"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >
-            {category}
+            {category.categoryName}
           </button>
         ))}
         <button
@@ -337,14 +339,31 @@ export default function Services() {
               <h3 className="hidden md:block font-serif font-bold text-lg text-gray-900 bg-gray-50/50 p-4 border-b border-gray-200">
                 Browse Services
               </h3>
+
               <ul className="space-y-1 md:p-3">
+                {/* all categories */}
+                <li>
+                  <button
+                    onClick={() => {
+                      setSelectedCategory("All Services");
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center justify-between transition-all duration-200 ${
+                      selectedCategory === "All Services"
+                        ? "bg-orange-50 text-orange-700 font-bold border-l-2 border-orange-500 pl-3"
+                        : "text-gray-600 hover:bg-gray-50 hover:text-orange-600 font-medium border-l-4 border-transparent pl-3"
+                    }`}
+                  >
+                    All Categories
+                  </button>
+                </li>
                 {CATEGORIES.map((category) => {
-                  const isActive = selectedCategory === category;
+                  const isActive = selectedCategory === category.categoryName;
                   return (
-                    <li key={category}>
+                    <li key={category.id}>
                       <button
                         onClick={() => {
-                          setSelectedCategory(category);
+                          setSelectedCategory(category.categoryName);
                           setIsMobileMenuOpen(false); // Close mobile drawer on selection
                         }}
                         className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center justify-between transition-all duration-200 ${
@@ -353,7 +372,7 @@ export default function Services() {
                             : "text-gray-600 hover:bg-gray-50 hover:text-orange-600 font-medium border-l-4 border-transparent pl-3"
                         }`}
                       >
-                        {category}
+                        {category.categoryName}
                         {isActive && (
                           <ChevronRight className="h-4 w-4 text-orange-500" />
                         )}

@@ -59,7 +59,7 @@ function AddService() {
   const [formData, setFormData] = useState({
     serviceName: "",
     slug: "",
-    categoryId: "",
+    categorySlug: "",
     shortDescription: "",
     fullDescription: "",
     benefits: "",
@@ -82,19 +82,14 @@ function AddService() {
     bannerImage: null,
   });
 
+  const [preview, setPreview] = useState({
+    thumbnailImage: null,
+    bannerImage: null,
+  });
+
   // --- FORM HANDLERS ---
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-
-    // Auto-generate slug from serviceName
-    if (name === "serviceName" && !formData.slug) {
-      const autoSlug = value
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)+/g, "");
-      setFormData((prev) => ({ ...prev, [name]: value, slug: autoSlug }));
-      return;
-    }
 
     setFormData((prev) => ({
       ...prev,
@@ -114,9 +109,19 @@ function AddService() {
   };
 
   const handleFileChange = (e, field) => {
-    if (e.target.files && e.target.files[0]) {
-      setFiles((prev) => ({ ...prev, [field]: e.target.files[0] }));
-    }
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    setFiles((prev) => ({
+      ...prev,
+      [field]: file,
+    }));
+
+    setPreview((prev) => ({
+      ...prev,
+      [field]: URL.createObjectURL(file),
+    }));
   };
 
   // --- PACKAGE HANDLERS ---
@@ -191,30 +196,6 @@ function AddService() {
                   <ArrowLeft className="h-5 w-5" /> Back to Services
                 </button>
               </Link>
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  className="px-5 py-2.5 rounded-xl border border-gray-200 text-gray-700 font-bold hover:bg-gray-50 transition-colors"
-                >
-                  Save as Draft
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSaving}
-                  className="px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold flex items-center gap-2 shadow-md transition-all disabled:opacity-70 disabled:cursor-not-allowed"
-                >
-                  {isSaving ? (
-                    <span className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>{" "}
-                      Saving...
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      <Save className="h-5 w-5" /> Publish Service
-                    </span>
-                  )}
-                </button>
-              </div>
             </div>
 
             {showSuccessMessage && (
@@ -265,8 +246,8 @@ function AddService() {
                   </label>
                   <select
                     required
-                    name="categoryId"
-                    value={formData.categoryId}
+                    name="categorySlug"
+                    value={formData.categorySlug}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 outline-none transition-all cursor-pointer"
                   >
@@ -274,7 +255,7 @@ function AddService() {
                       Select Category
                     </option>
                     {CATEGORIES.map((cat) => (
-                      <option key={cat.id} value={cat.id}>
+                      <option key={cat.slug} value={cat.slug}>
                         {cat.name}
                       </option>
                     ))}
@@ -347,15 +328,23 @@ function AddService() {
                   <label className="block text-sm font-bold text-gray-700 mb-2">
                     Thumbnail Image
                   </label>
-                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <UploadCloud className="w-6 h-6 mb-2 text-gray-500" />
-                      <p className="text-xs text-gray-500 font-medium">
-                        {files.thumbnailImage
-                          ? files.thumbnailImage.name
-                          : "Click to upload thumbnail"}
-                      </p>
-                    </div>
+
+                  <label className="flex items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors overflow-hidden">
+                    {preview.thumbnailImage ? (
+                      <img
+                        src={preview.thumbnailImage}
+                        alt="Thumbnail Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center">
+                        <UploadCloud className="w-6 h-6 mb-2 text-gray-500" />
+                        <p className="text-xs text-gray-500 font-medium">
+                          Click to upload thumbnail
+                        </p>
+                      </div>
+                    )}
+
                     <input
                       type="file"
                       className="hidden"
@@ -363,20 +352,35 @@ function AddService() {
                       onChange={(e) => handleFileChange(e, "thumbnailImage")}
                     />
                   </label>
+
+                  {files.thumbnailImage && (
+                    <p className="mt-2 text-xs text-gray-500">
+                      Click the image to change it
+                    </p>
+                  )}
                 </div>
-                <div>
+
+                {/* <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">
                     Banner Image
                   </label>
-                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <ImageIcon className="w-6 h-6 mb-2 text-gray-500" />
-                      <p className="text-xs text-gray-500 font-medium">
-                        {files.bannerImage
-                          ? files.bannerImage.name
-                          : "Click to upload hero banner"}
-                      </p>
-                    </div>
+
+                  <label className="flex items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors overflow-hidden">
+                    {preview.bannerImage ? (
+                      <img
+                        src={preview.bannerImage}
+                        alt="Banner Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center">
+                        <UploadCloud className="w-6 h-6 mb-2 text-gray-500" />
+                        <p className="text-xs text-gray-500 font-medium">
+                          Click to upload banner
+                        </p>
+                      </div>
+                    )}
+
                     <input
                       type="file"
                       className="hidden"
@@ -384,7 +388,13 @@ function AddService() {
                       onChange={(e) => handleFileChange(e, "bannerImage")}
                     />
                   </label>
-                </div>
+
+                  {files.bannerImage && (
+                    <p className="mt-2 text-xs text-gray-500">
+                      Click the image to change it
+                    </p>
+                  )}
+                </div> */}
               </div>
             </div>
 
@@ -496,8 +506,7 @@ function AddService() {
                     className="w-full px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-sm font-bold text-gray-700 outline-none"
                   >
                     <option value="ACTIVE">Status: ACTIVE</option>
-                    <option value="DRAFT">Status: DRAFT</option>
-                    <option value="ARCHIVED">Status: ARCHIVED</option>
+                    <option value="INACTIVE">Status: INACTIVE</option>
                   </select>
                 </div>
               </div>
@@ -690,6 +699,24 @@ function AddService() {
                   </div>
                 ))}
               </div>
+            </div>
+            <div className="flex justify-center">
+              <button
+                type="submit"
+                disabled={isSaving}
+                className="px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold flex items-center gap-2 shadow-md transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {isSaving ? (
+                  <span className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>{" "}
+                    Saving...
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <Save className="h-5 w-5" /> Publish Service
+                  </span>
+                )}
+              </button>
             </div>
           </form>
         </div>

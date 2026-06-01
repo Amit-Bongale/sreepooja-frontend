@@ -1,7 +1,7 @@
-export const getCategories = async () => {
+export const getCategories = async (path) => {
   try {
     const response = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/categories`,
+      `${import.meta.env.VITE_API_BASE_URL}${path}`,
       {
         method: "GET",
       },

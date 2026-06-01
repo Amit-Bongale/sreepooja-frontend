@@ -14,6 +14,7 @@ import {
   MapPin,
   Bell,
   Image,
+  Layers,
   // MessageCircleQuestionMark,
   // Heart,
 } from "lucide-react";
@@ -82,9 +83,14 @@ function DashboardNav() {
         path: "/content-manager/dashboard",
       },
       {
-        name: "Services & Category",
+        name: "Manage Services",
         icon: Book,
         path: "/staff/services",
+      },
+      {
+        name: "Manage Categories",
+        icon: Layers,
+        path: "/staff/categories",
       },
       {
         name: "Serving Locations",
