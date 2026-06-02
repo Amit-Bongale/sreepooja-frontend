@@ -1,27 +1,26 @@
 import { X } from "lucide-react";
 import { useState } from "react";
 import { notify } from "../../../../Utils/notify";
-import SlugGenerator from "../../../../utils/SlugGenerator";
 
-function AddCategory({ setIsAddCategoryModalOpen, onSucess }) {
+function AddLanguage({ setIsAddModalOpen, onSucess }) {
   const [data, setData] = useState({
-    categoryName: "",
-    slug: "",
-    status: "ACTIVE",
+    languageName: "",
+    active: true,
   });
+
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
-    if (data.categoryName.trim() === "") {
-      notify("Category name is required", "error");
+    
+    if(data.languageName.trim() === "") {
+      notify("Language name is required", "error");
       return;
     }
 
     setLoading(true);
-
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/admin/service-categories`,
+        `${import.meta.env.VITE_API_BASE_URL}/admin/masters/languages`,
         {
           method: "POST",
           headers: {
@@ -32,16 +31,16 @@ function AddCategory({ setIsAddCategoryModalOpen, onSucess }) {
       );
 
       if (!res.ok) {
-        throw new Error("Failed to add category");
+        throw new Error("Failed to add Language");
       }
 
-      notify("Category Added Successfully", "success");
-      setIsAddCategoryModalOpen(false);
-      setData({ categoryName: "", slug: "" });
+      notify("Language Added Successfully", "success");
+      setIsAddModalOpen(false);
+      setData({ languageName: "", active: true });
       onSucess();
-    } catch (e) {
-      notify("Failed to add category", "error");
-      console.log(e);
+    } catch (error) {
+      notify("Failed to add Language", "error");
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -52,10 +51,10 @@ function AddCategory({ setIsAddCategoryModalOpen, onSucess }) {
       <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         <div className="p-5 border-b border-gray-100 flex items-center justify-between">
           <h3 className="text-lg font-bold text-gray-900 font-serif">
-            Add New Category
+            Add New Language
           </h3>
           <button
-            onClick={() => setIsAddCategoryModalOpen(false)}
+            onClick={() => setIsAddModalOpen(false)}
             className="text-gray-400 hover:text-gray-600 p-1.5 rounded-full hover:bg-gray-100 transition-colors"
           >
             <X className="h-5 w-5" />
@@ -64,16 +63,14 @@ function AddCategory({ setIsAddCategoryModalOpen, onSucess }) {
         <div className="p-5 space-y-5">
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1.5">
-              Category Name <span className="text-red-500">*</span>
+              Language <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              value={data.categoryName}
               onChange={(e) => {
                 setData({
                   ...data,
-                  categoryName: e.target.value,
-                  slug: SlugGenerator(e.target.value),
+                  languageName: e.target.value,
                 });
               }}
               placeholder="e.g. Vastu Poojas"
@@ -83,7 +80,7 @@ function AddCategory({ setIsAddCategoryModalOpen, onSucess }) {
         </div>
         <div className="p-5 border-t border-gray-100 flex justify-end gap-3 bg-gray-50">
           <button
-            onClick={() => setIsAddCategoryModalOpen(false)}
+            onClick={() => setIsAddModalOpen(false)}
             className="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors"
           >
             Cancel
@@ -92,9 +89,10 @@ function AddCategory({ setIsAddCategoryModalOpen, onSucess }) {
             onClick={() => {
               handleSubmit();
             }}
+            disabled={loading}
             className="px-5 py-2.5 rounded-xl text-sm font-bold bg-orange-600 hover:bg-orange-700 text-white shadow-md transition-colors"
           >
-            {loading ? "Saving..." : "Save Category"}
+            {loading ? "saving" : "Save Language"}
           </button>
         </div>
       </div>
@@ -102,4 +100,4 @@ function AddCategory({ setIsAddCategoryModalOpen, onSucess }) {
   );
 }
 
-export default AddCategory;
+export default AddLanguage;

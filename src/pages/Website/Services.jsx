@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import Nav from "../../components/Nav";
 import { Link } from "react-router";
-import { getCategories } from "../../api/Api";
+import { getData } from "../../api/Api";
 
 // --- DUMMY DATA --- //
 const LOCATIONS = [
@@ -169,7 +169,7 @@ export default function Services() {
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const data = await getCategories("/pooja-services/categories");
+      const data = await getData("/pooja-services/categories");
       console.log("Fetched categories:", data);
       setCategories(data);
     };

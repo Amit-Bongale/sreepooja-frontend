@@ -21,8 +21,10 @@ import Bookings from "../pages/User/Bookings";
 import Profile from "../pages/User/Profile";
 import ContentManagerDashboard from "../pages/Staff/contentManager/ContentManagerDashboard";
 import MangeServices from "../pages/Staff/contentManager/MangeServices";
-import AddService from "../pages/Staff/contentManager/AddService";
 import ManageCategories from "../pages/Staff/contentManager/ManageCategories";
+import AddService from "../components/staff/contentManager/Serevices/AddService";
+import ManageCommunity from "../pages/Staff/contentManager/ManageCommunity";
+import ManageLanguages from "../pages/Staff/contentManager/ManageLanguages";
 
 function CustomRouter() {
   return (
@@ -64,7 +66,11 @@ function CustomRouter() {
               />
               <Route path="/staff/services" element={<MangeServices />} />
               <Route path="/staff/services/add" element={<AddService />} />
+
               <Route path="/staff/categories" element={<ManageCategories />} />
+              <Route path="/staff/community" element={<ManageCommunity />} />
+              <Route path="/staff/language" element={<ManageLanguages />} />
+
             </Route>
             
           </Route>

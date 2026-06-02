@@ -12,9 +12,11 @@ import {
   Home,
   Book,
   MapPin,
-  Bell,
-  Image,
   Layers,
+  Command,
+  Languages,
+  // Bell,
+  // Image,
   // MessageCircleQuestionMark,
   // Heart,
 } from "lucide-react";
@@ -93,20 +95,30 @@ function DashboardNav() {
         path: "/staff/categories",
       },
       {
+        name: "Manage Community",
+        icon: Command,
+        path: "/staff/community",
+      },
+      {
+        name: "Manage Languages",
+        icon: Languages,
+        path: "/staff/language",
+      },
+      {
         name: "Serving Locations",
         icon: MapPin,
         path: "/staff/manage/locations",
       },
-      {
-        name: "Notifications",
-        icon: Bell,
-        path: "/staff/manage/notifications",
-      },
-      {
-        name: "Banner and Blogs",
-        icon: Image,
-        path: "/staff/manage/ads",
-      },
+      // {
+      //   name: "Notifications",
+      //   icon: Bell,
+      //   path: "/staff/manage/notifications",
+      // },
+      // {
+      //   name: "Banner and Blogs",
+      //   icon: Image,
+      //   path: "/staff/manage/ads",
+      // },
     ],
 
     ADMIN: [

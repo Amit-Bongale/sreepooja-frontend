@@ -1,19 +1,14 @@
-import { X } from "lucide-react";
+import { CheckIcon, X } from "lucide-react";
 import { useState } from "react";
 import { notify } from "../../../../Utils/notify";
-import SlugGenerator from "../../../../utils/SlugGenerator";
 
-function AddCategory({ setIsAddCategoryModalOpen, onSucess }) {
-  const [data, setData] = useState({
-    categoryName: "",
-    slug: "",
-    status: "ACTIVE",
-  });
+function EditCommunity({ setIsEditModalOpen, editCommunityData, onSucess }) {
+  let [data, setData] = useState(editCommunityData);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
-    if (data.categoryName.trim() === "") {
-      notify("Category name is required", "error");
+    if (data.communityName.trim() === "") {
+      notify("Community name is required", "error");
       return;
     }
 
@@ -21,9 +16,9 @@ function AddCategory({ setIsAddCategoryModalOpen, onSucess }) {
 
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/admin/service-categories`,
+        `${import.meta.env.VITE_API_BASE_URL}/admin/masters/communities/${data.id}`,
         {
-          method: "POST",
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
@@ -32,16 +27,15 @@ function AddCategory({ setIsAddCategoryModalOpen, onSucess }) {
       );
 
       if (!res.ok) {
-        throw new Error("Failed to add category");
+        throw new Error("Failed to update category");
       }
 
-      notify("Category Added Successfully", "success");
-      setIsAddCategoryModalOpen(false);
-      setData({ categoryName: "", slug: "" });
+      notify("Community updated successfully", "success");
+      setIsEditModalOpen(false);
       onSucess();
-    } catch (e) {
-      notify("Failed to add category", "error");
-      console.log(e);
+    } catch (error) {
+      notify("Failed to update category", "error");
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -52,10 +46,10 @@ function AddCategory({ setIsAddCategoryModalOpen, onSucess }) {
       <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         <div className="p-5 border-b border-gray-100 flex items-center justify-between">
           <h3 className="text-lg font-bold text-gray-900 font-serif">
-            Add New Category
+            Edit Community
           </h3>
           <button
-            onClick={() => setIsAddCategoryModalOpen(false)}
+            onClick={() => setIsEditModalOpen(false)}
             className="text-gray-400 hover:text-gray-600 p-1.5 rounded-full hover:bg-gray-100 transition-colors"
           >
             <X className="h-5 w-5" />
@@ -68,33 +62,60 @@ function AddCategory({ setIsAddCategoryModalOpen, onSucess }) {
             </label>
             <input
               type="text"
-              value={data.categoryName}
+              name="communityName"
+              value={data.communityName}
               onChange={(e) => {
                 setData({
                   ...data,
-                  categoryName: e.target.value,
-                  slug: SlugGenerator(e.target.value),
+                  communityName: e.target.value,
                 });
               }}
               placeholder="e.g. Vastu Poojas"
               className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 outline-none transition-all"
             />
           </div>
+
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-2">
+              Status
+            </label>
+            <label className="flex items-center gap-3 cursor-pointer p-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors w-fit pr-6">
+              <div className="relative flex items-center justify-center w-5 h-5">
+                <input
+                  type="checkbox"
+                  checked={data.active}
+                  onChange={(e) =>
+                    setData({ ...data, active: e.target.checked })
+                  }
+                  className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded focus:ring-orange-500 checked:bg-orange-500 checked:border-orange-500 transition-all cursor-pointer"
+                />
+                <CheckIcon
+                  className="absolute w-4 h-4 text-white pointer-events-none opacity-0 peer-checked:opacity-100"
+                  strokeWidth={3}
+                />
+              </div>
+              <span className="text-sm font-bold text-gray-800">
+                {data.active ? "Active" : "Inactive"}
+              </span>
+            </label>
+          </div>
         </div>
         <div className="p-5 border-t border-gray-100 flex justify-end gap-3 bg-gray-50">
           <button
-            onClick={() => setIsAddCategoryModalOpen(false)}
+            onClick={() => setIsEditModalOpen(false)}
             className="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-200 transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={() => {
+              // Handle save logic here
               handleSubmit();
             }}
+            disabled={loading}
             className="px-5 py-2.5 rounded-xl text-sm font-bold bg-orange-600 hover:bg-orange-700 text-white shadow-md transition-colors"
           >
-            {loading ? "Saving..." : "Save Category"}
+            {loading ? "Updating..." : "Update Community"}
           </button>
         </div>
       </div>
@@ -102,4 +123,4 @@ function AddCategory({ setIsAddCategoryModalOpen, onSucess }) {
   );
 }
 
-export default AddCategory;
+export default EditCommunity;

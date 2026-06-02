@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Image as ImageIcon,
   Plus,
@@ -13,18 +13,26 @@ import {
   Check,
 } from "lucide-react";
 import { Link } from "react-router";
+import { getData } from "../../../../api/Api";
+import SlugGenerator from "../../../../utils/SlugGenerator";
 
 function AddService() {
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [CATEGORIES, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const data = await getData("/pooja-services/categories");
+      console.log("Fetched categories:", data);
+      setCategories(data);
+    };
+
+    fetchCategories();
+  }, []);
 
   // --- DUMMY DATA FOR DROPDOWNS ---
-  const CATEGORIES = [
-    { id: 1, name: "Ceremonies" },
-    { id: 2, name: "Homam" },
-    { id: 3, name: "Poojas" },
-    { id: 4, name: "Pariharam" },
-  ];
+
   const LANGUAGES = [
     { id: 1, name: "Sanskrit" },
     { id: 2, name: "Tamil" },
@@ -64,7 +72,7 @@ function AddService() {
     fullDescription: "",
     benefits: "",
     durationMinutes: "",
-    status: "ACTIVE", // ACTIVE, DRAFT, ARCHIVED
+    status: "ACTIVE", 
     featured: false,
     cancellationAllowed: true,
     refundAllowed: true,
@@ -220,26 +228,19 @@ function AddService() {
                     required
                     name="serviceName"
                     value={formData.serviceName}
-                    onChange={handleInputChange}
+                    onChange={(e) => {
+                      setFormData({
+                        ...formData,
+                        serviceName: e.target.value,
+                        slug: SlugGenerator(e.target.value),
+                      });
+                    }}
                     type="text"
                     placeholder="e.g. Navagraha Shanti"
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 outline-none transition-all"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">
-                    URL Slug <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    required
-                    name="slug"
-                    value={formData.slug}
-                    onChange={handleInputChange}
-                    type="text"
-                    placeholder="navagraha-shanti"
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 outline-none transition-all font-mono text-sm"
-                  />
-                </div>
+
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-1">
                     Category <span className="text-red-500">*</span>
@@ -256,7 +257,7 @@ function AddService() {
                     </option>
                     {CATEGORIES.map((cat) => (
                       <option key={cat.slug} value={cat.slug}>
-                        {cat.name}
+                        {cat.categoryName}
                       </option>
                     ))}
                   </select>
@@ -684,7 +685,7 @@ function AddService() {
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-gray-700 mb-1">
-                          Included Items (Newline separated)
+                          Included Items (Comma separated)
                         </label>
                         <textarea
                           name="includedItems"
@@ -708,7 +709,7 @@ function AddService() {
               >
                 {isSaving ? (
                   <span className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>{" "}
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                     Saving...
                   </span>
                 ) : (

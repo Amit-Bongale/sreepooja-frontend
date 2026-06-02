@@ -1,31 +1,44 @@
 import { X } from "lucide-react";
 import { useState } from "react";
 import { notify } from "../../../../Utils/notify";
+import SlugGenerator from "../../../../utils/SlugGenerator";
 
-function EditCategory({ setIsEditCategoryModalOpen, editCategoryData, onSucess }) {
-
+function EditCategory({
+  setIsEditCategoryModalOpen,
+  editCategoryData,
+  onSucess,
+}) {
   let [data, setData] = useState(editCategoryData);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
-    const res = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/admin/service-categories/${data.slug}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
+    setLoading(true);
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/admin/service-categories/${data.slug}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
         },
-        body: JSON.stringify(data),
-      },
-    );
+      );
 
-    if (!res.ok) {
+      if (!res.ok) {
+        throw new Error("Failed to update category");
+      }
+
+      notify("Category updated successfully", "success");
+      setIsEditCategoryModalOpen(false);
+      onSucess();
+    } catch (e) {
       notify("Failed to update category", "error");
-      throw new Error("Failed to update category");
+      console.error(e);
+    } finally {
+      setLoading(false);
     }
-
-    notify("Category updated successfully", "success");
-    setIsEditCategoryModalOpen(false);
-    onSucess();
   };
 
   return (
@@ -51,34 +64,18 @@ function EditCategory({ setIsEditCategoryModalOpen, editCategoryData, onSucess }
               type="text"
               name="categoryName"
               value={data.categoryName}
-              onChange={(e) =>
+              onChange={(e) => {
                 setData({
                   ...data,
                   categoryName: e.target.value,
-                })
-              }
+                  slug: SlugGenerator(e.target.value),
+                });
+              }}
               placeholder="e.g. Vastu Poojas"
               className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 outline-none transition-all"
             />
           </div>
-          <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1.5">
-              URL Slug <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="slug"
-              value={data.slug}
-              onChange={(e) =>
-                setData({
-                  ...data,
-                  slug: e.target.value,
-                })
-              }
-              placeholder="vastu-poojas"
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 outline-none transition-all font-mono text-sm"
-            />
-          </div>
+
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1.5">
               Status
@@ -110,9 +107,10 @@ function EditCategory({ setIsEditCategoryModalOpen, editCategoryData, onSucess }
               // Handle save logic here
               handleSubmit();
             }}
+            disabled={loading}
             className="px-5 py-2.5 rounded-xl text-sm font-bold bg-orange-600 hover:bg-orange-700 text-white shadow-md transition-colors"
           >
-            Update Category
+            {loading ? "Updating..." : "Update Category"}
           </button>
         </div>
       </div>
