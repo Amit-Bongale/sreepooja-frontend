@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Calendar,
   Clock,
@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { startPayment } from "../../utils/Payment";
 import Nav from "../../components/Nav";
+import { getData } from "../../api/Api";
 
 // --- DUMMY DATA FOR CHECKOUT ---
 const BOOKING_SUMMARY = {
@@ -31,33 +32,28 @@ const BOOKING_SUMMARY = {
 const LOCATIONS = ["Bengaluru Urban", "Bengaluru Rural", "Mysuru"];
 
 const STATES = ["Karnataka"];
-
-const LANGUAGES = [
-  "All Languages",
-  "Tamil",
-  "Telugu",
-  "Hindi",
-  "Kannada",
-  "Malayalam",
-  "Sanskrit",
-];
-
-const COMMUNITY = [
-  "All Communities",
-  "smartha",
-  "Vaishnava",
-  "Sri Vaishnava",
-  "Veerashaiva Lingayatha",
-  "Arya Vasya",
-];
-
+  
 export default function CheckOut() {
   // --- STATE ---
   const [isBillingSame, setIsBillingSame] = useState(true);
   const [paymentMode, setPaymentMode] = useState("advance");
   const [selectedLocation, setSelectedLocation] = useState("All Locations");
-  // const [selectedLanguage, setSelectedLanguage] = useState("All Languages");
-  // const [selectedCommunity, setSelectedCommunity] = useState("All Communities");
+
+  const [LANGUAGES, setLanguages] = useState([]);
+  const [COMMUNITY, setCommunity] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const languages = await getData("/masters/languages");
+      setLanguages(languages);
+
+      const community = await getData("/masters/communities");
+      setCommunity(community);
+      // console.log("Fetched categories:", data);
+    };
+
+    fetchData();
+  }, []);
 
   // Form state
   // eslint-disable-next-line no-unused-vars
@@ -67,6 +63,8 @@ export default function CheckOut() {
     notes: "",
     gotra: "",
     nakshatra: "",
+    language: "",
+    community: "",
   });
 
   // Calculations
@@ -133,10 +131,16 @@ export default function CheckOut() {
                   </label>
                   <div className="relative">
                     <Languages className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <select className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none appearance-none cursor-pointer">
+                    <select
+                      className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none appearance-none cursor-pointer"
+                      onchange={(e) =>
+                        setFormData({ ...formData, language: e.target.value })
+                      }
+                    >
+                      <option value={"any"}> Any Language</option>
                       {LANGUAGES.map((lang) => (
-                        <option key={lang} value={lang}>
-                          {lang}
+                        <option key={lang.id} value={lang.id}>
+                          {lang.languageName}
                         </option>
                       ))}
                     </select>
@@ -149,10 +153,16 @@ export default function CheckOut() {
                   </label>
                   <div className="relative">
                     <Command className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <select className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none appearance-none cursor-pointer">
+                    <select
+                      className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none appearance-none cursor-pointer"
+                      onchange={(e) =>
+                        setFormData({ ...formData, community: e.target.value })
+                      }
+                    >
+                      <option value={"any"}> Any Community</option>
                       {COMMUNITY.map((community) => (
-                        <option key={community} value={community}>
-                          {community}
+                        <option key={community.id} value={community.id}>
+                          {community.communityName}
                         </option>
                       ))}
                     </select>
@@ -164,9 +174,9 @@ export default function CheckOut() {
                 <Info className="h-5 w-5 shrink-0 mt-0.5" />
                 <p>
                   Priest assignment, Muhurtham timing, and selected date/time
-                  are subject to priest and Muhurtham availability and may change after
-                  confirmation. Selected preferences are considered as preferred
-                  options only.
+                  are subject to priest and Muhurtham availability and may
+                  change after confirmation. Selected preferences are considered
+                  as preferred options only.
                 </p>
               </div>
             </section>

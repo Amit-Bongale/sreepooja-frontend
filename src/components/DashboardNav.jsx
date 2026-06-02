@@ -107,7 +107,7 @@ function DashboardNav() {
       {
         name: "Serving Locations",
         icon: MapPin,
-        path: "/staff/manage/locations",
+        path: "/staff/locations",
       },
       // {
       //   name: "Notifications",

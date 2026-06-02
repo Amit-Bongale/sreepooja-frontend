@@ -24,25 +24,24 @@ const LOCATIONS = [
   "Mysuru",
 ];
 
-const LANGUAGES = [
-  "All Languages",
-  "Tamil",
-  "Telugu",
-  "Hindi",
-  "Kannada",
-  "Malayalam",
-  "Sanskrit",
-];
+// const LANGUAGES = [
+//   "All Languages",
+//   "Tamil",
+//   "Telugu",
+//   "Hindi",
+//   "Kannada",
+//   "Malayalam",
+//   "Sanskrit",
+// ];
 
-const COMMUNITY = [
-  "All Communities",
-  "smartha",
-  "Vaishnava",
-  "Sri Vaishnava",
-  "Veerashaiva Lingayatha",
-  "Arya Vasya",
-];
-
+// const COMMUNITY = [
+//   "All Communities",
+//   "smartha",
+//   "Vaishnava",
+//   "Sri Vaishnava",
+//   "Veerashaiva Lingayatha",
+//   "Arya Vasya",
+// ];
 
 const MOCK_SERVICES = [
   {
@@ -166,15 +165,22 @@ export default function Services() {
   const ITEMS_PER_PAGE = 6;
 
   const [CATEGORIES, setCategories] = useState([]);
-
+  const [LANGUAGES, setLanguages] = useState([]);
+  const [COMMUNITY, setCommunity] = useState([]);
   useEffect(() => {
-    const fetchCategories = async () => {
-      const data = await getData("/pooja-services/categories");
-      console.log("Fetched categories:", data);
-      setCategories(data);
+    const fetchData = async () => {
+      const categories = await getData("/pooja-services/categories");
+      setCategories(categories);
+
+      const languages = await getData("/masters/languages");
+      setLanguages(languages);
+
+      const community = await getData("/masters/communities");
+      setCommunity(community);
+      // console.log("Fetched categories:", data);
     };
 
-    fetchCategories();
+    fetchData();
   }, []);
 
   // Reset to page 1 when filters change
@@ -257,9 +263,10 @@ export default function Services() {
                   onChange={(e) => setSelectedLanguage(e.target.value)}
                   className="w-full pl-9 pr-8 py-2.5 bg-white border border-gray-200 hover:border-orange-300 focus:border-orange-500 rounded-xl text-sm transition-all outline-none appearance-none cursor-pointer text-gray-700 font-medium"
                 >
+                  <option value="all">All Languages</option>
                   {LANGUAGES.map((lang) => (
-                    <option key={lang} value={lang}>
-                      {lang}
+                    <option key={lang.id} value={lang.id}>
+                      {lang.languageName}
                     </option>
                   ))}
                 </select>
@@ -274,9 +281,10 @@ export default function Services() {
                   onChange={(e) => setSelectedLanguage(e.target.value)}
                   className="w-full pl-9 pr-8 py-2.5 bg-white border border-gray-200 hover:border-orange-300 focus:border-orange-500 rounded-xl text-sm transition-all outline-none appearance-none cursor-pointer text-gray-700 font-medium"
                 >
+                  <option value="all">All Community</option>
                   {COMMUNITY.map((community) => (
-                    <option key={community} value={community}>
-                      {community}
+                    <option key={community.id} value={community.communityName}>
+                      {community.communityName}
                     </option>
                   ))}
                 </select>

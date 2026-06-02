@@ -25,6 +25,7 @@ import ManageCategories from "../pages/Staff/contentManager/ManageCategories";
 import AddService from "../components/staff/contentManager/Serevices/AddService";
 import ManageCommunity from "../pages/Staff/contentManager/ManageCommunity";
 import ManageLanguages from "../pages/Staff/contentManager/ManageLanguages";
+import ManageLocations from "../pages/Staff/contentManager/ManageLocations";
 
 function CustomRouter() {
   return (
@@ -50,6 +51,7 @@ function CustomRouter() {
 
           {/* Dashboard Routes */}
           <Route element={<Dashboard />}>
+          
             {/*user protected routes*/}
             <Route element={<ProtectedRoutes allowedRoles={["USER"]} />}>
               <Route path="/account" element={<UserDashboard />} />
@@ -70,6 +72,7 @@ function CustomRouter() {
               <Route path="/staff/categories" element={<ManageCategories />} />
               <Route path="/staff/community" element={<ManageCommunity />} />
               <Route path="/staff/language" element={<ManageLanguages />} />
+              <Route path="/staff/locations" element={<ManageLocations />} />
 
             </Route>
             
