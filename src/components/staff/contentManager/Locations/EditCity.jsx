@@ -27,6 +27,8 @@ function EditCity({ label, setIsEditModalOpen, editData, onSucess }) {
       );
 
       if (!res.ok) {
+        const data = await res.json();
+        notify(data.message, "error");
         throw new Error(`Failed to update ${label}`);
       }
 
@@ -34,7 +36,6 @@ function EditCity({ label, setIsEditModalOpen, editData, onSucess }) {
       setIsEditModalOpen(false);
       onSucess();
     } catch (error) {
-      notify(`Failed to update ${label}`, "error");
       console.log(error);
     } finally {
       setLoading(false);

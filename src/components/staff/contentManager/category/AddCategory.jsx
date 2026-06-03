@@ -32,6 +32,8 @@ function AddCategory({ setIsAddCategoryModalOpen, onSucess }) {
       );
 
       if (!res.ok) {
+        const data = await res.json();
+        notify(data.message, "error");
         throw new Error("Failed to add category");
       }
 
@@ -40,7 +42,6 @@ function AddCategory({ setIsAddCategoryModalOpen, onSucess }) {
       setData({ categoryName: "", slug: "" });
       onSucess();
     } catch (e) {
-      notify("Failed to add category", "error");
       console.log(e);
     } finally {
       setLoading(false);

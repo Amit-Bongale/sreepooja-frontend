@@ -27,6 +27,8 @@ function EditLanguage({ setIsEditModalOpen, editLanguageData, onSucess }) {
       );
 
       if (!res.ok) {
+        const data = await res.json();
+        notify(data.message, "error");
         throw new Error("Failed to update category");
       }
 
@@ -34,7 +36,6 @@ function EditLanguage({ setIsEditModalOpen, editLanguageData, onSucess }) {
       setIsEditModalOpen(false);
       onSucess();
     } catch (error) {
-      notify("Failed to update Language", "error");
       console.log(error);
     } finally {
       setLoading(false);

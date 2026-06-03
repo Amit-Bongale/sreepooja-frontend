@@ -2,7 +2,7 @@ import { CheckIcon, X } from "lucide-react";
 import { useState } from "react";
 import { notify } from "../../../../Utils/notify";
 
-function EditState({ label , setIsEditModalOpen, editData, onSucess }) {
+function EditState({ label, setIsEditModalOpen, editData, onSucess }) {
   let [data, setData] = useState(editData);
   let [loading, setLoading] = useState(false);
 
@@ -27,14 +27,15 @@ function EditState({ label , setIsEditModalOpen, editData, onSucess }) {
       );
 
       if (!res.ok) {
+        const data = await res.json();
+        notify(data.message, "error");
         throw new Error(`Failed to update ${label}`);
       }
 
-      notify( `${label} updated successfully `, "success");
+      notify(`${label} updated successfully `, "success");
       setIsEditModalOpen(false);
       onSucess();
     } catch (error) {
-      notify(`Failed to update ${label}`, "error");
       console.log(error);
     } finally {
       setLoading(false);

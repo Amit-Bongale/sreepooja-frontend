@@ -30,6 +30,8 @@ function AddCommunity({ setIsAddModalOpen, onSucess }) {
       );
 
       if (!res.ok) {
+        const data = await res.json();
+        notify(data.message, "error");
         throw new Error("Failed to add Community");
       }
 
@@ -38,7 +40,6 @@ function AddCommunity({ setIsAddModalOpen, onSucess }) {
       setData({ communityName: "", active: true });
       onSucess();
     } catch (error) {
-      notify("Failed to add Community", "error");
       console.error(error);
     } finally {
       setLoading(false);

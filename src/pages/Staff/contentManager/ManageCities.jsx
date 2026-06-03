@@ -15,12 +15,12 @@ function ManageCities() {
 
   const [editData, setEditData] = useState({
     id: null,
-    stateName: "",
+    cityName: "",
     active: "",
   });
 
   const filteredData = locations.filter((loc) =>
-    loc.stateName.toLowerCase().includes(searchTerm.toLowerCase()),
+    loc.cityName.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const fetchLocations = async () => {
@@ -32,6 +32,7 @@ function ManageCities() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchLocations();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

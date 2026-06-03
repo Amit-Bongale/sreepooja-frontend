@@ -98,9 +98,6 @@ function Login() {
       setUserDetails({ phone: "", otp: "" });
 
       const redirectPath = location.state?.from || roleRoutes[data.roles?.[0]] || "/";
-      console.log(location.state?.from);
-      console.log(roleRoutes[data.roles?.[0]]);
-      console.log(redirectPath);
       // navigate
       navigate(redirectPath);
     } catch (error) {

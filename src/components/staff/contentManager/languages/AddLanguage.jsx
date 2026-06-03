@@ -31,6 +31,8 @@ function AddLanguage({ setIsAddModalOpen, onSucess }) {
       );
 
       if (!res.ok) {
+        const data = await res.json();
+        notify(data.message, "error");
         throw new Error("Failed to add Language");
       }
 
@@ -39,7 +41,6 @@ function AddLanguage({ setIsAddModalOpen, onSucess }) {
       setData({ languageName: "", active: true });
       onSucess();
     } catch (error) {
-      notify("Failed to add Language", "error");
       console.error(error);
     } finally {
       setLoading(false);

@@ -30,6 +30,8 @@ function AddCity({ label, stateId, setIsAddModalOpen, onSucess }) {
       );
 
       if (!res.ok) {
+        const data = await res.json();
+        notify(data.message, "error");
         throw new Error(`Failed to add ${label}`);
       }
 
@@ -38,7 +40,6 @@ function AddCity({ label, stateId, setIsAddModalOpen, onSucess }) {
       setData({ cityName: "", active: true });
       onSucess();
     } catch (error) {
-      notify(`Failed to add ${label}`, "error");
       console.error(error);
     } finally {
       setLoading(false);

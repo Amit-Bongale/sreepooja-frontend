@@ -30,6 +30,8 @@ function AddPincode({ label, cityId, setIsAddModalOpen, onSucess }) {
       );
 
       if (!res.ok) {
+        const data = await res.json();
+        notify(data.message, "error");
         throw new Error(`Failed to add ${label}`);
       }
 
@@ -38,7 +40,6 @@ function AddPincode({ label, cityId, setIsAddModalOpen, onSucess }) {
       setData({ pincodes: [], active: true });
       onSucess();
     } catch (error) {
-      notify(`Failed to add ${label}`, "error");
       console.error(error);
     } finally {
       setLoading(false);

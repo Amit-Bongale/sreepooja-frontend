@@ -27,6 +27,8 @@ function EditCategory({
       );
 
       if (!res.ok) {
+        const data = await res.json();
+        notify(data.message, "error");
         throw new Error("Failed to update category");
       }
 
@@ -34,7 +36,6 @@ function EditCategory({
       setIsEditCategoryModalOpen(false);
       onSucess();
     } catch (e) {
-      notify("Failed to update category", "error");
       console.error(e);
     } finally {
       setLoading(false);

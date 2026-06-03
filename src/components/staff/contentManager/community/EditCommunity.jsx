@@ -27,14 +27,15 @@ function EditCommunity({ setIsEditModalOpen, editCommunityData, onSucess }) {
       );
 
       if (!res.ok) {
-        throw new Error("Failed to update category");
+        const data = await res.json();
+        notify(data.message, "error");
+        throw new Error("Failed to update Community");
       }
 
       notify("Community updated successfully", "success");
       setIsEditModalOpen(false);
       onSucess();
     } catch (error) {
-      notify("Failed to update category", "error");
       console.error(error);
     } finally {
       setLoading(false);
