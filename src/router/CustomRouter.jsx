@@ -25,7 +25,9 @@ import ManageCategories from "../pages/Staff/contentManager/ManageCategories";
 import AddService from "../components/staff/contentManager/Serevices/AddService";
 import ManageCommunity from "../pages/Staff/contentManager/ManageCommunity";
 import ManageLanguages from "../pages/Staff/contentManager/ManageLanguages";
-import ManageLocations from "../pages/Staff/contentManager/ManageLocations";
+import ManageStates from "../pages/Staff/contentManager/ManageStates.jsx";
+import ManageCities from "../pages/Staff/contentManager/ManageCities.jsx";
+import ManagePincodes from "../pages/Staff/contentManager/MangePincodes.jsx";
 
 function CustomRouter() {
   return (
@@ -72,7 +74,10 @@ function CustomRouter() {
               <Route path="/staff/categories" element={<ManageCategories />} />
               <Route path="/staff/community" element={<ManageCommunity />} />
               <Route path="/staff/language" element={<ManageLanguages />} />
-              <Route path="/staff/locations" element={<ManageLocations />} />
+              <Route path="/staff/locations" element={<ManageStates />} />
+              <Route path="/staff/:state/:stateId/cities" element={<ManageCities />} />
+              <Route path="/staff/:city/:cityId/pincodes" element={<ManagePincodes />} />
+
 
             </Route>
             
