@@ -44,7 +44,7 @@ function AddService() {
     fetchData();
   }, []);
 
-  const PACKAGE_TYPES = ["CLASSIC", "PLATINUM" ];
+  const PACKAGE_TYPES = ["CLASSIC", "PLATINUM"];
 
   const initialPackageState = {
     packageType: "CLASSIC",
@@ -285,7 +285,7 @@ function AddService() {
                     name="shortDescription"
                     value={formData.shortDescription}
                     onChange={handleInputChange}
-                    rows="2"
+                    rows="3"
                     placeholder="Brief summary of the pooja..."
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 outline-none transition-all resize-none"
                   ></textarea>
@@ -298,14 +298,14 @@ function AddService() {
                     name="fullDescription"
                     value={formData.fullDescription}
                     onChange={handleInputChange}
-                    rows="4"
+                    rows="6"
                     placeholder="Detailed explanation..."
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 outline-none transition-all resize-none"
                   ></textarea>
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-1">
-                    Benefits (Comma separated or bullet points)
+                    Benefits (Comma separated)
                   </label>
                   <textarea
                     name="benefits"

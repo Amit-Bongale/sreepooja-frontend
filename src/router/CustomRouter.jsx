@@ -37,7 +37,7 @@ function CustomRouter() {
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/services" element={<Services />} />
-        <Route path="/services/:id" element={<ServiceDetails />} />
+        <Route path="/services/:slug" element={<ServiceDetails />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
@@ -50,7 +50,7 @@ function CustomRouter() {
             </Auth>
           }
         >
-          <Route path="/checkout" element={<CheckOut />} />
+          <Route path="/checkout/:service/:packageType" element={<CheckOut />} />
 
           {/* Dashboard Routes */}
           <Route element={<Dashboard />}>

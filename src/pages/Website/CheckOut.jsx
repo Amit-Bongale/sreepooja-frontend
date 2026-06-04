@@ -6,7 +6,6 @@ import {
   Phone,
   IndianRupee,
   ShieldCheck,
-  Check,
   CreditCard,
   Info,
   ChevronDown,
@@ -16,29 +15,18 @@ import {
 import { startPayment } from "../../utils/Payment";
 import Nav from "../../components/Nav";
 import { getData } from "../../api/Api";
-
-// --- DUMMY DATA FOR CHECKOUT ---
-const BOOKING_SUMMARY = {
-  title: "Aksharabhyasam Ceremony",
-  package: "Platinum Package",
-  packageDesc: "Priest + Complete Samagri",
-  image:
-    "https://newsmantra.in/wp-content/uploads/2024/10/EuroKids-Aksharabhyasam-celebrations_01.jpeg",
-  basePrice: 4500,
-  taxes: 225, // 5% simulated tax
-  advancePercentage: 40, // 40% advance required to book
-};
+import { useParams } from "react-router";
 
 const LOCATIONS = ["Bengaluru Urban", "Bengaluru Rural", "Mysuru"];
-
 const STATES = ["Karnataka"];
-  
+
 export default function CheckOut() {
+  const { service, packageType } = useParams();
   // --- STATE ---
-  const [isBillingSame, setIsBillingSame] = useState(true);
   const [paymentMode, setPaymentMode] = useState("advance");
   const [selectedLocation, setSelectedLocation] = useState("All Locations");
 
+  const [serviceDetails, setServiceDetails] = useState([]);
   const [LANGUAGES, setLanguages] = useState([]);
   const [COMMUNITY, setCommunity] = useState([]);
 
@@ -49,11 +37,17 @@ export default function CheckOut() {
 
       const community = await getData("/masters/communities");
       setCommunity(community);
-      // console.log("Fetched categories:", data);
+
+      const data = await getData(`/pooja-services/${service}`);
+      setServiceDetails(data);
     };
 
     fetchData();
-  }, []);
+  }, [service]);
+
+  const selectedPackage = serviceDetails?.packages?.find(
+    (pkg) => pkg.packageType === packageType,
+  );
 
   // Form state
   // eslint-disable-next-line no-unused-vars
@@ -61,15 +55,15 @@ export default function CheckOut() {
     date: "",
     timeSlot: "Morning (08:00 AM - 11:00 AM)",
     notes: "",
-    gotra: "",
-    nakshatra: "",
     language: "",
     community: "",
   });
 
   // Calculations
-  const totalAmount = BOOKING_SUMMARY.basePrice + BOOKING_SUMMARY.taxes;
-  const advanceAmount = (totalAmount * BOOKING_SUMMARY.advancePercentage) / 100;
+  // const totalAmount = BOOKING_SUMMARY.basePrice + BOOKING_SUMMARY.taxes;
+  const totalAmount = selectedPackage?.price;
+  const advanceAmount =
+    (totalAmount * selectedPackage?.advancePercentage) / 100;
 
   return (
     <div className="font-sans text-gray-800 antialiased min-h-screen bg-gray-50 flex flex-col">
@@ -133,7 +127,7 @@ export default function CheckOut() {
                     <Languages className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <select
                       className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none appearance-none cursor-pointer"
-                      onchange={(e) =>
+                      onChange={(e) =>
                         setFormData({ ...formData, language: e.target.value })
                       }
                     >
@@ -155,7 +149,7 @@ export default function CheckOut() {
                     <Command className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <select
                       className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none appearance-none cursor-pointer"
-                      onchange={(e) =>
+                      onChange={(e) =>
                         setFormData({ ...formData, community: e.target.value })
                       }
                     >
@@ -285,27 +279,6 @@ export default function CheckOut() {
                   </div>
                 </div>
               </div>
-
-              {/* Billing Address Checkbox */}
-              <div className="mt-6 pt-5 border-t border-gray-100">
-                <label className="flex items-center gap-3 cursor-pointer group">
-                  <div className="relative flex items-center justify-center w-5 h-5">
-                    <input
-                      type="checkbox"
-                      checked={isBillingSame}
-                      onChange={() => setIsBillingSame(!isBillingSame)}
-                      className="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded focus:ring-orange-500 checked:bg-orange-500 checked:border-orange-500 transition-all cursor-pointer"
-                    />
-                    <Check
-                      className="absolute w-4 h-4 text-white pointer-events-none opacity-0 peer-checked:opacity-100"
-                      strokeWidth={3}
-                    />
-                  </div>
-                  <span className="text-sm font-medium text-gray-700 select-none group-hover:text-gray-900">
-                    My billing address is the same as the Pooja location
-                  </span>
-                </label>
-              </div>
             </section>
 
             {/* Section 4: Special Instructions */}
@@ -332,19 +305,19 @@ export default function CheckOut() {
                 {/* Item Details */}
                 <div className="flex gap-4">
                   <img
-                    src={BOOKING_SUMMARY.image}
-                    alt={BOOKING_SUMMARY.title}
+                    src={`${import.meta.env.VITE_API_BASE_URL}${serviceDetails.thumbnailImage}`}
+                    alt={serviceDetails?.serviceName}
                     className="w-16 h-16 rounded-xl object-cover border border-gray-200"
                   />
                   <div>
                     <h4 className="font-bold text-gray-900 line-clamp-1">
-                      {BOOKING_SUMMARY.title}
+                      {serviceDetails?.serviceName}
                     </h4>
                     <p className="text-sm text-gray-500">
-                      {BOOKING_SUMMARY.package}
+                      {selectedPackage?.packageType}
                     </p>
                     <span className="inline-block mt-1 bg-orange-100 text-orange-700 text-[10px] font-bold px-2 py-0.5 rounded uppercase">
-                      {BOOKING_SUMMARY.packageDesc}
+                      {selectedPackage?.shortDescription}
                     </span>
                   </div>
                 </div>
@@ -356,15 +329,15 @@ export default function CheckOut() {
                   <span>Base Package Price</span>
                   <span className="font-medium text-gray-900 flex items-center">
                     <IndianRupee className="h-3.5 w-3.5" />{" "}
-                    {BOOKING_SUMMARY.basePrice}
+                    {selectedPackage?.price}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm text-gray-600">
-                  <span>Taxes & Fees (5%)</span>
+                  {/* <span>Taxes & Fees (5%)</span>
                   <span className="font-medium text-gray-900 flex items-center">
                     <IndianRupee className="h-3.5 w-3.5" />{" "}
                     {BOOKING_SUMMARY.taxes}
-                  </span>
+                  </span> */}
                 </div>
 
                 <div className="border-t border-dashed border-gray-200 my-3 pt-3"></div>
@@ -392,7 +365,7 @@ export default function CheckOut() {
                       )}
                     </div>
                     <span className="font-bold text-gray-900 text-sm">
-                      Pay Advance ({BOOKING_SUMMARY.advancePercentage}%)
+                      Pay Advance ({selectedPackage?.advancePercentage}%)
                     </span>
                   </div>
                   <span className="font-bold text-gray-900 flex items-center text-sm">

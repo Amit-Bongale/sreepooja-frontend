@@ -1,172 +1,40 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   MapPin,
   Languages,
   ChevronRight,
-  ChevronLeft,
   X,
   Filter,
   Clock,
   IndianRupee,
   Command,
-  ShieldCheck,
+  // ShieldCheck,
 } from "lucide-react";
 import Nav from "../../components/Nav";
 import { Link } from "react-router";
 import { getData } from "../../api/Api";
 
-// --- DUMMY DATA --- //
-const LOCATIONS = [
-  "All Locations",
-  "Bengaluru Urban",
-  "Bengaluru Rural",
-  "Mysuru",
-];
-
-// const LANGUAGES = [
-//   "All Languages",
-//   "Tamil",
-//   "Telugu",
-//   "Hindi",
-//   "Kannada",
-//   "Malayalam",
-//   "Sanskrit",
-// ];
-
-// const COMMUNITY = [
-//   "All Communities",
-//   "smartha",
-//   "Vaishnava",
-//   "Sri Vaishnava",
-//   "Veerashaiva Lingayatha",
-//   "Arya Vasya",
-// ];
-
-const MOCK_SERVICES = [
-  {
-    id: 1,
-    title: "Aksharabhyasam",
-    category: "Ceremonies",
-    image: "https://placehold.co/600x400/ea580c/ffffff?text=Aksharabhyasam",
-    price: 2500,
-    duration: "2-3 Hours",
-    languages: ["Telugu", "Tamil", "Kannada"],
-    location: ["Hyderabad", "Bengaluru", "Chennai"],
-    rating: 4.8,
-    reviews: 124,
-  },
-  {
-    id: 2,
-    title: "Annaprasana",
-    category: "Ceremonies",
-    image: "https://placehold.co/600x400/fff7ed/ea580c?text=Annaprasana",
-    price: 3000,
-    duration: "2 Hours",
-    languages: ["Telugu", "Hindi", "Tamil"],
-    location: ["Hyderabad", "Delhi", "Chennai"],
-    rating: 4.9,
-    reviews: 89,
-  },
-  {
-    id: 3,
-    title: "Griha Pravesham",
-    category: "Ceremonies",
-    image: "https://placehold.co/600x400/ea580c/ffffff?text=Griha+Pravesham",
-    price: 5500,
-    duration: "4-5 Hours",
-    languages: ["Hindi", "Tamil", "Kannada", "Telugu"],
-    location: ["Bengaluru", "Chennai", "Hyderabad", "Mumbai", "Delhi"],
-    rating: 4.7,
-    reviews: 342,
-  },
-  {
-    id: 4,
-    title: "Ganapathi Homam",
-    category: "Homam",
-    image: "https://placehold.co/600x400/fff7ed/ea580c?text=Ganapathi+Homam",
-    price: 3500,
-    duration: "3 Hours",
-    languages: ["Sanskrit", "Tamil", "Kannada"],
-    location: ["Bengaluru", "Chennai", "Mumbai"],
-    rating: 4.9,
-    reviews: 512,
-  },
-  {
-    id: 5,
-    title: "Navagraha Shanti",
-    category: "Pariharam",
-    image: "https://placehold.co/600x400/ea580c/ffffff?text=Navagraha+Shanti",
-    price: 4200,
-    duration: "3-4 Hours",
-    languages: ["Sanskrit", "Hindi", "Telugu"],
-    location: ["Delhi", "Hyderabad", "Bengaluru"],
-    rating: 4.8,
-    reviews: 215,
-  },
-  {
-    id: 6,
-    title: "Satyanarayan Pooja",
-    category: "Poojas",
-    image: "https://placehold.co/600x400/fff7ed/ea580c?text=Satyanarayan",
-    price: 2100,
-    duration: "2 Hours",
-    languages: ["Hindi", "Marathi", "Kannada"],
-    location: ["Mumbai", "Delhi", "Bengaluru"],
-    rating: 4.9,
-    reviews: 856,
-  },
-  {
-    id: 7,
-    title: "Chandi Homam",
-    category: "Powerful Devi Homam",
-    image: "https://placehold.co/600x400/ea580c/ffffff?text=Chandi+Homam",
-    price: 15000,
-    duration: "6-8 Hours",
-    languages: ["Sanskrit", "Tamil", "Telugu"],
-    location: ["Chennai", "Hyderabad", "Bengaluru"],
-    rating: 5.0,
-    reviews: 94,
-  },
-  {
-    id: 8,
-    title: "Marriage Ceremony",
-    category: "Ceremonies",
-    image: "https://placehold.co/600x400/fff7ed/ea580c?text=Marriage",
-    price: 25000,
-    duration: "1-2 Days",
-    languages: ["Tamil", "Telugu", "Hindi", "Kannada", "Malayalam"],
-    location: ["Bengaluru", "Chennai", "Hyderabad", "Mumbai", "Delhi"],
-    rating: 4.9,
-    reviews: 1024,
-  },
-  {
-    id: 9,
-    title: "Mahalaya Amavasya Tarpanam",
-    category: "Ancestor Rituals",
-    image: "https://placehold.co/600x400/ea580c/ffffff?text=Tarpanam",
-    price: 1500,
-    duration: "1 Hour",
-    languages: ["Tamil", "Sanskrit", "Telugu"],
-    location: ["Chennai", "Hyderabad", "Bengaluru"],
-    rating: 4.7,
-    reviews: 430,
-  },
-];
-
 export default function Services() {
   // --- STATE ---
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState("All Locations");
-  const [selectedLanguage, setSelectedLanguage] = useState("All Languages");
-  const [selectedCategory, setSelectedCategory] = useState("All Services");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 6;
+  // const ITEMS_PER_PAGE = 6;
+
+  const [SERVICES, setServices] = useState([]);
 
   const [CATEGORIES, setCategories] = useState([]);
   const [LANGUAGES, setLanguages] = useState([]);
   const [COMMUNITY, setCommunity] = useState([]);
+  const [LOCATIONS, setLocations] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
       const categories = await getData("/pooja-services/categories");
@@ -177,11 +45,21 @@ export default function Services() {
 
       const community = await getData("/masters/communities");
       setCommunity(community);
-      // console.log("Fetched categories:", data);
+
+      const cities = await getData("/masters/cities");
+      setLocations(cities);
     };
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   // Reset to page 1 when filters change
   useEffect(() => {
@@ -191,26 +69,45 @@ export default function Services() {
     resetPage();
   }, [searchQuery, selectedLocation, selectedLanguage, selectedCategory]);
 
-  // --- FILTERING LOGIC ---
-  const filteredServices = useMemo(() => {
-    return MOCK_SERVICES.filter((service) => {
-      const matchesSearch =
-        service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        service.category.toLowerCase().includes(searchQuery.toLowerCase());
+  useEffect(() => {
+    const fetchData = async () => {
+      const baseurl = `/pooja-services`;
+      const queryParams = [];
+      if (selectedCategory && selectedCategory !== "all") {
+        queryParams.push(`categorySlug=${selectedCategory}`);
+      }
 
-      return matchesSearch;
-    });
-  }, [searchQuery]);
+      if (debouncedSearch) {
+        queryParams.push(`search=${debouncedSearch}`);
+      }
 
-  const totalPages = Math.ceil(filteredServices.length / ITEMS_PER_PAGE);
-  const paginatedServices = filteredServices.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE,
-  );
+      const finalUrl = `${baseurl}${queryParams.length > 0 ? `?${queryParams.join("&")}` : ""}`;
+
+      const services = await getData(finalUrl);
+      setServices(services);
+    };
+    fetchData();
+  }, [selectedCategory, debouncedSearch]);
+
+  function formatDuration(minutes) {
+    const hrs = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+
+    if (hrs && mins) {
+      return `${hrs} hr ${mins} min`;
+    }
+
+    if (hrs) {
+      return `${hrs} hr`;
+    }
+
+    return `${mins} min`;
+  }
 
   return (
     <div className="font-sans text-gray-800 antialiased min-h-screen bg-gray-50 flex flex-col">
       <Nav />
+
       {/* --- FILTERS SECTION (Moved down) --- */}
       <div className="bg-white border-b border-gray-200 py-3 z-40 relative mt-17 md:mt-22">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -247,8 +144,8 @@ export default function Services() {
                   className="w-full pl-9 pr-8 py-2.5 bg-white border border-gray-200 hover:border-orange-300 focus:border-orange-500 rounded-xl text-sm transition-all outline-none appearance-none cursor-pointer text-gray-700 font-medium"
                 >
                   {LOCATIONS.map((loc) => (
-                    <option key={loc} value={loc}>
-                      {loc}
+                    <option key={loc.id} value={loc.id}>
+                      {loc.cityName}
                     </option>
                   ))}
                 </select>
@@ -300,7 +197,7 @@ export default function Services() {
         {CATEGORIES.map((category) => (
           <button
             key={category.id}
-            onClick={() => setSelectedCategory(category.id)}
+            onClick={() => setSelectedCategory(category.slug)}
             className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
               selectedCategory === category.id
                 ? "bg-orange-600 text-white shadow-sm"
@@ -353,11 +250,11 @@ export default function Services() {
                 <li>
                   <button
                     onClick={() => {
-                      setSelectedCategory("All Services");
+                      setSelectedCategory("all");
                       setIsMobileMenuOpen(false);
                     }}
                     className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center justify-between transition-all duration-200 ${
-                      selectedCategory === "All Services"
+                      selectedCategory === "all"
                         ? "bg-orange-50 text-orange-700 font-bold border-l-2 border-orange-500 pl-3"
                         : "text-gray-600 hover:bg-gray-50 hover:text-orange-600 font-medium border-l-4 border-transparent pl-3"
                     }`}
@@ -366,12 +263,12 @@ export default function Services() {
                   </button>
                 </li>
                 {CATEGORIES.map((category) => {
-                  const isActive = selectedCategory === category.categoryName;
+                  const isActive = selectedCategory === category.slug;
                   return (
                     <li key={category.id}>
                       <button
                         onClick={() => {
-                          setSelectedCategory(category.categoryName);
+                          setSelectedCategory(category.slug);
                           setIsMobileMenuOpen(false); // Close mobile drawer on selection
                         }}
                         className={`w-full text-left px-4 py-2.5 rounded-lg flex items-center justify-between transition-all duration-200 ${
@@ -406,27 +303,17 @@ export default function Services() {
           <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl md:text-3xl font-serif font-bold text-gray-900">
-                {selectedCategory === "All Services"
+                {selectedCategory === "all"
                   ? "Explore Divine Services"
                   : selectedCategory}
               </h1>
             </div>
-
-            {/* Sort Dropdown (Visual Only for UI completeness) */}
-            <div className="hidden sm:flex items-center gap-2 text-sm">
-              <span className="text-gray-500">Sort by:</span>
-              <select className="bg-transparent font-semibold text-gray-700 focus:outline-none cursor-pointer">
-                <option>Popularity</option>
-                <option>Price: Low to High</option>
-                <option>Price: High to Low</option>
-              </select>
-            </div>
           </div>
 
-          {filteredServices.length > 0 ? (
+          {SERVICES.length > 0 ? (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {paginatedServices.map((service) => (
+                {SERVICES.map((service) => (
                   <div
                     key={service.id}
                     className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col"
@@ -434,35 +321,35 @@ export default function Services() {
                     {/* Image Container */}
                     <div className="relative aspect-4/3 overflow-hidden bg-orange-50">
                       <img
-                        src={service.image}
-                        alt={service.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        src={`${import.meta.env.VITE_API_BASE_URL}${service.thumbnailImage}`}
+                        alt={service.serviceName}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 "
                       />
                     </div>
 
                     {/* Content Container */}
                     <div className="p-5 flex flex-col flex-1">
                       <div className="text-xs font-bold text-orange-600 uppercase tracking-wider mb-2">
-                        {service.category}
+                        {service.categorySlug}
                       </div>
                       <h3 className="font-bold text-lg text-gray-900 mb-3 line-clamp-2">
-                        {service.title}
+                        {service.serviceName}
                       </h3>
 
-                      <div className="space-y-2 mb-4 flex-1">
+                      <div className="space-y-2 mb-1 flex-1">
                         <div className="flex items-center text-sm text-gray-600 gap-2">
                           <Clock className="h-4 w-4 text-gray-400" />
                           <span>
-                            Duration:{" "}
+                            Duration:
                             <span className="font-medium text-gray-800">
-                              {service.duration}
+                              {formatDuration(service.durationMinutes)}
                             </span>
                           </span>
                         </div>
-                        <div className="flex items-center text-sm text-gray-600 gap-2">
+                        {/* <div className="flex items-center text-sm text-gray-600 gap-2">
                           <ShieldCheck className="h-4 w-4 text-green-500" />
                           <span>Verified Priests</span>
-                        </div>
+                        </div> */}
                       </div>
 
                       <div className="pt-4 border-t border-gray-100 flex items-center justify-between mt-auto">
@@ -471,13 +358,14 @@ export default function Services() {
                             Starts from
                           </span>
                           <div className="flex items-center text-gray-900 font-bold text-lg">
-                            <IndianRupee className="h-4 w-4" /> {service.price}
+                            <IndianRupee className="h-4 w-4" />{" "}
+                            {service.startingPrice}
                           </div>
                         </div>
-                        <Link to={"/services/1"}>
+                        <Link to={`/services/${service.slug}`}>
                           <button className="bg-orange-50 text-orange-600 hover:bg-orange-600 hover:text-white px-5 py-2 rounded-xl text-sm font-bold transition-colors">
                             View Details
-                          </button>{" "}
+                          </button>
                         </Link>
                       </div>
                     </div>
@@ -486,7 +374,7 @@ export default function Services() {
               </div>
 
               {/* --- PAGINATION --- */}
-              {totalPages > 1 && (
+              {/* {totalPages > 1 && (
                 <div className="mt-10 flex items-center justify-center gap-2">
                   <button
                     onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
@@ -520,7 +408,7 @@ export default function Services() {
                     <ChevronRight className="h-5 w-5" />
                   </button>
                 </div>
-              )}
+              )} */}
             </>
           ) : (
             // Empty State
