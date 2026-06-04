@@ -28,6 +28,7 @@ import ManageLanguages from "../pages/Staff/contentManager/ManageLanguages";
 import ManageStates from "../pages/Staff/contentManager/ManageStates.jsx";
 import ManageCities from "../pages/Staff/contentManager/ManageCities.jsx";
 import ManagePincodes from "../pages/Staff/contentManager/MangePincodes.jsx";
+import EditService from "../components/staff/contentManager/Serevices/EditService.jsx";
 
 function CustomRouter() {
   return (
@@ -70,6 +71,7 @@ function CustomRouter() {
               />
               <Route path="/staff/services" element={<MangeServices />} />
               <Route path="/staff/services/add" element={<AddService />} />
+              <Route path="/staff/services/edit/:slug" element={<EditService />} />
 
               <Route path="/staff/categories" element={<ManageCategories />} />
               <Route path="/staff/community" element={<ManageCommunity />} />

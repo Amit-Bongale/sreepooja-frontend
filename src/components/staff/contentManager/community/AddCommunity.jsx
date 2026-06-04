@@ -73,7 +73,7 @@ function AddCommunity({ setIsAddModalOpen, onSucess }) {
                   communityName: e.target.value,
                 });
               }}
-              placeholder="e.g. Vastu Poojas"
+              placeholder="e.g. Smartha"
               className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 outline-none transition-all"
             />
           </div>

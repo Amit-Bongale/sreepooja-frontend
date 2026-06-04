@@ -97,7 +97,8 @@ function Login() {
       // clear form
       setUserDetails({ phone: "", otp: "" });
 
-      const redirectPath = location.state?.from || roleRoutes[data.roles?.[0]] || "/";
+      const redirectPath =
+        location.state?.from || roleRoutes[data.roles?.[0]] || "/";
       // navigate
       navigate(redirectPath);
     } catch (error) {

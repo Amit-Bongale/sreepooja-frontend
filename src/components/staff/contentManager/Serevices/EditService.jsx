@@ -11,13 +11,14 @@ import {
   Package,
   UploadCloud,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import { getData } from "../../../../api/Api";
 import SlugGenerator from "../../../../utils/SlugGenerator";
 import { notify } from "../../../../Utils/notify";
 
-function AddService() {
+function EditService() {
   const navigate = useNavigate();
+  const { slug } = useParams();
 
   const [isSaving, setIsSaving] = useState(false);
 
@@ -26,25 +27,7 @@ function AddService() {
   const [COMMUNITY, setCommunity] = useState([]);
   const [CITIES, setCities] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const categories = await getData("/pooja-services/categories");
-      setCategories(categories);
-
-      const languages = await getData("/masters/languages");
-      setLanguages(languages);
-
-      const community = await getData("/masters/communities");
-      setCommunity(community);
-
-      const cities = await getData("/masters/cities");
-      setCities(cities);
-    };
-
-    fetchData();
-  }, []);
-
-  const PACKAGE_TYPES = ["CLASSIC", "PLATINUM" ];
+  const PACKAGE_TYPES = ["CLASSIC", "PLATINUM"];
 
   const initialPackageState = {
     packageType: "CLASSIC",
@@ -57,6 +40,7 @@ function AddService() {
   };
 
   const [formData, setFormData] = useState({
+    id: "",
     serviceName: "",
     slug: "",
     categorySlug: "",
@@ -86,6 +70,75 @@ function AddService() {
     thumbnailImage: null,
     bannerImage: null,
   });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const categories = await getData("/pooja-services/categories");
+      setCategories(categories);
+
+      const languages = await getData("/masters/languages");
+      setLanguages(languages);
+
+      const community = await getData("/masters/communities");
+      setCommunity(community);
+
+      const cities = await getData("/masters/cities");
+      setCities(cities);
+
+      const service = await getData(`/admin/pooja-services/${slug}`);
+
+      setPreview({
+        thumbnailImage: service.thumbnailImage
+          ? `${import.meta.env.VITE_API_BASE_URL}${service.thumbnailImage}`
+          : null,
+        bannerImage: service.bannerImage
+          ? `${import.meta.env.VITE_API_BASE_URL}${service.bannerImage}`
+          : null,
+      });
+
+      setFormData({
+        id: service.id,
+        serviceName: service.serviceName,
+        slug: service.slug,
+        categorySlug: service.categorySlug,
+        shortDescription: service.shortDescription || "",
+        fullDescription: service.fullDescription || "",
+        benefits: service.benefits || "",
+        durationMinutes: service.durationMinutes || "",
+        status: service.status,
+        featured: service.featured,
+        cancellationAllowed: service.cancellationAllowed,
+        refundAllowed: service.refundAllowed,
+        metaTitle: service.metaTitle || "",
+        metaDescription: service.metaDescription || "",
+        metaKeywords: service.metaKeywords || "",
+
+        languageIds: languages
+          .filter((l) => service.languages.includes(l.languageName))
+          .map((l) => l.id),
+
+        communityIds: community
+          .filter((c) => service.communities.includes(c.communityName))
+          .map((c) => c.id),
+
+        cityIds: cities
+          .filter((c) => service.cities.includes(c.cityName))
+          .map((c) => c.id),
+
+        packages:
+          service.packages?.map((pkg) => ({
+            packageType: pkg.packageType,
+            shortDescription: pkg.shortDescription,
+            includedItems: pkg.includedItems,
+            price: pkg.price,
+            advancePercentage: pkg.advancePercentage,
+            status: pkg.status,
+          })) || [],
+      });
+    };
+
+    fetchData();
+  }, [slug]);
 
   // --- FORM HANDLERS ---
   const handleInputChange = (e) => {
@@ -175,9 +228,9 @@ function AddService() {
 
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/admin/pooja-services`,
+        `${import.meta.env.VITE_API_BASE_URL}/admin/pooja-services/${formData.id}`,
         {
-          method: "POST",
+          method: "PUT",
           body: submitData,
         },
       );
@@ -186,7 +239,8 @@ function AddService() {
         notify(data.message || "Failed to create service", "error");
         throw new Error("Failed to create service");
       }
-      notify("Service Created Successfully", "success");
+
+      notify("Service Updated Successfully", "success");
       setIsSaving(false);
       navigate("/staff/services");
     } catch (error) {
@@ -354,7 +408,7 @@ function AddService() {
                     />
                   </label>
 
-                  {files.thumbnailImage && (
+                  {preview.thumbnailImage && (
                     <p className="mt-2 text-xs text-gray-500">
                       Click the image to change it
                     </p>
@@ -634,7 +688,7 @@ function AddService() {
 
             {/* SECTION 5: Dynamic Packages */}
             <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-200 shadow-sm">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-8">
                 <h2 className="text-xl font-serif font-bold text-gray-900 flex items-center gap-2">
                   <Package className="h-5 w-5 text-orange-500" /> Service
                   Packages
@@ -654,7 +708,7 @@ function AddService() {
                 </p>
               )}
 
-              <div className="space-y-6">
+              <div className="space-y-6 mt-2">
                 {formData.packages.map((pkg, index) => (
                   <div
                     key={index}
@@ -784,7 +838,7 @@ function AddService() {
                   </span>
                 ) : (
                   <span className="flex items-center gap-2">
-                    <Save className="h-5 w-5" /> Publish Service
+                    <Save className="h-5 w-5" /> Update Service
                   </span>
                 )}
               </button>
@@ -796,4 +850,4 @@ function AddService() {
   );
 }
 
-export default AddService;
+export default EditService;

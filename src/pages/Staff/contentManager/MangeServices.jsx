@@ -2,45 +2,27 @@ import { Plus, Search, IndianRupee, SquarePen, Book } from "lucide-react";
 
 import { Link } from "react-router";
 import { getStatusBadge } from "../../../utils/getStatusBadge";
-const SERVICES_DATA = [
-  {
-    id: "SRV-01",
-    title: "Aksharabhyasam Ceremony",
-    category: "Ceremonies",
-    basePrice: 2500,
-    status: "ACTIVE",
-  },
-  {
-    id: "SRV-02",
-    title: "Ganapathi Homam",
-    category: "Homam",
-    basePrice: 3500,
-    status: "ACTIVE",
-  },
-  {
-    id: "SRV-03",
-    title: "Navagraha Shanti",
-    category: "Pariharam",
-    basePrice: 4200,
-    status: "DRAFT",
-  },
-  {
-    id: "SRV-04",
-    title: "Satyanarayan Pooja",
-    category: "Poojas",
-    basePrice: 2100,
-    status: "ACTIVE",
-  },
-  {
-    id: "SRV-05",
-    title: "Chandi Homam",
-    category: "Powerful Devi Homam",
-    basePrice: 15000,
-    status: "INACTIVE",
-  },
-];
+import { useEffect, useState } from "react";
+import { getData } from "../../../api/Api";
 
 function MangeServices() {
+  const [services, setServices] = useState([]);
+  const [searchTerm, setSearchTearm] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await getData("/admin/pooja-services");
+      setServices(res);
+    };
+
+    fetchData();
+  }, []);
+
+  const filterdData = services.filter((s) => 
+     s.serviceName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+
   return (
     <div className="font-sans text-gray-800 antialiased min-h-screen bg-gray-50">
       <header className="h-18 bg-white border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 mt-18 md:mt-0 shrink-0">
@@ -53,6 +35,7 @@ function MangeServices() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
               type="text"
+              onChange={(e) => setSearchTearm(e.target.value)}
               placeholder="Search poojas..."
               className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:border-orange-500 outline-none w-full sm:w-64"
             />
@@ -66,9 +49,9 @@ function MangeServices() {
       </header>
 
       <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-gray-50 space-y-6">
-        {SERVICES_DATA.length > 0 ? (
+        {filterdData.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {SERVICES_DATA.map((service) => (
+            {filterdData.map((service) => (
               <div
                 key={service.id}
                 className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col"
@@ -76,8 +59,12 @@ function MangeServices() {
                 {/* Image Container */}
                 <div className="relative aspect-4/3 overflow-hidden bg-orange-50">
                   <img
-                    src={service.image}
-                    alt={service.title}
+                    src={`${
+                      service.thumbnailImage
+                        ? `${import.meta.env.VITE_API_BASE_URL}${service.thumbnailImage}`
+                        : "/placeholder-image.jpg"
+                    }`}
+                    alt={service.serviceName}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 </div>
@@ -85,10 +72,10 @@ function MangeServices() {
                 {/* Content Container */}
                 <div className="p-5 flex flex-col flex-1">
                   <div className="text-xs flex justify-between font-bold text-orange-600 uppercase tracking-wider">
-                    {service.category} {getStatusBadge(service.status)}
+                    {service.categoryId} {getStatusBadge(service.status)}
                   </div>
                   <h3 className="font-bold text-lg text-gray-900 line-clamp-2">
-                    {service.title}
+                    {service.serviceName}
                   </h3>
 
                   {/* <div className="space-y-2 mb-4 flex-1">
@@ -109,13 +96,13 @@ function MangeServices() {
                         Starts from
                       </span>
                       <div className="flex items-center text-gray-900 font-bold text-lg">
-                        <IndianRupee className="h-4 w-4" /> {service.basePrice}
+                        <IndianRupee className="h-4 w-4" /> {service.startingPrice}
                       </div>
                     </div>
-                    <Link to={"/edit/services/1"}>
+                    <Link to={`/staff/services/edit/${service.slug}`}>
                       <button className="bg-orange-50 text-orange-600 hover:bg-orange-600 hover:text-white px-5 py-2 rounded-xl text-sm font-bold transition-colors flex gap-2 items-center">
                         <SquarePen className="w-4 h-4" /> Edit
-                      </button>{" "}
+                      </button>
                     </Link>
                   </div>
                 </div>
