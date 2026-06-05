@@ -17,6 +17,7 @@ import {
 import Nav from "../../components/Nav";
 import { Link, useParams } from "react-router";
 import { getData } from "../../api/Api";
+import { Helmet } from "react-helmet-async";
 
 export default function ServiceDetails() {
   const { slug } = useParams();
@@ -54,6 +55,20 @@ export default function ServiceDetails() {
 
   return (
     <div className="font-sans text-gray-800 antialiased min-h-screen bg-gray-50 flex flex-col">
+      {/* SEO meta tags */}
+      <Helmet>
+        <title>{details?.metaTitle}</title>
+        <meta name="description" content={details?.metaDescription} />
+        <meta name="keywords" content={details?.metaKeywords} />
+        <link rel="canonical" href={window.location.href} />
+        <meta property="og:title" content={details?.metaTitle} />
+        <meta property="og:description" content={details?.metaDescription} />
+        <meta
+          property="og:image"
+          content={`${import.meta.env.VITE_API_BASE_URL}${details?.thumbnailImage}`}
+        />
+      </Helmet>
+
       <Nav />
 
       {/* --- MAIN CONTENT --- */}
@@ -265,8 +280,8 @@ export default function ServiceDetails() {
                       Contact Support
                     </button>
                   ) : (
-                    <Link 
-                      to={`/checkout/${details?.slug}/${currentPackage?.packageType}`}
+                    <Link
+                      to={`/checkout/${currentPackage?.id}`}
                       className="w-full"
                     >
                       <button className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold text-lg py-4 rounded-xl shadow-lg shadow-orange-600/20 transition-all flex justify-center items-center gap-2">

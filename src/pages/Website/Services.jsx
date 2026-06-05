@@ -9,6 +9,7 @@ import {
   Clock,
   IndianRupee,
   Command,
+  ChevronLeft,
   // ShieldCheck,
 } from "lucide-react";
 import Nav from "../../components/Nav";
@@ -26,8 +27,7 @@ export default function Services() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   // eslint-disable-next-line no-unused-vars
   const [currentPage, setCurrentPage] = useState(1);
-  // const ITEMS_PER_PAGE = 6;
-
+  const [totalPages, setTotalPage] = useState(0);
   const [SERVICES, setServices] = useState([]);
 
   const [CATEGORIES, setCategories] = useState([]);
@@ -81,13 +81,18 @@ export default function Services() {
         queryParams.push(`search=${debouncedSearch}`);
       }
 
+      if(currentPage){
+        queryParams.push(`page=${currentPage-1}`)
+      }
+
       const finalUrl = `${baseurl}${queryParams.length > 0 ? `?${queryParams.join("&")}` : ""}`;
 
       const services = await getData(finalUrl);
-      setServices(services);
+      setServices(services.content);
+      setTotalPage(services.totalPages);
     };
     fetchData();
-  }, [selectedCategory, debouncedSearch]);
+  }, [selectedCategory, debouncedSearch, currentPage]);
 
   function formatDuration(minutes) {
     const hrs = Math.floor(minutes / 60);
@@ -374,11 +379,11 @@ export default function Services() {
               </div>
 
               {/* --- PAGINATION --- */}
-              {/* {totalPages > 1 && (
+              {totalPages > 1 && (
                 <div className="mt-10 flex items-center justify-center gap-2">
                   <button
                     onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
+                    disabled={currentPage === 0}
                     className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <ChevronLeft className="h-5 w-5" />
@@ -387,14 +392,14 @@ export default function Services() {
                   {[...Array(totalPages)].map((_, i) => (
                     <button
                       key={i}
-                      onClick={() => setCurrentPage(i + 1)}
+                      onClick={() => setCurrentPage(i+1)}
                       className={`w-10 h-10 rounded-lg text-sm font-bold transition-colors ${
-                        currentPage === i + 1
+                        currentPage === i+1
                           ? "bg-orange-600 text-white shadow-md"
                           : "border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-orange-600"
                       }`}
                     >
-                      {i + 1}
+                      {i+1} 
                     </button>
                   ))}
 
@@ -408,7 +413,7 @@ export default function Services() {
                     <ChevronRight className="h-5 w-5" />
                   </button>
                 </div>
-              )} */}
+              )}
             </>
           ) : (
             // Empty State
@@ -426,9 +431,10 @@ export default function Services() {
               <button
                 onClick={() => {
                   setSearchQuery("");
-                  setSelectedLocation("All Locations");
-                  setSelectedLanguage("All Languages");
-                  setSelectedCategory("All Services");
+                  setSelectedLocation("");
+                  setSelectedLanguage("");
+                  setSelectedCategory("");
+                  setCurrentPage(0);
                 }}
                 className="bg-orange-600 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-orange-700 transition-colors"
               >

@@ -55,14 +55,14 @@ function Nav() {
             </Link>
 
             <Link
-              to="/about"
+              to="/"
               className="text-gray-600 hover:text-brand-600 font-medium transition"
             >
               About
             </Link>
 
             <Link
-              to="/contact"
+              to="/"
               className="text-gray-600 hover:text-brand-600 font-medium transition"
             >
               Contact

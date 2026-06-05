@@ -50,7 +50,7 @@ function CustomRouter() {
             </Auth>
           }
         >
-          <Route path="/checkout/:service/:packageType" element={<CheckOut />} />
+          <Route path="/checkout/:id" element={<CheckOut />} />
 
           {/* Dashboard Routes */}
           <Route element={<Dashboard />}>

@@ -16,19 +16,21 @@ import { startPayment } from "../../utils/Payment";
 import Nav from "../../components/Nav";
 import { getData } from "../../api/Api";
 import { useParams } from "react-router";
+import Select from "react-select";
 
-const LOCATIONS = ["Bengaluru Urban", "Bengaluru Rural", "Mysuru"];
-const STATES = ["Karnataka"];
+// const LOCATIONS = ["Bengaluru Urban", "Bengaluru Rural", "Mysuru"];
 
 export default function CheckOut() {
-  const { service, packageType } = useParams();
+  const { id } = useParams();
   // --- STATE ---
   const [paymentMode, setPaymentMode] = useState("advance");
-  const [selectedLocation, setSelectedLocation] = useState("All Locations");
 
   const [serviceDetails, setServiceDetails] = useState([]);
   const [LANGUAGES, setLanguages] = useState([]);
   const [COMMUNITY, setCommunity] = useState([]);
+  const [STATES, setStates] = useState([]);
+  const [CITIES, setCities] = useState([]);
+  const [PINCODES, setPincodes] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,16 +40,25 @@ export default function CheckOut() {
       const community = await getData("/masters/communities");
       setCommunity(community);
 
-      const data = await getData(`/pooja-services/${service}`);
+      const data = await getData(`/bookings/checkout/${id}`);
       setServiceDetails(data);
+
+      const states = await getData("/masters/states");
+      setStates(states);
     };
 
     fetchData();
-  }, [service]);
+  }, [id]);
 
-  const selectedPackage = serviceDetails?.packages?.find(
-    (pkg) => pkg.packageType === packageType,
-  );
+  const fetchCities = async (id) => {
+    const data = await getData(`/masters/states/${id}`);
+    setCities(data?.cities);
+  };
+
+  const fetchPincodes = async (id) => {
+    const data = await getData(`/masters/cities/${id}`);
+    setPincodes(data?.pincodes);
+  };
 
   // Form state
   // eslint-disable-next-line no-unused-vars
@@ -57,13 +68,24 @@ export default function CheckOut() {
     notes: "",
     language: "",
     community: "",
+    state: "",
+    city: "",
+    pincode: "",
   });
 
-  // Calculations
-  // const totalAmount = BOOKING_SUMMARY.basePrice + BOOKING_SUMMARY.taxes;
-  const totalAmount = selectedPackage?.price;
-  const advanceAmount =
-    (totalAmount * selectedPackage?.advancePercentage) / 100;
+  const selectStyles = {
+    control: (base, state) => ({
+      ...base,
+      borderColor: state.isFocused ? "#f97316" : "#e5e7eb",
+      boxShadow: state.isFocused
+        ? "0 0 0 0.5px #f97316, 0 0 0 2px rgba(253, 186, 116, 0.25)"
+        : "none",
+      "&:hover": {
+        borderColor: "#f97316",
+      },
+      borderRadius: "8px",
+    }),
+  };
 
   return (
     <div className="font-sans text-gray-800 antialiased min-h-screen bg-gray-50 flex flex-col">
@@ -238,43 +260,67 @@ export default function CheckOut() {
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">
-                      City
+                      State
                     </label>
-                    <select
-                      value={selectedLocation}
-                      onChange={(e) => setSelectedLocation(e.target.value)}
-                      className="w-full pl-4 pr-8 py-2.5 bg-white border border-gray-200 hover:border-orange-300 focus:border-orange-500 rounded-xl text-sm transition-all outline-none cursor-pointer text-gray-700 font-medium"
-                    >
-                      {LOCATIONS.map((loc) => (
-                        <option key={loc} value={loc}>
-                          {loc}
-                        </option>
-                      ))}
-                    </select>
+                    <Select
+                      placeholder={"select state"}
+                      styles={selectStyles}
+                      isClearable={true}
+                      options={STATES?.map((data) => ({
+                        value: data.id,
+                        label: data.stateName,
+                      }))}
+                      onChange={(option) => {
+                        setFormData((data) => ({
+                          ...data,
+                          state: option?.value,
+                        }));
+                        fetchCities(option?.value);
+                      }}
+                    />
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">
-                      State
+                      City
                     </label>
-                    <select
-                      value={selectedLocation}
-                      onChange={(e) => setSelectedLocation(e.target.value)}
-                      className="w-full pl-4 pr-8 py-2.5 bg-white border border-gray-200 hover:border-orange-300 focus:border-orange-500 rounded-xl text-sm transition-all outline-none cursor-pointer text-gray-700 font-medium"
-                    >
-                      {STATES.map((loc) => (
-                        <option key={loc} value={loc}>
-                          {loc}
-                        </option>
-                      ))}
-                    </select>
+                    <Select
+                      placeholder={"select city"}
+                      styles={selectStyles}
+                      isDisabled={!formData.state}
+                      isClearable={true}
+                      options={CITIES?.map((data) => ({
+                        value: data.id,
+                        label: data.cityName,
+                      }))}
+                      onChange={(option) => {
+                        setFormData((data) => ({
+                          ...data,
+                          city: option?.value,
+                        }));
+                        fetchPincodes(option?.value);
+                      }}
+                    />
                   </div>
+
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">
                       Pincode
                     </label>
-                    <input
-                      type="text"
-                      className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-200 outline-none"
+                    <Select
+                      placeholder={"select pincode"}
+                      isDisabled={!formData.city}
+                      isClearable={true}
+                      styles={selectStyles}
+                      options={PINCODES?.map((data) => ({
+                        value: data.id,
+                        label: data.pincode,
+                      }))}
+                      onChange={(option) => {
+                        setFormData((data) => ({
+                          ...data,
+                          pincode: option?.value,
+                        }));
+                      }}
                     />
                   </div>
                 </div>
@@ -314,30 +360,31 @@ export default function CheckOut() {
                       {serviceDetails?.serviceName}
                     </h4>
                     <p className="text-sm text-gray-500">
-                      {selectedPackage?.packageType}
+                      {serviceDetails?.packageType}
                     </p>
                     <span className="inline-block mt-1 bg-orange-100 text-orange-700 text-[10px] font-bold px-2 py-0.5 rounded uppercase">
-                      {selectedPackage?.shortDescription}
+                      {serviceDetails?.shortDescription}
                     </span>
                   </div>
                 </div>
               </div>
 
               {/* Price Breakdown */}
-              <div className="p-6 space-y-3">
+              {/* <div className="p-6 space-y-3">
+                
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>Base Package Price</span>
                   <span className="font-medium text-gray-900 flex items-center">
                     <IndianRupee className="h-3.5 w-3.5" />{" "}
-                    {selectedPackage?.price}
+                    {serviceDetails?.packagePrice}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm text-gray-600">
-                  {/* <span>Taxes & Fees (5%)</span>
+                  <span>Taxes & Fees (5%)</span>
                   <span className="font-medium text-gray-900 flex items-center">
                     <IndianRupee className="h-3.5 w-3.5" />{" "}
-                    {BOOKING_SUMMARY.taxes}
-                  </span> */}
+                    {serviceDetails?.taxes}
+                  </span>
                 </div>
 
                 <div className="border-t border-dashed border-gray-200 my-3 pt-3"></div>
@@ -345,13 +392,13 @@ export default function CheckOut() {
                 <div className="flex justify-between items-center mb-1">
                   <span className="font-bold text-gray-900">Total Amount</span>
                   <span className="text-lg font-bold text-gray-900 flex items-center">
-                    <IndianRupee className="h-4 w-4" /> {totalAmount}
+                    <IndianRupee className="h-4 w-4" /> {serviceDetails?.packagePrice}
                   </span>
                 </div>
-              </div>
+              </div> */}
 
               {/* Payment Options Selection */}
-              <div className="px-6 pb-2 space-y-3">
+              <div className="px-6 pb-2 space-y-3 mt-4">
                 <label
                   onClick={() => setPaymentMode("advance")}
                   className={`flex items-center justify-between p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 ${paymentMode === "advance" ? "border-orange-500 bg-orange-50/50" : "border-gray-200 hover:border-orange-200"}`}
@@ -365,11 +412,12 @@ export default function CheckOut() {
                       )}
                     </div>
                     <span className="font-bold text-gray-900 text-sm">
-                      Pay Advance ({selectedPackage?.advancePercentage}%)
+                      Pay Advance ({serviceDetails?.advancePercentage}%)
                     </span>
                   </div>
                   <span className="font-bold text-gray-900 flex items-center text-sm">
-                    <IndianRupee className="h-3 w-3" /> {advanceAmount}
+                    <IndianRupee className="h-3 w-3" />{" "}
+                    {serviceDetails?.advanceAmount}
                   </span>
                 </label>
 
@@ -390,7 +438,8 @@ export default function CheckOut() {
                     </span>
                   </div>
                   <span className="font-bold text-gray-900 flex items-center text-sm">
-                    <IndianRupee className="h-3 w-3" /> {totalAmount}
+                    <IndianRupee className="h-3 w-3" />{" "}
+                    {serviceDetails?.packagePrice}
                   </span>
                 </label>
               </div>
@@ -404,15 +453,20 @@ export default function CheckOut() {
                     </span>
                     <span className="text-xl font-bold text-orange-600 flex items-center">
                       <IndianRupee className="h-5 w-5" />{" "}
-                      {paymentMode === "advance" ? advanceAmount : totalAmount}
+                      {paymentMode === "advance"
+                        ? serviceDetails?.advanceAmount
+                        : serviceDetails?.packagePrice}
                     </span>
                   </div>
                   {paymentMode === "advance" ? (
                     <p className="text-xs text-orange-600/80 leading-relaxed mt-1">
                       Pay the remaining balance of{" "}
-                      <IndianRupee className="h-2.5 w-2.5 inline" />
-                      {totalAmount - advanceAmount}{" "}
-                      <strong>at least 3 days before</strong> the pooja date.
+                      <strong>
+                        {" "}
+                        <IndianRupee className="h-3 w-3 inline font-bold" />
+                        {serviceDetails?.balanceAmount} at least 3 days before
+                      </strong>{" "}
+                      the pooja date.
                     </p>
                   ) : (
                     <p className="text-xs text-orange-600/80 leading-relaxed mt-1">
