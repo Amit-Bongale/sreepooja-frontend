@@ -21,6 +21,7 @@ function EditCommunity({ setIsEditModalOpen, editCommunityData, onSucess }) {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: localStorage.getItem("token"),
           },
           body: JSON.stringify(data),
         },

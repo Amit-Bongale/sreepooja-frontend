@@ -21,6 +21,7 @@ function EditLanguage({ setIsEditModalOpen, editLanguageData, onSucess }) {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: localStorage.getItem("token"),
           },
           body: JSON.stringify(data),
         },

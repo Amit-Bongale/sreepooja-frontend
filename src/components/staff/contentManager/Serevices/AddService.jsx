@@ -178,6 +178,9 @@ function AddService() {
         `${import.meta.env.VITE_API_BASE_URL}/admin/pooja-services`,
         {
           method: "POST",
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
           body: submitData,
         },
       );

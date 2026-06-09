@@ -88,8 +88,8 @@ export default function Services() {
       const finalUrl = `${baseurl}${queryParams.length > 0 ? `?${queryParams.join("&")}` : ""}`;
 
       const services = await getData(finalUrl);
-      setServices(services.content);
-      setTotalPage(services.totalPages);
+      setServices(services?.content);
+      setTotalPage(services?.totalPages);
     };
     fetchData();
   }, [selectedCategory, debouncedSearch, currentPage]);
@@ -148,7 +148,7 @@ export default function Services() {
                   onChange={(e) => setSelectedLocation(e.target.value)}
                   className="w-full pl-9 pr-8 py-2.5 bg-white border border-gray-200 hover:border-orange-300 focus:border-orange-500 rounded-xl text-sm transition-all outline-none appearance-none cursor-pointer text-gray-700 font-medium"
                 >
-                  {LOCATIONS.map((loc) => (
+                  {LOCATIONS?.map((loc) => (
                     <option key={loc.id} value={loc.id}>
                       {loc.cityName}
                     </option>
@@ -166,9 +166,9 @@ export default function Services() {
                   className="w-full pl-9 pr-8 py-2.5 bg-white border border-gray-200 hover:border-orange-300 focus:border-orange-500 rounded-xl text-sm transition-all outline-none appearance-none cursor-pointer text-gray-700 font-medium"
                 >
                   <option value="all">All Languages</option>
-                  {LANGUAGES.map((lang) => (
-                    <option key={lang.id} value={lang.id}>
-                      {lang.languageName}
+                  {LANGUAGES?.map((lang) => (
+                    <option key={lang?.id} value={lang?.id}>
+                      {lang?.languageName}
                     </option>
                   ))}
                 </select>
@@ -184,7 +184,7 @@ export default function Services() {
                   className="w-full pl-9 pr-8 py-2.5 bg-white border border-gray-200 hover:border-orange-300 focus:border-orange-500 rounded-xl text-sm transition-all outline-none appearance-none cursor-pointer text-gray-700 font-medium"
                 >
                   <option value="all">All Community</option>
-                  {COMMUNITY.map((community) => (
+                  {COMMUNITY?.map((community) => (
                     <option key={community.id} value={community.communityName}>
                       {community.communityName}
                     </option>
@@ -199,7 +199,7 @@ export default function Services() {
 
       {/* Mobile Horizontal Category Chips (Quick Select) */}
       <div className="md:hidden border-b border-gray-100 bg-white overflow-x-auto hide-scrollbar px-4 py-3 flex gap-2">
-        {CATEGORIES.map((category) => (
+        {CATEGORIES?.map((category) => (
           <button
             key={category.id}
             onClick={() => setSelectedCategory(category.slug)}
@@ -267,7 +267,7 @@ export default function Services() {
                     All Categories
                   </button>
                 </li>
-                {CATEGORIES.map((category) => {
+                {CATEGORIES?.map((category) => {
                   const isActive = selectedCategory === category.slug;
                   return (
                     <li key={category.id}>
@@ -315,10 +315,10 @@ export default function Services() {
             </div>
           </div>
 
-          {SERVICES.length > 0 ? (
+          {SERVICES?.length > 0 ? (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {SERVICES.map((service) => (
+                {SERVICES?.map((service) => (
                   <div
                     key={service.id}
                     className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col"

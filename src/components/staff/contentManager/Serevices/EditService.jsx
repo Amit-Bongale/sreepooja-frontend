@@ -231,6 +231,9 @@ function EditService() {
         `${import.meta.env.VITE_API_BASE_URL}/admin/pooja-services/${formData.id}`,
         {
           method: "PUT",
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
           body: submitData,
         },
       );

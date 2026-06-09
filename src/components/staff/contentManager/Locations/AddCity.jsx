@@ -24,6 +24,7 @@ function AddCity({ label, stateId, setIsAddModalOpen, onSucess }) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: localStorage.getItem("token"),
           },
           body: JSON.stringify(data),
         },

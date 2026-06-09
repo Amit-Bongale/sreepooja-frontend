@@ -15,15 +15,21 @@ import {
 import { startPayment } from "../../utils/Payment";
 import Nav from "../../components/Nav";
 import { getData } from "../../api/Api";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import Select from "react-select";
+import { useSelector } from "react-redux";
+import { notify } from "../../Utils/notify";
 
 // const LOCATIONS = ["Bengaluru Urban", "Bengaluru Rural", "Mysuru"];
 
 export default function CheckOut() {
   const { id } = useParams();
   // --- STATE ---
-  const [paymentMode, setPaymentMode] = useState("advance");
+  const user = useSelector((state) => state.user.user);
+  const navigate = useNavigate();
+
+  const [paymentMode, setPaymentMode] = useState("ADVANCE");
+  const [loading, setLoading] = useState(false);
 
   const [serviceDetails, setServiceDetails] = useState([]);
   const [LANGUAGES, setLanguages] = useState([]);
@@ -61,16 +67,18 @@ export default function CheckOut() {
   };
 
   // Form state
-  // eslint-disable-next-line no-unused-vars
   const [formData, setFormData] = useState({
-    date: "",
-    timeSlot: "Morning (08:00 AM - 11:00 AM)",
-    notes: "",
-    language: "",
-    community: "",
-    state: "",
-    city: "",
-    pincode: "",
+    packageId: Number(id),
+    preferredDate: "",
+    preferredTimeSlot: "MORNING",
+    preferredLanguage: "",
+    preferredCommunity: "",
+    address: "",
+    stateId: "",
+    cityId: "",
+    pincodeId: "",
+    specialInstructions: "",
+    paymentOption: "ADVANCE",
   });
 
   const selectStyles = {
@@ -85,6 +93,33 @@ export default function CheckOut() {
       },
       borderRadius: "8px",
     }),
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/bookings`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: localStorage.getItem("token"),
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        notify(data.message, "error");
+      }
+
+      await startPayment(data.bookingId);
+
+      navigate("/user/bookings");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -121,6 +156,12 @@ export default function CheckOut() {
                   <div className="relative">
                     <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <input
+                      onChange={(e) =>
+                        setFormData((data) => ({
+                          ...data,
+                          preferredDate: e.target.value,
+                        }))
+                      }
                       type="date"
                       className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none"
                     />
@@ -132,11 +173,27 @@ export default function CheckOut() {
                   </label>
                   <div className="relative">
                     <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <select className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none appearance-none cursor-pointer">
-                      <option>Morning (06:00 AM - 09:00 AM)</option>
-                      <option>Mid-Morning (09:00 AM - 12:00 PM)</option>
-                      <option>Afternoon (12:00 PM - 04:00 PM)</option>
-                      <option>Evening (04:00 PM - 07:00 PM)</option>
+                    <select
+                      className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none appearance-none cursor-pointer"
+                      onChange={(e) =>
+                        setFormData((data) => ({
+                          ...data,
+                          preferredLanguage: e.target.value,
+                        }))
+                      }
+                    >
+                      <option value={"MORNING"}>
+                        Morning (06:00 AM - 09:00 AM)
+                      </option>
+                      <option value={"MID_MORNING"}>
+                        Mid-Morning (09:00 AM - 12:00 PM)
+                      </option>
+                      <option value={"AFTERNOON"}>
+                        Afternoon (12:00 PM - 04:00 PM)
+                      </option>
+                      <option value={"EVENING"}>
+                        Evening (04:00 PM - 07:00 PM)
+                      </option>
                     </select>
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
                   </div>
@@ -150,7 +207,10 @@ export default function CheckOut() {
                     <select
                       className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none appearance-none cursor-pointer"
                       onChange={(e) =>
-                        setFormData({ ...formData, language: e.target.value })
+                        setFormData((data) => ({
+                          ...data,
+                          preferredTimeSlot: e.target.value,
+                        }))
                       }
                     >
                       <option value={"any"}> Any Language</option>
@@ -172,7 +232,10 @@ export default function CheckOut() {
                     <select
                       className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none appearance-none cursor-pointer"
                       onChange={(e) =>
-                        setFormData({ ...formData, community: e.target.value })
+                        setFormData((data) => ({
+                          ...data,
+                          preferredCommunity: e.target.value,
+                        }))
                       }
                     >
                       <option value={"any"}> Any Community</option>
@@ -214,8 +277,9 @@ export default function CheckOut() {
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <input
                       type="text"
-                      defaultValue="Rahul Sharma"
-                      className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none"
+                      disabled={true}
+                      defaultValue={user.name}
+                      className="w-full pl-10 pr-4 py-2.5 bg-gray-200 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none"
                     />
                   </div>
                 </div>
@@ -227,11 +291,17 @@ export default function CheckOut() {
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <input
                       type="tel"
-                      defaultValue="+91 98765 43210"
-                      className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none"
+                      disabled={true}
+                      defaultValue={user.phone}
+                      className="w-full pl-10 pr-4 py-2.5 bg-gray-200 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none"
                     />
                   </div>
                 </div>
+              </div>
+
+              <div className="mt-4 p-3 bg-blue-50 rounded-xl border border-blue-100 flex gap-3 text-sm text-blue-800">
+                <Info className="h-5 w-5 shrink-0 mt-0.5" />
+                <p>Please visit the Profile section to change your name.</p>
               </div>
 
               {/* extra cutomer Fields here if required */}
@@ -254,6 +324,12 @@ export default function CheckOut() {
                       Street Address
                     </label>
                     <textarea
+                      onChange={(e) =>
+                        setFormData((data) => ({
+                          ...data,
+                          address: e.target.value,
+                        }))
+                      }
                       className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-200 outline-none resize-none"
                       rows="2"
                     ></textarea>
@@ -273,7 +349,7 @@ export default function CheckOut() {
                       onChange={(option) => {
                         setFormData((data) => ({
                           ...data,
-                          state: option?.value,
+                          stateId: option?.value,
                         }));
                         fetchCities(option?.value);
                       }}
@@ -286,7 +362,7 @@ export default function CheckOut() {
                     <Select
                       placeholder={"select city"}
                       styles={selectStyles}
-                      isDisabled={!formData.state}
+                      isDisabled={!formData.stateId}
                       isClearable={true}
                       options={CITIES?.map((data) => ({
                         value: data.id,
@@ -295,7 +371,7 @@ export default function CheckOut() {
                       onChange={(option) => {
                         setFormData((data) => ({
                           ...data,
-                          city: option?.value,
+                          cityId: option?.value,
                         }));
                         fetchPincodes(option?.value);
                       }}
@@ -308,7 +384,7 @@ export default function CheckOut() {
                     </label>
                     <Select
                       placeholder={"select pincode"}
-                      isDisabled={!formData.city}
+                      isDisabled={!formData.cityId}
                       isClearable={true}
                       styles={selectStyles}
                       options={PINCODES?.map((data) => ({
@@ -318,7 +394,7 @@ export default function CheckOut() {
                       onChange={(option) => {
                         setFormData((data) => ({
                           ...data,
-                          pincode: option?.value,
+                          pincodeId: option?.value,
                         }));
                       }}
                     />
@@ -333,6 +409,12 @@ export default function CheckOut() {
                 Special Requests / Notes
               </h2>
               <textarea
+                onChange={(e) =>
+                  setFormData((data) => ({
+                    ...data,
+                    specialInstructions: e.target.value,
+                  }))
+                }
                 placeholder="Any specific requirements for the priest, directions to your home, or questions..."
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none resize-none"
                 rows="3"
@@ -400,14 +482,20 @@ export default function CheckOut() {
               {/* Payment Options Selection */}
               <div className="px-6 pb-2 space-y-3 mt-4">
                 <label
-                  onClick={() => setPaymentMode("advance")}
-                  className={`flex items-center justify-between p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 ${paymentMode === "advance" ? "border-orange-500 bg-orange-50/50" : "border-gray-200 hover:border-orange-200"}`}
+                  onClick={() => {
+                    setPaymentMode("ADVANCE");
+                    setFormData((data) => ({
+                      ...data,
+                      paymentOption: "ADVANCE",
+                    }));
+                  }}
+                  className={`flex items-center justify-between p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 ${paymentMode === "ADVANCE" ? "border-orange-500 bg-orange-50/50" : "border-gray-200 hover:border-orange-200"}`}
                 >
                   <div className="flex items-center gap-3">
                     <div
-                      className={`w-4 h-4 rounded-full border flex items-center justify-center ${paymentMode === "advance" ? "border-orange-500" : "border-gray-300"}`}
+                      className={`w-4 h-4 rounded-full border flex items-center justify-center ${paymentMode === "ADVANCE" ? "border-orange-500" : "border-gray-300"}`}
                     >
-                      {paymentMode === "advance" && (
+                      {paymentMode === "ADVANCE" && (
                         <div className="w-2 h-2 rounded-full bg-orange-500"></div>
                       )}
                     </div>
@@ -422,14 +510,20 @@ export default function CheckOut() {
                 </label>
 
                 <label
-                  onClick={() => setPaymentMode("full")}
-                  className={`flex items-center justify-between p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 ${paymentMode === "full" ? "border-orange-500 bg-orange-50/50" : "border-gray-200 hover:border-orange-200"}`}
+                  onClick={() => {
+                    setPaymentMode("FULL");
+                    setFormData((data) => ({
+                      ...data,
+                      paymentOption: "FULL",
+                    }));
+                  }}
+                  className={`flex items-center justify-between p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 ${paymentMode === "FULL" ? "border-orange-500 bg-orange-50/50" : "border-gray-200 hover:border-orange-200"}`}
                 >
                   <div className="flex items-center gap-3">
                     <div
-                      className={`w-4 h-4 rounded-full border flex items-center justify-center ${paymentMode === "full" ? "border-orange-500" : "border-gray-300"}`}
+                      className={`w-4 h-4 rounded-full border flex items-center justify-center ${paymentMode === "FULL" ? "border-orange-500" : "border-gray-300"}`}
                     >
-                      {paymentMode === "full" && (
+                      {paymentMode === "FULL" && (
                         <div className="w-2 h-2 rounded-full bg-orange-500"></div>
                       )}
                     </div>
@@ -453,12 +547,12 @@ export default function CheckOut() {
                     </span>
                     <span className="text-xl font-bold text-orange-600 flex items-center">
                       <IndianRupee className="h-5 w-5" />{" "}
-                      {paymentMode === "advance"
+                      {paymentMode === "ADVANCE"
                         ? serviceDetails?.advanceAmount
                         : serviceDetails?.packagePrice}
                     </span>
                   </div>
-                  {paymentMode === "advance" ? (
+                  {paymentMode === "ADVANCE" ? (
                     <p className="text-xs text-orange-600/80 leading-relaxed mt-1">
                       Pay the remaining balance of{" "}
                       <strong>
@@ -476,11 +570,12 @@ export default function CheckOut() {
                 </div>
 
                 <button
-                  onClick={() => startPayment("module", "appId")}
-                  className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-all flex justify-center items-center gap-2"
+                  onClick={handleSubmit}
+                  disabled={loading}
+                  className={`w-full ${loading ? " bg-gray-800" : "bg-brand-600 hover:bg-brnad-700 "}  text-white font-bold py-3.5 rounded-xl shadow-md transition-all flex justify-center items-center gap-2`}
                 >
                   <CreditCard className="h-5 w-5" />
-                  {paymentMode === "advance"
+                  {paymentMode === "ADVANCE"
                     ? "Pay Advance & Book"
                     : "Pay Full Amount"}
                 </button>

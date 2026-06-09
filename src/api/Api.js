@@ -4,6 +4,7 @@ export const getData = async (path) => {
       `${import.meta.env.VITE_API_BASE_URL}${path}`,
       {
         method: "GET",
+        Authorization: localStorage.getItem("token"),
       },
     );
     if (!response.ok) {
