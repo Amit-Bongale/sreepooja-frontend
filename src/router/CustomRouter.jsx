@@ -29,6 +29,7 @@ import ManageStates from "../pages/Staff/contentManager/ManageStates.jsx";
 import ManageCities from "../pages/Staff/contentManager/ManageCities.jsx";
 import ManagePincodes from "../pages/Staff/contentManager/MangePincodes.jsx";
 import EditService from "../components/staff/contentManager/Serevices/EditService.jsx";
+import BookingDetailas from "../pages/User/BookingDetailas.jsx";
 
 function CustomRouter() {
   return (
@@ -59,6 +60,7 @@ function CustomRouter() {
             <Route element={<ProtectedRoutes allowedRoles={["USER"]} />}>
               <Route path="/account" element={<UserDashboard />} />
               <Route path="/user/bookings" element={<Bookings />} />
+              <Route path="/user/bookings/:id" element={<BookingDetailas />} />
               <Route path="/user/profile" element={<Profile />} />
             </Route>
 

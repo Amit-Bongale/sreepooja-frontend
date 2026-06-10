@@ -25,7 +25,6 @@ export default function Services() {
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  // eslint-disable-next-line no-unused-vars
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPage] = useState(0);
   const [SERVICES, setServices] = useState([]);

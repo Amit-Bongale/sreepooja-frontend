@@ -113,7 +113,7 @@ export default function CheckOut() {
       }
 
       await startPayment(data.bookingId);
-
+      notify("Booking Successfull" , "success")
       navigate("/user/bookings");
     } catch (error) {
       console.log(error);
@@ -121,6 +121,9 @@ export default function CheckOut() {
       setLoading(false);
     }
   };
+
+
+  
 
   return (
     <div className="font-sans text-gray-800 antialiased min-h-screen bg-gray-50 flex flex-col">
@@ -214,7 +217,7 @@ export default function CheckOut() {
                       }
                     >
                       <option value={"any"}> Any Language</option>
-                      {LANGUAGES.map((lang) => (
+                      {LANGUAGES?.map((lang) => (
                         <option key={lang.id} value={lang.id}>
                           {lang.languageName}
                         </option>
@@ -239,7 +242,7 @@ export default function CheckOut() {
                       }
                     >
                       <option value={"any"}> Any Community</option>
-                      {COMMUNITY.map((community) => (
+                      {COMMUNITY?.map((community) => (
                         <option key={community.id} value={community.id}>
                           {community.communityName}
                         </option>
@@ -278,7 +281,7 @@ export default function CheckOut() {
                     <input
                       type="text"
                       disabled={true}
-                      defaultValue={user.name}
+                      defaultValue={user?.name}
                       className="w-full pl-10 pr-4 py-2.5 bg-gray-200 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none"
                     />
                   </div>
@@ -292,7 +295,7 @@ export default function CheckOut() {
                     <input
                       type="tel"
                       disabled={true}
-                      defaultValue={user.phone}
+                      defaultValue={user?.phone}
                       className="w-full pl-10 pr-4 py-2.5 bg-gray-200 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none"
                     />
                   </div>
@@ -433,7 +436,7 @@ export default function CheckOut() {
                 {/* Item Details */}
                 <div className="flex gap-4">
                   <img
-                    src={`${import.meta.env.VITE_API_BASE_URL}${serviceDetails.thumbnailImage}`}
+                    src={`${import.meta.env.VITE_API_BASE_URL}${serviceDetails?.thumbnailImage}`}
                     alt={serviceDetails?.serviceName}
                     className="w-16 h-16 rounded-xl object-cover border border-gray-200"
                   />
