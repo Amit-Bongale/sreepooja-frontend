@@ -30,6 +30,12 @@ import ManageCities from "../pages/Staff/contentManager/ManageCities.jsx";
 import ManagePincodes from "../pages/Staff/contentManager/MangePincodes.jsx";
 import EditService from "../components/staff/contentManager/Serevices/EditService.jsx";
 import BookingDetailas from "../pages/User/BookingDetailas.jsx";
+import OperationManagerDashboard from "../pages/Staff/OperationManager/OperationManagerDashboard.jsx";
+import LatestBookings from "../pages/Staff/OperationManager/LatestBookings.jsx";
+import PendingPayment from "../pages/Staff/OperationManager/PendingPayment.jsx";
+import ActivePoojas from "../pages/Staff/OperationManager/ActivePoojas.jsx";
+import AllBookings from "../pages/Staff/OperationManager/AllBookings.jsx";
+import CancelledBookings from "../pages/Staff/OperationManager/CancelledBookings.jsx";
 
 function CustomRouter() {
   return (
@@ -55,7 +61,6 @@ function CustomRouter() {
 
           {/* Dashboard Routes */}
           <Route element={<Dashboard />}>
-          
             {/*user protected routes*/}
             <Route element={<ProtectedRoutes allowedRoles={["USER"]} />}>
               <Route path="/account" element={<UserDashboard />} />
@@ -73,7 +78,10 @@ function CustomRouter() {
               />
               <Route path="/staff/services" element={<MangeServices />} />
               <Route path="/staff/services/add" element={<AddService />} />
-              <Route path="/staff/services/edit/:slug" element={<EditService />} />
+              <Route
+                path="/staff/services/edit/:slug"
+                element={<EditService />}
+              />
 
               <Route path="/staff/categories" element={<ManageCategories />} />
               <Route path="/staff/community" element={<ManageCommunity />} />
@@ -81,10 +89,19 @@ function CustomRouter() {
               <Route path="/staff/locations" element={<ManageStates />} />
               <Route path="/staff/:state/:stateId/cities" element={<ManageCities />} />
               <Route path="/staff/:city/:cityId/pincodes" element={<ManagePincodes />} />
+            </Route>
 
+            <Route
+              element={ <ProtectedRoutes allowedRoles={["Operations_Manager"]} />}
+            >
+              <Route path="/operation-manager/dashboard" element={<OperationManagerDashboard />} />
+              <Route path="/staff/bookings/latest" element={<LatestBookings />}/>
+              <Route path="/staff/bookings/pending-payments" element={<PendingPayment />}/>
+              <Route path="/staff/bookings/active" element={<ActivePoojas />}/>
+              <Route path="/staff/bookings/all" element={<AllBookings />}/>
+              <Route path="/staff/bookings/cancelled" element={<CancelledBookings />}/>
 
             </Route>
-            
           </Route>
         </Route>
       </Routes>

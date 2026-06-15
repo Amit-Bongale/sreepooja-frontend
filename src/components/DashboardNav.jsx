@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   Menu,
   X,
-  FileText,
   LogOut,
   User,
   CalendarCheck,
@@ -15,6 +14,9 @@ import {
   Layers,
   Command,
   Languages,
+  CreditCard,
+  Sparkle,
+  CircleAlert,
   // Bell,
   // Image,
   // MessageCircleQuestionMark,
@@ -50,31 +52,41 @@ function DashboardNav() {
       // { name: "Queries", icon: MessageCircleQuestionMark, path: "/user/queries" },
     ],
 
-    STAFF: [
+     Operations_Manager: [
       {
         name: "Dashboard",
         icon: LayoutDashboard,
-        path: "/staff/dashboard",
+        path: "/operation-manager/dashboard",
       },
       {
-        name: "Booking Requests",
-        icon: FileText,
-        path: "/staff/bookings",
+        name: "Latest Bookings",
+        icon: CalendarDays,
+        path: "/staff/bookings/latest",
+      },
+      {
+        name: "Pending Payments",
+        icon: CreditCard,
+        path: "/staff/bookings/pending-payments",
+      },
+      {
+        name: "Active Poojas",
+        icon: Sparkle,
+        path: "/staff/bookings/active",
       },
       {
         name: "All Booking",
         icon: CalendarCheck,
-        path: "/staff/bookings",
+        path: "/staff/bookings/all",
       },
       {
-        name: "Priests List",
+        name: "Cancelled Booking",
+        icon: CircleAlert,
+        path: "/staff/bookings/cancelled",
+      },
+      {
+        name: "Priests Management",
         icon: Users2,
         path: "/staff/priests",
-      },
-      {
-        name: "Customer Support",
-        icon: Users2,
-        path: "/staff/customer-support",
       },
     ],
 

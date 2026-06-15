@@ -4,16 +4,28 @@ import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useDispatch } from "react-redux";
 import { userLogin } from "./Redux/Reducer";
+
 function App() {
-  
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const token = localStorage.getItem("token")?.split(" ")[1];
+    const authHeader = localStorage.getItem("token");
+
+    if (!authHeader?.startsWith("Bearer ")) {
+      localStorage.removeItem("token");
+      return;
+    }
+
+    const token = authHeader.substring(7);
     if (!token) return;
 
     try {
       const decodedToken = jwtDecode(token);
+
+      if (decodedToken.exp * 1000 < Date.now()) {
+        localStorage.removeItem("token");
+        return;
+      }
 
       dispatch(
         userLogin({
@@ -23,7 +35,6 @@ function App() {
         }),
       );
     } catch (err) {
-      localStorage.removeItem("token");
       console.log(err);
     }
   }, [dispatch]);
