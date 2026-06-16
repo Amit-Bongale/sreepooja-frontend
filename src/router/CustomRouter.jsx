@@ -36,6 +36,7 @@ import PendingPayment from "../pages/Staff/OperationManager/PendingPayment.jsx";
 import ActivePoojas from "../pages/Staff/OperationManager/ActivePoojas.jsx";
 import AllBookings from "../pages/Staff/OperationManager/AllBookings.jsx";
 import CancelledBookings from "../pages/Staff/OperationManager/CancelledBookings.jsx";
+import ManagePriests from "../pages/Staff/OperationManager/ManagePriests.jsx";
 
 function CustomRouter() {
   return (
@@ -100,6 +101,8 @@ function CustomRouter() {
               <Route path="/staff/bookings/active" element={<ActivePoojas />}/>
               <Route path="/staff/bookings/all" element={<AllBookings />}/>
               <Route path="/staff/bookings/cancelled" element={<CancelledBookings />}/>
+              <Route path="/staff/manage/priest" element={<ManagePriests />}/>
+
 
             </Route>
           </Route>

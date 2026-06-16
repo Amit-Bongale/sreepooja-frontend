@@ -8,9 +8,10 @@ import {
   Search,
   User,
 } from "lucide-react";
-import StaffBookingDetails from "./StaffBookingDetails";
+import PriestAssignBookingDetails from "../../../components/staff/operationManager/PriestAssignBookingDetails";
 import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
+import { formatDate } from "../../../utils/formatter";
 
 function LatestBookings() {
   const [selectedService, setSelectedService] = useState(null);
@@ -36,7 +37,7 @@ function LatestBookings() {
 
       if (currentPage) {
         queryParams.push(`page=${currentPage - 1}`);
-      } 
+      }
 
       if (debouncedSearch) {
         queryParams.push(`mobileNumber=${debouncedSearch}`);
@@ -103,7 +104,7 @@ function LatestBookings() {
                       <div className="space-y-2">
                         <div className="flex items-center gap-2 text-gray-600">
                           <Calendar className="size-4 shrink-0" />
-                          <span>{booking?.poojaDate}</span>
+                          <span>{formatDate(booking?.poojaDate)}</span>
                         </div>
 
                         <div className="flex items-center gap-2 text-gray-600">
@@ -195,12 +196,11 @@ function LatestBookings() {
       </main>
 
       {selectedService && (
-        <StaffBookingDetails
+        <PriestAssignBookingDetails
           bookingId={selectedService}
           setOpenModal={setSelectedService}
         />
       )}
-
     </div>
   );
 }

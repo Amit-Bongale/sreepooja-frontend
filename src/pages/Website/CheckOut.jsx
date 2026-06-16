@@ -123,7 +123,6 @@ export default function CheckOut() {
   };
 
 
-  
 
   return (
     <div className="font-sans text-gray-800 antialiased min-h-screen bg-gray-50 flex flex-col">
@@ -181,7 +180,7 @@ export default function CheckOut() {
                       onChange={(e) =>
                         setFormData((data) => ({
                           ...data,
-                          preferredLanguage: e.target.value,
+                          preferredTimeSlot: e.target.value,
                         }))
                       }
                     >
@@ -212,7 +211,7 @@ export default function CheckOut() {
                       onChange={(e) =>
                         setFormData((data) => ({
                           ...data,
-                          preferredTimeSlot: e.target.value,
+                          preferredLanguage: e.target.value,
                         }))
                       }
                     >

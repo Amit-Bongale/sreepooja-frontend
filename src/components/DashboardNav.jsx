@@ -86,7 +86,7 @@ function DashboardNav() {
       {
         name: "Priests Management",
         icon: Users2,
-        path: "/staff/priests",
+        path: "/staff/manage/priest",
       },
     ],
 

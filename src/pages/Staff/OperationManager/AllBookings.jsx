@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
+import BookingDetails from "../../../components/staff/operationManager/BookingDetails";
 
 function AllBookings() {
   const [selectedService, setSelectedService] = useState(null);
@@ -311,6 +312,10 @@ function AllBookings() {
           </div>
         )}
       </main>
+
+      {
+        selectedService && <BookingDetails bookingId={selectedService} setOpenModal={setSelectedService}/>
+      }
     </div>
   );
 }
