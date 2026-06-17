@@ -1,44 +1,104 @@
-import { Command, Edit, Plus, Search, Trash } from "lucide-react";
+/* eslint-disable no-unused-vars */
+import {
+  Command,
+  Plus,
+  Search,
+  Phone,
+  MapPin,
+  Languages,
+  Users,
+  CheckCircle2,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
-import AddCommunity from "../../../components/staff/contentManager/community/AddCommunity";
-import EditCommunity from "../../../components/staff/contentManager/community/EditCommunity";
-
-// const priest = {
-//     name: "john",
-//     age: 23,
-//     city: "bengaluru",
-//     state: "karnataka",
-//     address: "location abcd",
-//     mobileNo: 12232323234,
-// }
+import AddPriestModal from "../../../components/staff/operationManager/AddPriestModal";
 
 function ManagePriests() {
-  const [priests, setPriests] = useState([]);
+  const [priests, setPriests] = useState([
+    {
+      id: "1",
+      name: "Sri Venkatesh Sharma",
+      mobile: "9876543210",
+      language: "Kannada",
+      community: "Smartha",
+      city: "Bangalore",
+    },
+    {
+      id: "2",
+      name: "Sri Hari Narayanan",
+      mobile: "9988776655",
+      language: "Tamil",
+      community: "Iyer",
+      city: "Chennai",
+    },
+    {
+      id: "0",
+      name: "Sri Hari Narayanan",
+      mobile: "9988776655",
+      language: "Tamil",
+      community: "Iyer",
+      city: "Chennai",
+    },
+    {
+      id: "4",
+      name: "Sri Hari Narayanan",
+      mobile: "9988776655",
+      language: "Tamil",
+      community: "Iyer",
+      city: "Chennai",
+    },
+    {
+      id: "14",
+      name: "Sri Hari Narayanan",
+      mobile: "9988776655",
+      language: "Tamil",
+      community: "Iyer",
+      city: "Chennai",
+    },
+    {
+      id: "6",
+      name: "Sri Hari Narayanan",
+      mobile: "9988776655",
+      language: "Tamil",
+      community: "Iyer",
+      city: "Chennai",
+    },
+    {
+      id: "7",
+      name: "Sri Hari Narayanan",
+      mobile: "9988776655",
+      language: "Tamil",
+      community: "Iyer",
+      city: "Chennai",
+    },
+    {
+      id: "8",
+      name: "Sri Hari Narayanan",
+      mobile: "9988776655",
+      language: "Tamil",
+      community: "Iyer",
+      city: "Chennai",
+    },
+  ]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+  const [language, setLanguage] = useState("");
+  const [community, setCommunity] = useState("");
+  const [city, setCity] = useState("");
 
-  const [editCommunityData, setEditCommunityData] = useState({
-    id: null,
-    communityName: "",
-    active: "",
-  });
-
-  const fetchCommunities = async () => {
-    const data = await getData("/admin/masters/communities");
-    console.log("Fetched communities:", data);
-    setPriests(data);
+  const fetchPriests = async () => {
+    // const data = await getData("/admin/masters/communities");
+    // console.log("Fetched communities:", data);
+    // setPriests(data);
   };
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchCommunities();
+    fetchPriests();
   }, []);
-
-  const filteredCommunities = priests.filter((community) =>
-    community.communityName.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
 
   return (
     <div className="font-sans text-gray-800 antialiased min-h-screen bg-gray-50">
@@ -67,67 +127,20 @@ function ManagePriests() {
         </div>
       </div>
       <div className="overflow-x-auto p-4">
-        {filteredCommunities.length > 0 ? (
-          <table className="w-full text-left text-sm whitespace-nowrap rounded-xl overflow-hidden">
-            <thead className="bg-gray-100 text-gray-600 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-4 font-bold w-16">ID</th>
-                <th className="px-6 py-4 font-bold">Name</th>
-                <th className="px-6 py-4 font-bold">Mobile No</th>
-                {/* <th className="px-6 py-4 font-bold">languages</th>
-                <th className="px-6 py-4 font-bold">community</th> */}
-                <th className="px-6 py-4 font-bold text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {filteredCommunities.map((data) => (
-                <tr key={data.id} className="hover:bg-gray-50/50">
-                  <td className="px-6 py-4 text-gray-500 font-mono text-xs">
-                    COM-{data.id.toString().padStart(2, "0")}
-                  </td>
-                  <td className="px-6 py-4 font-bold text-gray-900">
-                    {data.communityName}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-2.5 py-1 rounded-full text-xs font-bold border ${data.active ? "border-green-500 text-green-700 bg-green-100" : "border-red-500 text-red-700 bg-red-100"}`}
-                    >
-                      {data.active ? "Active" : "Inactive"}{" "}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <button
-                      className="p-2 text-gray-400 hover:text-blue-600 transition-colors"
-                      onClick={() => {
-                        setEditCommunityData({
-                          id: data.id,
-                          communityName: data.communityName,
-                          active: data.active,
-                        });
-                        setIsEditModalOpen(true);
-                      }}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </button>
-
-                    <button
-                      className="p-2 text-gray-400 hover:text-orange-600 transition-colors"
-                      onClick={() => {
-                        setEditCommunityData({
-                          id: data.id,
-                          communityName: data.communityName,
-                          active: data.active,
-                        });
-                        setIsEditModalOpen(true);
-                      }}
-                    >
-                      <Trash className="h-4 w-4" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {priests.length > 0 ? (
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+            <div className="space-y-4">
+              {priests.map((priest) => {
+                return (
+                  <PriestCard
+                    key={priest.id}
+                    priest={priest}
+                    onClick={() => setSelectedId(priest.id)}
+                  />
+                );
+              })}
+            </div>
+          </div>
         ) : (
           <div className="flex flex-col items-center min-h-[70vh] justify-center gap-2 py-10">
             <Command className="size-18 text-brand-500" />
@@ -149,21 +162,80 @@ function ManagePriests() {
       </div>
 
       {isAddModalOpen && (
-        <AddCommunity
-          setIsAddModalOpen={setIsAddModalOpen}
-          onSucess={fetchCommunities}
-        />
-      )}
-
-      {isEditModalOpen && (
-        <EditCommunity
-          editCommunityData={editCommunityData}
-          setIsEditModalOpen={setIsEditModalOpen}
-          onSucess={fetchCommunities}
-        />
+        <AddPriestModal onClose={() => setIsAddModalOpen(false)} />
       )}
     </div>
   );
 }
 
-export default ManagePriests
+export default ManagePriests;
+
+const PriestCard = ({ priest, selected, onClick }) => {
+  return (
+    <div
+      className={`
+        w-full
+        text-left
+        rounded-xl
+        border 
+        transition-all
+        ${
+          selected
+            ? "border-orange-500 bg-orange-50 shadow-md ring-2 ring-orange-200"
+            : "border-slate-200 hover:border-orange-300 hover:bg-orange-50/40"
+        }
+      `}
+    >
+      <div className="p-4 sm:p-5 flex flex-col sm:flex-row gap-4">
+        {/* Avatar */}
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-full bg-slate-200 overflow-hidden shrink-0">
+            {priest.avatar ? (
+              <img
+                src={priest.avatar}
+                alt={priest.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center font-semibold">
+                {priest.name?.charAt(0)}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="font-semibold text-lg">{priest.name}</h3>
+          </div>
+
+          <div className="flex items-center gap-2 text-slate-600 mt-2">
+            <Phone size={14} />
+            {priest.mobile}
+          </div>
+
+          <div className="flex flex-wrap gap-2 mt-3">
+            <Badge icon={<Languages size={14} />} label={priest.language} />
+
+            <Badge icon={<Users size={14} />} label={priest.community} />
+
+            <Badge icon={<MapPin size={14} />} label={priest.city} />
+          </div>
+        </div>
+
+        <div className="self-start sm:self-center">
+          <button className="bg-brand-500 text-white px-4 py-2 rounded-md">
+            View Details
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Badge = ({ icon, label }) => (
+  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-slate-100 text-sm">
+    {icon}
+    {label}
+  </span>
+);

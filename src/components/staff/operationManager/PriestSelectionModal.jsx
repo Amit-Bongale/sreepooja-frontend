@@ -153,16 +153,8 @@ const PriestSelectionModal = ({ loading = false, onClose, onSelect }) => {
                 placeholder="Search name or mobile..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="
-                  w-full
-                  border border-gray-300
-                  rounded-lg
-                  pl-10
-                  pr-4
-                  py-2.5
-                  focus:outline-none
-                  focus:border-orange-500
-                "
+                className=" w-full border border-gray-300 rounded-lg pl-10 pr-4 py-2.5 
+                focus:outline-none focus:border-orange-500 "
               />
             </div>
 
