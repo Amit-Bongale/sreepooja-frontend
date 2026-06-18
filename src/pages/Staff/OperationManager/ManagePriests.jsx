@@ -8,97 +8,61 @@ import {
   Languages,
   Users,
   CheckCircle2,
+  ChevronRight,
+  ChevronLeft,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
 import AddPriestModal from "../../../components/staff/operationManager/AddPriestModal";
+import { notify } from "../../../utils/notify";
 
 function ManagePriests() {
-  const [priests, setPriests] = useState([
-    {
-      id: "1",
-      name: "Sri Venkatesh Sharma",
-      mobile: "9876543210",
-      language: "Kannada",
-      community: "Smartha",
-      city: "Bangalore",
-    },
-    {
-      id: "2",
-      name: "Sri Hari Narayanan",
-      mobile: "9988776655",
-      language: "Tamil",
-      community: "Iyer",
-      city: "Chennai",
-    },
-    {
-      id: "0",
-      name: "Sri Hari Narayanan",
-      mobile: "9988776655",
-      language: "Tamil",
-      community: "Iyer",
-      city: "Chennai",
-    },
-    {
-      id: "4",
-      name: "Sri Hari Narayanan",
-      mobile: "9988776655",
-      language: "Tamil",
-      community: "Iyer",
-      city: "Chennai",
-    },
-    {
-      id: "14",
-      name: "Sri Hari Narayanan",
-      mobile: "9988776655",
-      language: "Tamil",
-      community: "Iyer",
-      city: "Chennai",
-    },
-    {
-      id: "6",
-      name: "Sri Hari Narayanan",
-      mobile: "9988776655",
-      language: "Tamil",
-      community: "Iyer",
-      city: "Chennai",
-    },
-    {
-      id: "7",
-      name: "Sri Hari Narayanan",
-      mobile: "9988776655",
-      language: "Tamil",
-      community: "Iyer",
-      city: "Chennai",
-    },
-    {
-      id: "8",
-      name: "Sri Hari Narayanan",
-      mobile: "9988776655",
-      language: "Tamil",
-      community: "Iyer",
-      city: "Chennai",
-    },
-  ]);
+  const [priests, setPriests] = useState([]);
 
-  const [searchTerm, setSearchTerm] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState(null);
+  const [totalPages, setTotalPage] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+
   const [language, setLanguage] = useState("");
   const [community, setCommunity] = useState("");
   const [city, setCity] = useState("");
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [selectedId, setSelectedId] = useState(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   const fetchPriests = async () => {
-    // const data = await getData("/admin/masters/communities");
-    // console.log("Fetched communities:", data);
-    // setPriests(data);
+    const baseurl = `/admin/priests`;
+    const queryParams = [];
+
+    if (currentPage) {
+      queryParams.push(`page=${currentPage - 1}`);
+    }
+
+      if (debouncedSearch) {
+        queryParams.push(`mobileNumber=${debouncedSearch}`);
+      }
+
+    const finalUrl = `${baseurl}${queryParams.length > 0 ? `?${queryParams.join("&")}` : ""}`;
+
+    const data = await getData(finalUrl);
+    setPriests(data?.content);
+    setTotalPage(data?.totalPages);
   };
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchPriests();
-  }, []);
+  }, [currentPage, debouncedSearch]);
 
   return (
     <div className="font-sans text-gray-800 antialiased min-h-screen bg-gray-50">
@@ -111,7 +75,7 @@ function ManagePriests() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
               type="text"
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search communities..."
               className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:border-orange-500 outline-none w-full sm:w-64"
               placeholder="Search by name..."
@@ -133,36 +97,79 @@ function ManagePriests() {
               {priests.map((priest) => {
                 return (
                   <PriestCard
-                    key={priest.id}
+                    key={priest.priestId}
                     priest={priest}
-                    onClick={() => setSelectedId(priest.id)}
+                    onClick={() => setSelectedId(priest.priestId)}
                   />
                 );
               })}
             </div>
+
+            {/* --- PAGINATION --- */}
+            {totalPages > 1 && (
+              <div className="mt-10 flex items-center justify-center gap-2">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 0}
+                  className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+
+                {[...Array(totalPages)].map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`w-10 h-10 rounded-lg text-sm font-bold transition-colors ${
+                      currentPage === i + 1
+                        ? "bg-orange-600 text-white shadow-md"
+                        : "border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-orange-600"
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+
+                <button
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           <div className="flex flex-col items-center min-h-[70vh] justify-center gap-2 py-10">
-            <Command className="size-18 text-brand-500" />
+            <Users className="size-18 text-brand-500" />
             <h2 className="text-lg font-bold text-gray-900">
-              {" "}
-              No Community Found
+              No Priest Found
             </h2>
             <p className="text-gray-500 text-center">
-              Try adjusting your search or add new Community.
+              Try adjusting your search or add new Priest.
             </p>
             <button
               onClick={() => setIsAddModalOpen(true)}
               className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shrink-0 mt-2"
             >
-              <Plus className="h-4 w-4" /> Add Community
+              <Plus className="h-4 w-4" /> Add Priest
             </button>
           </div>
         )}
       </div>
 
       {isAddModalOpen && (
-        <AddPriestModal onClose={() => setIsAddModalOpen(false)} />
+        <AddPriestModal
+          onClose={() => setIsAddModalOpen(false)}
+          onSuccess={() => {
+            notify("Priest Added Successfully", "success");
+            setIsAddModalOpen(false);
+            fetchPriests();
+          }}
+        />
       )}
     </div>
   );
@@ -192,13 +199,13 @@ const PriestCard = ({ priest, selected, onClick }) => {
           <div className="w-16 h-16 rounded-full bg-slate-200 overflow-hidden shrink-0">
             {priest.avatar ? (
               <img
-                src={priest.avatar}
-                alt={priest.name}
+                src={priest?.avatar}
+                alt={priest?.firstName}
                 className="w-full h-full object-cover"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center font-semibold">
-                {priest.name?.charAt(0)}
+                {priest?.firstName?.charAt(0)?.toUpperCase()}
               </div>
             )}
           </div>
@@ -206,18 +213,18 @@ const PriestCard = ({ priest, selected, onClick }) => {
 
         <div className="flex-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="font-semibold text-lg">{priest.name}</h3>
+            <h3 className="font-semibold text-lg">{priest?.firstName} {priest?.lastName}</h3>
           </div>
 
           <div className="flex items-center gap-2 text-slate-600 mt-2">
             <Phone size={14} />
-            {priest.mobile}
+            {priest?.mobileNumber}
           </div>
 
           <div className="flex flex-wrap gap-2 mt-3">
-            <Badge icon={<Languages size={14} />} label={priest.language} />
+            <Badge icon={<Languages size={14} />} label={priest?.languagesSpoken} />
 
-            <Badge icon={<Users size={14} />} label={priest.community} />
+            <Badge icon={<Users size={14} />} label={priest.trimathastharu} />
 
             <Badge icon={<MapPin size={14} />} label={priest.city} />
           </div>

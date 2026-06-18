@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { X, Save, UserPlus } from "lucide-react";
+import { notify } from "../../../utils/notify";
 
 const EXPERIENCE_OPTIONS = [
   {
@@ -72,7 +73,8 @@ export default function AddPriestModal({ onClose, onSuccess }) {
     email: "",
     addressLine1: "",
     addressLine2: "",
-    place: "",
+    city: "",
+    state: "",
     pincode: "",
     languagesSpoken: "",
     trimathastharu: "",
@@ -135,12 +137,15 @@ export default function AddPriestModal({ onClose, onSuccess }) {
 
     if (!formData.firstName.trim()) {
       errors.firstName = "First name is required";
+      notify("First name is required", "error");
     }
 
     if (!formData.mobileNumber.trim()) {
       errors.mobileNumber = "Mobile number is required";
+      notify("Mobile number is required", "error");
     } else if (!/^[6-9]\d{9}$/.test(formData.mobileNumber)) {
       errors.mobileNumber = "Enter valid 10 digit mobile number";
+      notify("Enter valid 10 digit mobile number", "error");
     }
 
     if (
@@ -148,19 +153,22 @@ export default function AddPriestModal({ onClose, onSuccess }) {
       !/^[6-9]\d{9}$/.test(formData.whatsappNumber)
     ) {
       errors.whatsappNumber = "Enter valid WhatsApp number";
+        notify("Enter valid WhatsApp number", "error");
     }
 
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       errors.email = "Invalid email";
+      notify("Invalid email", "error");
     }
 
-    
     if (formData.aadhaarNumber && !/^\d{12}$/.test(formData.aadhaarNumber)) {
       errors.aadhaarNumber = "Aadhaar must contain 12 digits";
+      notify("Aadhaar must contain 12 digits", "error");
     }
 
     if (formData.pincode && !/^\d{6}$/.test(formData.pincode)) {
       errors.pincode = "Enter valid pincode";
+      notify("Enter valid pincode", "error");
     }
 
     setErrors(errors);
@@ -173,26 +181,28 @@ export default function AddPriestModal({ onClose, onSuccess }) {
     try {
       setLoading(true);
 
-      const response = await fetch("http://localhost:8080/admin/priests", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: localStorage.getItem("token"),
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/admin/priests`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: localStorage.getItem("token"),
+          },
+          body: JSON.stringify({
+            ...formData,
+            age: Number(formData.age),
+            languagesSpoken: languages.join(","),
+          }),
         },
-        body: JSON.stringify({
-          ...formData,
-          age: Number(formData.age),
-          languagesSpoken: languages.join(","),
-        }),
-      });
+      );
 
       if (!response.ok) {
+        const data = await response.json();
+        notify(data.message, "error");
         throw new Error("Failed to create priest");
       }
-
-      const data = await response.json();
-
-      onSuccess?.(data);
+      onSuccess();
       onClose();
 
       setFormData({
@@ -371,7 +381,14 @@ export default function AddPriestModal({ onClose, onSuccess }) {
             <Input
               label="City"
               name="city"
-              value={formData.place}
+              value={formData.city}
+              onChange={handleChange}
+            />
+
+            <Input
+              label="State"
+              name="state"
+              value={formData.state}
               onChange={handleChange}
             />
 

@@ -212,10 +212,15 @@ function PriestAssignBookingDetails({ bookingId, setOpenModal }) {
               <div className="flex flex-col gap-1 items-center">
                 {selectedPriest && (
                   <div>
-                    <p>
-                      Name: {selectedPriest?.name} - {selectedPriest?.community}
+                    <p className="flex gap-2 items-center">
+                      Name: {selectedPriest?.firstName}{" "}
+                      {selectedPriest?.lastName}
+                      <span className="bg-brand-100 px-2 rounded-xl text-sm text-brand-600">
+                        {" "}
+                        {selectedPriest?.trimathastharu}
+                      </span>
                     </p>
-                    <p>Mobile Number: {selectedPriest?.mobile}</p>
+                    <p>Mobile Number: {selectedPriest?.mobileNumber}</p>
                   </div>
                 )}
               </div>
@@ -249,7 +254,6 @@ function PriestAssignBookingDetails({ bookingId, setOpenModal }) {
 
             <button
               disabled={!selectedPriest}
-              
               onClick={() => handleSubmit()}
               className="px-5 py-2.5 rounded-xl bg-brand-500 text-white hover:bg-brand-600 flex items-center gap-2 shrink-0 disabled:opacity-50"
             >

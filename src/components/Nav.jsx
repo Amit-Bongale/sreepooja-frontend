@@ -62,7 +62,7 @@ function Nav() {
             </Link>
 
             <Link
-              to="/"
+              to="/contact"
               className="text-gray-600 hover:text-brand-600 font-medium transition"
             >
               Contact

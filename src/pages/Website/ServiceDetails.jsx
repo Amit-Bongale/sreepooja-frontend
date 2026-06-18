@@ -139,7 +139,7 @@ export default function ServiceDetails() {
                 Divine Benefits
               </h2>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {details?.benefits.split(",").map((benefit, index) => (
+                {details?.benefits.split("-").map((benefit, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
                     <span className="text-gray-700">{benefit}</span>
@@ -242,7 +242,7 @@ export default function ServiceDetails() {
                     </h4>
                     <ul className="space-y-2.5">
                       {currentPackage.includedItems
-                        .split(",")
+                        .split("-")
                         .map((item, idx) => (
                           <li
                             key={idx}

@@ -240,10 +240,12 @@ function Home() {
                 Create an Account
               </button>
             </Link>
+
+            <Link to={"/contact"}>
             <button className="bg-brand-700 hover:bg-brand-600 border border-brand-500 px-8 py-4 rounded-full font-medium text-lg transition-colors flex items-center justify-center gap-2">
               <PhoneCall className="h-5 w-5" />
               Talk to Support
-            </button>
+            </button> </Link>
           </div>
         </div>
       </section>

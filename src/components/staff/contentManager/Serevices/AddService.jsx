@@ -308,7 +308,7 @@ function AddService() {
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-1">
-                    Benefits (Comma separated)
+                    Benefits (` - ` separated)
                   </label>
                   <textarea
                     name="benefits"
@@ -758,7 +758,7 @@ function AddService() {
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-gray-700 mb-1">
-                          Included Items (Comma separated)
+                          Included Items (` - ` separated)
                         </label>
                         <textarea
                           name="includedItems"

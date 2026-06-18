@@ -37,6 +37,7 @@ import ActivePoojas from "../pages/Staff/OperationManager/ActivePoojas.jsx";
 import AllBookings from "../pages/Staff/OperationManager/AllBookings.jsx";
 import CancelledBookings from "../pages/Staff/OperationManager/CancelledBookings.jsx";
 import ManagePriests from "../pages/Staff/OperationManager/ManagePriests.jsx";
+import Contact from "../pages/Website/Contact.jsx";
 
 function CustomRouter() {
   return (
@@ -46,6 +47,7 @@ function CustomRouter() {
         <Route path="/" element={<Home />} />
         <Route path="/services" element={<Services />} />
         <Route path="/services/:slug" element={<ServiceDetails />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
