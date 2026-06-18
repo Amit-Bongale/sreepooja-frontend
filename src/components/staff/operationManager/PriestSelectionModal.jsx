@@ -8,17 +8,17 @@ const PriestSelectionModal = ({ onClose, onSelect }) => {
   const [totalPages, setTotalPage] = useState();
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [selectedCity, setSelectedCity] = useState();
-  const [selectedCommunnity, setSelectedCommunity] = useState();
-  const [selectedLanguage, setSelectedLanguage] = useState();
-
   const [languages, setLanguage] = useState([]);
   const [communities, setCommunity] = useState([]);
   const [cities, setCity] = useState([]);
 
+  const [selectedCity, setSelectedCity] = useState();
+  const [selectedCommunity, setSelectedCommunity] = useState();
+  const [selectedLanguage, setSelectedLanguage] = useState();
+  const [selectedPriest, setSelectedPriest] = useState(null);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [selectedPriest, setSelectedPriest] = useState(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -41,6 +41,18 @@ const PriestSelectionModal = ({ onClose, onSelect }) => {
         queryParams.push(`mobileNumber=${debouncedSearch}`);
       }
 
+      if (selectedCommunity) {
+        queryParams.push(`trimathastharu=${selectedCommunity}`);
+      }
+
+      if (selectedLanguage) {
+        queryParams.push(`languageId=${selectedLanguage}`);
+      }
+
+      if (selectedCity) {
+        queryParams.push(`cityId=${selectedCity}`);
+      }
+
       const finalUrl = `${baseurl}${queryParams.length > 0 ? `?${queryParams.join("&")}` : ""}`;
 
       const data = await getData(finalUrl);
@@ -49,7 +61,13 @@ const PriestSelectionModal = ({ onClose, onSelect }) => {
     };
 
     fetchPriests();
-  }, [currentPage, debouncedSearch]);
+  }, [
+    currentPage,
+    debouncedSearch,
+    selectedCity,
+    selectedCommunity,
+    selectedLanguage,
+  ]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -133,7 +151,7 @@ const PriestSelectionModal = ({ onClose, onSelect }) => {
 
             {/* Community */}
             <select
-              value={selectedCommunnity}
+              value={selectedCommunity}
               onChange={(e) => setSelectedCommunity(e.target.value)}
               className="border  border-gray-300 rounded-lg px-3 py-2.5"
             >
@@ -166,15 +184,15 @@ const PriestSelectionModal = ({ onClose, onSelect }) => {
         {/* Body */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6">
           {/* No Results */}
-          {filteredPriests.length === 0 && (
+          {filteredPriests?.length === 0 && (
             <NoResults onClick={() => clearFilters()} />
           )}
 
           {/* Results */}
-          {filteredPriests.length > 0 && (
+          {filteredPriests?.length > 0 && (
             <>
               <div className="mb-4 text-sm text-slate-500">
-                Showing {currentPage} Page out of {totalPages}
+                Showing {currentPage} out of {totalPages} Page
               </div>
 
               <div className="space-y-4">
@@ -245,17 +263,7 @@ const PriestSelectionModal = ({ onClose, onSelect }) => {
             <button
               disabled={!selectedPriest}
               onClick={() => onSelect(selectedPriest)}
-              className="
-                w-full sm:w-auto
-                bg-orange-500
-                hover:bg-orange-600
-                text-white
-                px-5
-                py-2.5
-                rounded-lg
-                disabled:opacity-50
-                disabled:cursor-not-allowed
-              "
+              className=" w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 rounded-lg disabled:opacity-50 "
             >
               Select Priest
             </button>

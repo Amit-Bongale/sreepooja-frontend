@@ -10,6 +10,8 @@ import {
   CheckCircle2,
   ChevronRight,
   ChevronLeft,
+  Filter,
+  X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
@@ -21,16 +23,35 @@ function ManagePriests() {
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
   const [totalPages, setTotalPage] = useState();
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [language, setLanguage] = useState("");
-  const [community, setCommunity] = useState("");
-  const [city, setCity] = useState("");
+  const [languages, setLanguages] = useState([]);
+  const [communities, setCommunities] = useState([]);
+  const [cities, setCities] = useState([]);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedId, setSelectedId] = useState(null);
+  const [selectedCity, setSelectedCity] = useState();
+  const [selectedCommunity, setSelectedCommunity] = useState();
+  const [selectedLanguage, setSelectedLanguage] = useState();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const languages = await getData("/masters/languages");
+      setLanguages(languages);
+
+      const community = await getData("/masters/communities");
+      setCommunities(community);
+
+      const cities = await getData("/masters/cities");
+      setCities(cities);
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -48,13 +69,26 @@ function ManagePriests() {
       queryParams.push(`page=${currentPage - 1}`);
     }
 
-      if (debouncedSearch) {
-        queryParams.push(`mobileNumber=${debouncedSearch}`);
-      }
+    if (debouncedSearch) {
+      queryParams.push(`mobileNumber=${debouncedSearch}`);
+    }
+
+    if (selectedCommunity) {
+      queryParams.push(`trimathastharu=${selectedCommunity}`);
+    }
+
+    if (selectedLanguage) {
+      queryParams.push(`languageId=${selectedLanguage}`);
+    }
+
+    if (selectedCity) {
+      queryParams.push(`cityId=${selectedCity}`);
+    }
 
     const finalUrl = `${baseurl}${queryParams.length > 0 ? `?${queryParams.join("&")}` : ""}`;
 
     const data = await getData(finalUrl);
+
     setPriests(data?.content);
     setTotalPage(data?.totalPages);
   };
@@ -62,7 +96,24 @@ function ManagePriests() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchPriests();
-  }, [currentPage, debouncedSearch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    currentPage,
+    debouncedSearch,
+    searchQuery,
+    selectedCity,
+    selectedCommunity,
+    selectedLanguage,
+  ]);
+
+  const clearFilter = () => {
+    setSelectedCity("");
+    setShowFilters(false);
+    setSearchQuery("");
+    setDebouncedSearch("");
+    setSelectedLanguage("");
+    setSelectedCommunity("");
+  };
 
   return (
     <div className="font-sans text-gray-800 antialiased min-h-screen bg-gray-50">
@@ -70,18 +121,30 @@ function ManagePriests() {
         <h2 className="text-lg hidden md:flex font-bold text-gray-900 font-serif items-center gap-2">
           Manage Priests
         </h2>
-        <div className="flex gap-3">
+        <div
+          className="flex gap-3 items-center
+        "
+        >
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
               type="text"
               onChange={(e) => setSearchQuery(e.target.value)}
+              value={searchQuery}
               placeholder="Search communities..."
               className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:border-orange-500 outline-none w-full sm:w-64"
               placeholder="Search by name..."
               className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:border-orange-500 outline-none w-full sm:w-64"
             />
           </div>
+
+          <button
+            className="size-5 text-gray-400 mr-4"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <Filter />
+          </button>
+
           <button
             onClick={() => setIsAddModalOpen(true)}
             className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shrink-0"
@@ -90,6 +153,63 @@ function ManagePriests() {
           </button>
         </div>
       </div>
+
+      {showFilters && (
+        <div className="bg-white border-b border-gray-300 p-4 flex flex-wrap gap-4 md:justify-center">
+          <select
+            value={selectedLanguage}
+            onChange={(e) => setSelectedLanguage(e.target.value)}
+            className="border border-gray-300 rounded-lg px-3 py-2.5 w-full md:w-fit"
+          >
+            <option value="">All Languages</option>
+
+            {languages.map((item) => (
+              <option key={item?.id} value={item?.id}>
+                {item?.languageName}
+              </option>
+            ))}
+          </select>
+
+          {/* Community */}
+          <select
+            value={selectedCommunity}
+            onChange={(e) => setSelectedCommunity(e.target.value)}
+            className="border  border-gray-300 rounded-lg px-3 py-2.5 w-full md:w-fit"
+          >
+            <option value="">All Communities</option>
+
+            {communities.map((item) => (
+              <option key={item?.id} value={item?.id}>
+                {item?.communityName}
+              </option>
+            ))}
+          </select>
+
+          {/* City */}
+          <select
+            value={selectedCity}
+            onChange={(e) => setSelectedCity(e.target.value)}
+            className="border border-gray-300 rounded-lg px-3 py-2.5 w-full md:w-fit"
+          >
+            <option value="">All Cities</option>
+
+            {cities.map((item) => (
+              <option key={item?.id} value={item?.id}>
+                {item?.cityName}
+              </option>
+            ))}
+          </select>
+
+          <button
+            className="bg-brand-500 text-white py-2 px-4 rounded-xl shrink-0 flex items-center gap-1"
+            onClick={() => clearFilter()}
+          >
+            <X className="size-5"/> Clear Filter
+          </button>
+          
+        </div>
+      )}
+
       <div className="overflow-x-auto p-4">
         {priests.length > 0 ? (
           <div className="flex-1 overflow-y-auto p-4 sm:p-6">
@@ -145,18 +265,26 @@ function ManagePriests() {
         ) : (
           <div className="flex flex-col items-center min-h-[70vh] justify-center gap-2 py-10">
             <Users className="size-18 text-brand-500" />
-            <h2 className="text-lg font-bold text-gray-900">
-              No Priest Found
-            </h2>
+            <h2 className="text-lg font-bold text-gray-900">No Priest Found</h2>
             <p className="text-gray-500 text-center">
               Try adjusting your search or add new Priest.
             </p>
-            <button
-              onClick={() => setIsAddModalOpen(true)}
-              className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shrink-0 mt-2"
-            >
-              <Plus className="h-4 w-4" /> Add Priest
-            </button>
+
+            <div className=" md:flex gap-4 flex-wrap">
+              <button
+                onClick={() => setIsAddModalOpen(true)}
+                className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shrink-0 mt-2"
+              >
+                <Plus className="h-4 w-4" /> Add Priest
+              </button>
+
+              <button
+                onClick={() => clearFilter()}
+                className="border border-orange-600 hover:bg-orange-100 text-brand-500 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shrink-0 mt-2"
+              >
+                <X className="h-4 w-4" /> Clear Filter
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -180,14 +308,8 @@ export default ManagePriests;
 const PriestCard = ({ priest, selected, onClick }) => {
   return (
     <div
-      className={`
-        w-full
-        text-left
-        rounded-xl
-        border 
-        transition-all
-        ${
-          selected
+      className={`w-full text-left rounded-xl border transition-all
+        ${  selected
             ? "border-orange-500 bg-orange-50 shadow-md ring-2 ring-orange-200"
             : "border-slate-200 hover:border-orange-300 hover:bg-orange-50/40"
         }
@@ -213,7 +335,9 @@ const PriestCard = ({ priest, selected, onClick }) => {
 
         <div className="flex-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="font-semibold text-lg">{priest?.firstName} {priest?.lastName}</h3>
+            <h3 className="font-semibold text-lg">
+              {priest?.firstName} {priest?.lastName}
+            </h3>
           </div>
 
           <div className="flex items-center gap-2 text-slate-600 mt-2">
@@ -222,7 +346,10 @@ const PriestCard = ({ priest, selected, onClick }) => {
           </div>
 
           <div className="flex flex-wrap gap-2 mt-3">
-            <Badge icon={<Languages size={14} />} label={priest?.languagesSpoken} />
+            <Badge
+              icon={<Languages size={14} />}
+              label={priest?.languagesSpoken}
+            />
 
             <Badge icon={<Users size={14} />} label={priest.trimathastharu} />
 
