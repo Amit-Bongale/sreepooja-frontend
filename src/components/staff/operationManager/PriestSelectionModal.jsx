@@ -30,7 +30,7 @@ const PriestSelectionModal = ({ onClose, onSelect }) => {
 
   useEffect(() => {
     const fetchPriests = async () => {
-      const baseurl = `/admin/priests`;
+      const baseurl = `/admin/priests?active=true`;
       const queryParams = [];
 
       if (currentPage) {
@@ -42,7 +42,7 @@ const PriestSelectionModal = ({ onClose, onSelect }) => {
       }
 
       if (selectedCommunity) {
-        queryParams.push(`trimathastharu=${selectedCommunity}`);
+        queryParams.push(`communityId=${selectedCommunity}`);
       }
 
       if (selectedLanguage) {
@@ -53,7 +53,7 @@ const PriestSelectionModal = ({ onClose, onSelect }) => {
         queryParams.push(`cityId=${selectedCity}`);
       }
 
-      const finalUrl = `${baseurl}${queryParams.length > 0 ? `?${queryParams.join("&")}` : ""}`;
+      const finalUrl = `${baseurl}${queryParams.length > 0 ? `&${queryParams.join("&")}` : ""}`;
 
       const data = await getData(finalUrl);
       setFilteredPriests(data?.content);

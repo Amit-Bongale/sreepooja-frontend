@@ -12,6 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
 import BookingDetails from "../../../components/staff/operationManager/BookingDetails";
+import { formatDate } from "../../../utils/formatter";
 
 function AllBookings() {
   const [selectedService, setSelectedService] = useState(null);
@@ -222,12 +223,12 @@ function AllBookings() {
                       <div className="space-y-2">
                         <div className="flex items-center gap-2 text-gray-600">
                           <Calendar className="size-4 shrink-0" />
-                          <span>{booking?.poojaDate}</span>
+                          <span>{formatDate( booking?.poojaDate)}</span>
                         </div>
 
                         <div className="flex items-center gap-2 text-gray-600">
                           <Clock className="size-4 shrink-0" />
-                          <span>{booking?.timing}</span>
+                          <span>{booking?.preferredTimeSlot}</span>
                         </div>
                       </div>
 
@@ -254,7 +255,7 @@ function AllBookings() {
                   <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between gap-3">
                     <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 text-xs font-medium">
                       <CircleAlert className="size-3" />
-                      Unassigned
+                      {booking?.bookingStatus}
                     </span>
 
                     <button
@@ -314,10 +315,14 @@ function AllBookings() {
       </main>
 
       {
-        selectedService && <BookingDetails bookingId={selectedService} setOpenModal={setSelectedService}/>
+        selectedService && <BookingDetails 
+        bookingId={selectedService}
+        setOpenModal={setSelectedService}/>
       }
     </div>
   );
 }
 
 export default AllBookings;
+
+

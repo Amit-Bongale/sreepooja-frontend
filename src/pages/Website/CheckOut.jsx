@@ -15,12 +15,11 @@ import {
 import { startPayment } from "../../utils/Payment";
 import Nav from "../../components/Nav";
 import { getData } from "../../api/Api";
-import { useNavigate, useParams } from "react-router";
+import {  useNavigate, useParams } from "react-router";
 import Select from "react-select";
 import { useSelector } from "react-redux";
 import { notify } from "../../Utils/notify";
 
-// const LOCATIONS = ["Bengaluru Urban", "Bengaluru Rural", "Mysuru"];
 
 export default function CheckOut() {
   const { id } = useParams();
@@ -79,6 +78,7 @@ export default function CheckOut() {
     pincodeId: "",
     specialInstructions: "",
     paymentOption: "ADVANCE",
+    paymentType: ""
   });
 
   const selectStyles = {
@@ -97,6 +97,7 @@ export default function CheckOut() {
 
   const handleSubmit = async () => {
     setLoading(true);
+    console.log(formData);
     try {
       const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/bookings`, {
         method: "POST",
@@ -104,7 +105,7 @@ export default function CheckOut() {
           "Content-Type": "application/json",
           Authorization: localStorage.getItem("token"),
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({...formData , packageType: serviceDetails?.packageType}),
       });
       const data = await res.json();
 
@@ -112,7 +113,8 @@ export default function CheckOut() {
         notify(data.message, "error");
       }
 
-      await startPayment(data.bookingId);
+      await startPayment(data.bookingId , data.packageType);
+
       notify("Booking Successfull" , "success")
       navigate("/user/bookings");
     } catch (error) {
@@ -217,7 +219,7 @@ export default function CheckOut() {
                     >
                       <option value={"any"}> Any Language</option>
                       {LANGUAGES?.map((lang) => (
-                        <option key={lang.id} value={lang.id}>
+                        <option key={lang.id} value={lang.languageName}>
                           {lang.languageName}
                         </option>
                       ))}
@@ -242,7 +244,7 @@ export default function CheckOut() {
                     >
                       <option value={"any"}> Any Community</option>
                       {COMMUNITY?.map((community) => (
-                        <option key={community.id} value={community.id}>
+                        <option key={community.id} value={community.communityName}>
                           {community.communityName}
                         </option>
                       ))}

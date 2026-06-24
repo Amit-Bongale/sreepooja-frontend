@@ -8,13 +8,17 @@ export const formatDate = (dateString) => {
 };
 
 export const formatTime = (time) => {
-  const [hours, minutes] = time.split(':').map(Number);
+  if (!time) return "";
 
-  const period = hours >= 12 ? 'PM' : 'AM';
-  const formattedHours = hours % 12 || 12;
+  const [hours, minutes] = time.split(":");
 
-  return `${formattedHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+  const hour = parseInt(hours, 10);
+  const period = hour >= 12 ? "PM" : "AM";
+  const formattedHour = hour % 12 || 12;
+
+  return `${formattedHour}:${minutes} ${period}`;
 };
+
 
 export const formatCurrency = (amount) => {
   return new Intl.NumberFormat("en-IN", {

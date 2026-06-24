@@ -11,6 +11,8 @@ import {
 
 import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
+import { formatDate, formatTime } from "../../../utils/formatter";
+import BookingDetails from "../../../components/staff/operationManager/BookingDetails";
 
 function ActivePoojas() {
   const [selectedService, setSelectedService] = useState(null);
@@ -31,7 +33,7 @@ function ActivePoojas() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const baseurl = `/admin/bookings?bookingStatus=PRIEST_ASSIGNED&paymentStatus=PAID`;
+      const baseurl = `/admin/bookings?bookingStatus=CONFIRMED&paymentStatus=PAID`;
       const queryParams = [];
 
       if (currentPage) {
@@ -103,12 +105,12 @@ function ActivePoojas() {
                       <div className="space-y-2">
                         <div className="flex items-center gap-2 text-gray-600">
                           <Calendar className="size-4 shrink-0" />
-                          <span>{booking?.poojaDate}</span>
+                          <span>{formatDate( booking?.poojaDate)}</span>
                         </div>
 
                         <div className="flex items-center gap-2 text-gray-600">
                           <Clock className="size-4 shrink-0" />
-                          <span>{booking?.timing}</span>
+                          <span>{formatTime(booking?.poojaTime)}</span>
                         </div>
                       </div>
 
@@ -133,9 +135,9 @@ function ActivePoojas() {
 
                   {/* Right Actions */}
                   <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between gap-3">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 text-xs font-medium">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-green-50 text-green-700 border border-green-200 px-3 py-1 text-xs font-medium">
                       <CircleAlert className="size-3" />
-                      Unassigned
+                      {booking?.bookingStatus}
                     </span>
 
                     <button
@@ -193,6 +195,15 @@ function ActivePoojas() {
           </div>
         )}
       </main>
+
+
+      
+      {selectedService && (
+        <BookingDetails
+          bookingId={selectedService}
+          setOpenModal={setSelectedService}
+        />
+      )}
     </div>
   );
 }

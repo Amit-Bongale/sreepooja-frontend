@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X, Save, UserPlus } from "lucide-react";
 import { notify } from "../../../utils/notify";
+import { getData } from "../../../api/Api";
 
 const EXPERIENCE_OPTIONS = [
   {
@@ -21,29 +22,6 @@ const EXPERIENCE_OPTIONS = [
   },
 ];
 
-const TRIMATHASTHARU_OPTIONS = [
-  {
-    label: "Smartha",
-    value: "SMARTHA",
-  },
-  {
-    label: "Vaishnava",
-    value: "VAISHNAVA",
-  },
-  {
-    label: "Sri Vaishnava",
-    value: "SRI_VAISHNAVA",
-  },
-  {
-    label: "Veerashaiva Lingayatha",
-    value: "VEERASHAIVA_LINGAYATHA",
-  },
-  {
-    label: "Arya Vasya",
-    value: "ARYA_VASYA",
-  },
-];
-
 const LANGUAGE_OPTIONS = [
   "Kannada",
   "Sanskrit",
@@ -58,12 +36,21 @@ export default function AddPriestModal({ onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [sameWhatsapp, setSameWhatsapp] = useState(true);
   const [languages, setLanguages] = useState([]);
+  const [communities , setCommunities] = useState([]);
+
+  useEffect( () =>  {
+    const fetchData = async () => {
+    const community = await getData("/masters/communities");
+      setCommunities(community);}
+      fetchData();
+  },[])
+
   const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    age: "",
+    dob: "",
     gothra: "",
     pravara: "",
     nativePlace: "",
@@ -77,7 +64,7 @@ export default function AddPriestModal({ onClose, onSuccess }) {
     state: "",
     pincode: "",
     languagesSpoken: "",
-    trimathastharu: "",
+    communityId: "",
     experience: "",
     referredBy: "",
   });
@@ -153,7 +140,7 @@ export default function AddPriestModal({ onClose, onSuccess }) {
       !/^[6-9]\d{9}$/.test(formData.whatsappNumber)
     ) {
       errors.whatsappNumber = "Enter valid WhatsApp number";
-        notify("Enter valid WhatsApp number", "error");
+      notify("Enter valid WhatsApp number", "error");
     }
 
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -278,10 +265,10 @@ export default function AddPriestModal({ onClose, onSuccess }) {
             />
 
             <Input
-              label="Age"
-              name="age"
-              type="number"
-              value={formData.age}
+              label="Date of Birth"
+              name="dob"
+              type="date"
+              value={formData.dob}
               onChange={handleChange}
               required
             />
@@ -346,13 +333,21 @@ export default function AddPriestModal({ onClose, onSuccess }) {
               onChange={handleChange}
             />
 
-            <Select
-              label="Trimathastharu"
-              name="trimathastharu"
-              value={formData.trimathastharu}
-              onChange={handleChange}
-              options={TRIMATHASTHARU_OPTIONS}
-            />
+            <div>
+              <label className="text-sm font-medium mb-1 block">Trimathastharu</label>
+              <select
+                className=" w-full border border-gray-300 rounded-lg px-3 py-2.5  focus:border-orange-500  outline-none"
+                name="communityId"
+                onChange={handleChange}
+              >
+                <option value="">Select</option>
+                {communities.map((option, idx) => (
+                  <option key={idx} value={option.id}>
+                    {option.communityName}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             <Select
               label="Experience"

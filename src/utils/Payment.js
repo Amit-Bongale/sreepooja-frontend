@@ -1,15 +1,22 @@
 import { notify } from "./notify";
 
-export const startPayment = (applicationId) => {
+export const startPayment = (bookingId , paymentOption) => {
   return new Promise((resolve, reject) => {
     // Create order on the server
+    let data = {
+      "bookingId" : bookingId,
+      "paymentOption": paymentOption
+    }
+
     fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/payments/create-order/${applicationId}`,
+      `${import.meta.env.VITE_API_BASE_URL}/payments/create-order`,
       {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: localStorage.getItem("token"),
         },
+        body: JSON.stringify(data)
       },
     )
       .then(async (res) => {

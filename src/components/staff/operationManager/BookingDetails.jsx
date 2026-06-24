@@ -7,16 +7,25 @@ import {
   Package,
   Calendar,
   Command,
+  Upload,
   Notebook,
-  Clock,
   IndianRupee,
+  Clock,
+  Check,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
-import { formatDate } from "../../../utils/formatter";
+import PriestSelectionModal from "./PriestSelectionModal";
+import { formatDate, formatTime } from "../../../utils/formatter";
+import { notify } from "../../../Utils/notify";
 
-function BookingDetails({ bookingId, setOpenModal }) {
+function BookingDetails({ bookingId, setOpenModal, onSucess }) {
   const [data, setData] = useState();
+  const [openPriestModal, setOpenPriestModal] = useState(false);
+  const [selectedPriest, setSelectedPriest] = useState();
+  const [confirmDate, setConfirmDate] = useState();
+  const [confirmTime, setConfirmTime] = useState();
+
   useEffect(() => {
     const fetchData = async () => {
       const data = await getData(`/admin/bookings/${bookingId}`);
@@ -25,6 +34,62 @@ function BookingDetails({ bookingId, setOpenModal }) {
     fetchData();
   }, [bookingId]);
 
+  const handleSubmit = async () => {
+    let data = {
+      confirmedDate: confirmDate,
+      confirmedTime: confirmTime,
+      priestId: selectedPriest?.priestId,
+    };
+
+    const baseurl =
+      data?.bookingstatus == "CONFIRMED"
+        ? `admin/bookings/${bookingId}/reassign`
+        : `admin/bookings/${bookingId}/confirm`;
+
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/${baseurl}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const response = await res.json();
+      notify(response.message, "error");
+      return;
+    }
+
+    notify("Priest Assigned Successfully", "success");
+    onSucess();
+    setOpenModal(false);
+  };
+
+  const handleCancelService = async () => {
+    const res = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/admin/bookings/${bookingId}/cancel`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: localStorage.getItem("token"),
+        },
+        body: JSON.stringify(data),
+      },
+    );
+
+    if (!res.ok) {
+      const response = await res.json();
+      notify(response.message, "error");
+      return;
+    }
+
+    notify("Booking Cancelled", "success");
+    onSucess();
+    setOpenModal(false);
+  };
+
   return (
     <div className="fixed inset-0 z-60 bg-black/30 backdrop-blur-xs flex items-center justify-center p-4">
       <div className="w-full max-w-4xl max-h-[95vh] bg-white rounded-2xl overflow-y-auto ">
@@ -32,9 +97,9 @@ function BookingDetails({ bookingId, setOpenModal }) {
         <div className="p-6 border-b border-gray-300 flex flex-wrap justify-between items-center">
           <div>
             <p className="text-gray-500 mt-1">
-              #{data?.bookingNumber} - {formatDate(data?.bookedAt)}
+              Booking No: #{data?.bookingNumber} - {formatDate(data?.bookedAt)}
             </p>
-            <h2 className="text-2xl font-bold mt-1">{data?.serviceName}</h2>
+            <h2 className="text-2xl font-bold">{data?.serviceName}</h2>
 
             <div className="flex justify-between border border-brand-300 bg-brand-100 rounded-xl px-3 py-2 items-center mt-1">
               <div className="flex gap-1 text-brand-600">
@@ -42,6 +107,7 @@ function BookingDetails({ bookingId, setOpenModal }) {
                 Package:
               </div>
               <span className="font-bold text-bold ml-1">
+                {" "}
                 {data?.packageType}
               </span>
             </div>
@@ -60,7 +126,7 @@ function BookingDetails({ bookingId, setOpenModal }) {
             <div className="flex gap-1 flex-col items-center bg-orange-100 justify-between border border-brand-400 rounded-xl p-4">
               <div className="flex gap-2 text-brand-700">
                 <Calendar size={18} />
-                Date & Time
+                Preferd Date & Time
               </div>
               <span className="font-bold">
                 {formatDate(data?.preferredDate)} - {data?.preferredTimeSlot}
@@ -132,16 +198,14 @@ function BookingDetails({ bookingId, setOpenModal }) {
                   <Notebook size={18} />
                   Special Instructions
                 </div>
-                <span className="font-medium text-black">
+                <span className="font-semibold text-black">
                   {data?.specialInstructions}{" "}
                 </span>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="w-full p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          {data?.bookingStatus == "CONFIRMED" && (
             <div className="space-y-2">
               <h3 className="font-semibold text-gray-400 uppercase text-sm mb-4">
                 Assignment
@@ -162,7 +226,7 @@ function BookingDetails({ bookingId, setOpenModal }) {
                 <p>
                   {data?.confirmedTime == null
                     ? "Not Confirmed"
-                    : data?.confirmedTime}
+                    : formatTime(data?.confirmedTime)}
                 </p>
               </div>
 
@@ -176,68 +240,153 @@ function BookingDetails({ bookingId, setOpenModal }) {
                 </p>
               </div>
             </div>
+          )}
 
-            <div className="space-y-2">
-              <h3 className="font-semibold text-gray-400 uppercase text-sm mb-4">
-                Payment Summary
-              </h3>
+          <div className="space-y-2">
+            <h3 className="font-semibold text-gray-400 uppercase text-sm mb-4">
+              Payment Summary
+            </h3>
 
-              <div className="flex gap-3 text-brand-500">
-                Total Amount:
-                <p className="flex items-center font-semibold ">
-                  <IndianRupee className="size-3.5" />
-                  {data?.totalAmount}
-                </p>
-              </div>
+            <div className="flex gap-3 text-brand-500">
+              Total Amount:
+              <p className="flex items-center font-semibold ">
+                <IndianRupee className="size-3.5" />
+                {data?.totalAmount}
+              </p>
+            </div>
 
-              <div className="flex gap-3">
-                Advance Amount:
-                <p className="flex items-center ">
-                  <IndianRupee className="size-3.5" />
-                  {data?.advanceAmount}
-                </p>
-              </div>
+            <div className="flex gap-3">
+              Advance Amount:
+              <p className="flex items-center ">
+                <IndianRupee className="size-3.5" />
+                {data?.advanceAmount}
+              </p>
+            </div>
 
-              <div className="flex gap-3">
-                Balance Amount:
-                <p className="flex items-center ">
-                  <IndianRupee className="size-3.5" />
-                  {data?.balanceAmount}
-                </p>
-              </div>
+            <div className="flex gap-3">
+              Balance Amount:
+              <p className="flex items-center ">
+                <IndianRupee className="size-3.5" />
+                {data?.balanceAmount}
+              </p>
             </div>
           </div>
         </div>
 
+        {!["COMPLETED", "CANCELLED"].includes(data?.bookingStatus) && (
+          <div className="w-full p-6">
+            <h3 className="font-semibold text-gray-400 uppercase text-sm mb-4">
+              Assignment
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 items-end">
+              <div className="flex flex-col gap-1">
+                <label htmlFor="confirmDate">Confirm Date</label>
+                <input
+                  id="confirmDate"
+                  type="date"
+                  defaultValue={data?.confirmedDate}
+                  onChange={(e) => setConfirmDate(e.target.value)}
+                  className="border border-gray-300 p-3 bg-gray-100 rounded-xl w-full"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label htmlFor="confirmDate">Confirm Time</label>
+                <input
+                  id="confirmDate"
+                  type="time"
+                  defaultValue={data?.confirmedTime}
+                  onChange={(e) => setConfirmTime(e.target.value)}
+                  className="border-gray-300 border p-3 bg-gray-100 rounded-xl w-full"
+                />
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <h3 className="font-semibold text-gray-400 uppercase text-sm mb-1">
+                Priest Details
+              </h3>
+
+              <div className="flex md:flex-row flex-col justify-between gap-2">
+                <div className="flex flex-col gap-1 items-center">
+                  {selectedPriest && (
+                    <div>
+                      <p className="flex gap-2 items-center">
+                        Name: {selectedPriest?.firstName}{" "}
+                        {selectedPriest?.lastName}
+                        <span className="bg-brand-100 px-2 rounded-xl text-sm text-brand-600">
+                          {" "}
+                          {selectedPriest?.communityName}
+                        </span>
+                      </p>
+                      <p>Mobile Number: {selectedPriest?.mobileNumber}</p>
+                    </div>
+                  )}
+                </div>
+                <button
+                  onClick={() => setOpenPriestModal(true)}
+                  className="border border-brand-500 px-4 py-2 rounded-xl text-brand-500"
+                >
+                  {selectedPriest ? "Change Priest" : "Choose priest"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Footer */}
-        <div className="border-t border-gray-300 p-6 flex justify-between gap-3 flex-wrap ">
-          {data?.bookingStatus != "COMPLETED" && (
+        <div
+          className={`border-t border-gray-300 p-6 flex justify-between gap-3 flex-wrap ${!["COMPLETED", "CANCELLED"].includes(data?.bookingStatus) ? "justify-between" : "justify-end"}`}
+        >
+          {!["COMPLETED", "CANCELLED"].includes(data?.bookingStatus) && (
             <button
-              // onClick={onCancelService}
+              onClick={handleCancelService}
               className="px-5 py-2.5 rounded-xl border border-red-300 text-red-600 hover:bg-red-600 hover:text-white transition-all shrink-0"
             >
               Cancel Service
             </button>
           )}
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
-              // onClick={onCancelService}
               className="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-600 hover:bg-gray-800 hover:text-white transition-all flex items-center gap-1 shrink-0"
               onClick={() => setOpenModal(null)}
             >
               <X className="size-4" /> Close
             </button>
 
-            {/* <button
-              // onClick={onAssignPriest}
-              className="px-5 py-2.5 rounded-xl bg-brand-500 text-white hover:bg-brand-600 flex items-center gap-2 shrink-0"
+            <button
+              disabled={!selectedPriest}
+              onClick={() => handleSubmit()}
+              className="px-5 py-2.5 rounded-xl bg-brand-500 text-white hover:bg-brand-600 flex items-center gap-2 shrink-0 disabled:opacity-50"
             >
               <Upload className="size-4" /> Submit
-            </button> */}
+            </button>
+
+            {
+              data?.bookingStatus == "CONFIRMED" && (
+              <button
+              // onClick={() => handleComplete()}
+              className="px-5 py-2.5 rounded-xl bg-green-500 text-white hover:bg-green-600 flex items-center gap-2 shrink-0 disabled:opacity-50"
+            >
+              <Check className="size-4" /> Mark as Complete
+            </button>
+              )
+            }
           </div>
         </div>
       </div>
+
+      {openPriestModal && (
+        <PriestSelectionModal
+          onClose={() => setOpenPriestModal(false)}
+          onSelect={(priest) => {
+            setSelectedPriest(priest);
+            setOpenPriestModal(false);
+          }}
+        />
+      )}
     </div>
   );
 }

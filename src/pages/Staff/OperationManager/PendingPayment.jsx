@@ -12,6 +12,8 @@ import {
 
 import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
+import BookingDetails from "../../../components/staff/operationManager/BookingDetails2";
+import { formatDate, formatTime } from "../../../utils/formatter";
 
 function PendingPayment() {
   const [selectedService, setSelectedService] = useState(null);
@@ -32,7 +34,7 @@ function PendingPayment() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const baseurl = `/admin/bookings?bookingStatus=PRIEST_ASSIGNED&paymentStatus=PARTIALLY_PAID`;
+      const baseurl = `/admin/bookings?bookingStatusCONFIRMED&paymentStatus=PARTIALLY_PAID`;
       const queryParams = [];
 
       if (currentPage) {
@@ -104,12 +106,16 @@ function PendingPayment() {
                       <div className="space-y-2">
                         <div className="flex items-center gap-2 text-gray-600">
                           <Calendar className="size-4 shrink-0" />
-                          <span>{booking?.poojaDate}</span>
+                          <span>{formatDate(booking?.poojaDate)}</span>
                         </div>
 
                         <div className="flex items-center gap-2 text-gray-600">
                           <Clock className="size-4 shrink-0" />
-                          <span>{booking?.preferredTimeSlot}</span>
+                          <span>
+                            {booking?.poojaTime
+                              ? formatTime(booking?.poojaTime)
+                              : "Not yet Assigned"}
+                          </span>
                         </div>
                       </div>
 
@@ -135,11 +141,11 @@ function PendingPayment() {
                   {/* Right Actions */}
                   <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between gap-3">
                     <span className="inline-flex items-center rounded-full gap-1 bg-amber-50 text-amber-700 border border-amber-200 px-3 py-2 text-xs font-medium">
-                      <CircleAlert className="size-3" /> 
+                      <CircleAlert className="size-3" />
                       <span className="flex items-center shrink-0">
-                        Due: {" "} <IndianRupee className="size-3"/>{booking?.balanceAmount}
+                        Due: <IndianRupee className="size-3" />
+                        {booking?.balanceAmount}
                       </span>
-                     
                     </span>
 
                     <button
@@ -197,6 +203,13 @@ function PendingPayment() {
           </div>
         )}
       </main>
+
+      {selectedService && (
+        <BookingDetails
+          bookingId={selectedService}
+          setOpenModal={setSelectedService}
+        />
+      )}
     </div>
   );
 }

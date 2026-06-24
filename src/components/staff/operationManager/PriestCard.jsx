@@ -33,8 +33,7 @@ export const PriestCard = ({ priest, selected, onClick }) => {
 
         <div className="flex-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="font-semibold text-lg">{priest.firstName}</h3>
-
+            <h3 className="font-semibold text-lg">{priest.firstName} {priest?.lastName}</h3>
             {selected && <CheckCircle2 size={18} className="text-orange-500" />}
           </div>
 
@@ -46,7 +45,7 @@ export const PriestCard = ({ priest, selected, onClick }) => {
           <div className="flex flex-wrap gap-2 mt-3">
             <Badge icon={<Languages size={14} />} label={priest.lastName} />
 
-            <Badge icon={<Users size={14} />} label={priest.trimathastharu} />
+            <Badge icon={<Users size={14} />} label={priest.communityName} />
 
             <Badge icon={<MapPin size={14} />} label={priest.city} />
           </div>

@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
+import BookingDetails from "../../../components/staff/operationManager/BookingDetails";
+import { formatTime } from "../../../utils/formatter";
 
 function CancelledBookings() {
   const [selectedService, setSelectedService] = useState(null);
@@ -107,7 +109,7 @@ function CancelledBookings() {
 
                         <div className="flex items-center gap-2 text-gray-600">
                           <Clock className="size-4 shrink-0" />
-                          <span>{booking?.timing}</span>
+                          <span>{booking.poojaTime ? formatTime(booking?.poojaTime) : booking?.preferredTimeSlot}</span> 
                         </div>
                       </div>
 
@@ -132,9 +134,9 @@ function CancelledBookings() {
 
                   {/* Right Actions */}
                   <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between gap-3">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 text-xs font-medium">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-red-50 text-red-700 border border-red-200 px-3 py-1 text-xs font-medium">
                       <CircleAlert className="size-3" />
-                      Unassigned
+                      Cancled
                     </span>
 
                     <button
@@ -191,9 +193,17 @@ function CancelledBookings() {
             <h3 className="text-xl text-gray-500"> No Bookings Found </h3>
           </div>
         )}
+
+        {selectedService && (
+          <BookingDetails
+            bookingId={selectedService}
+            setOpenModal={setSelectedService}
+          />
+        )}
+
       </main>
     </div>
   );
 }
 
-export default CancelledBookings
+export default CancelledBookings;

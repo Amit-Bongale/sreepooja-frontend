@@ -8,10 +8,11 @@ import {
   Search,
   User,
 } from "lucide-react";
-import PriestAssignBookingDetails from "../../../components/staff/operationManager/PriestAssignBookingDetails";
+
 import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
 import { formatDate } from "../../../utils/formatter";
+import BookingDetails from "../../../components/staff/operationManager/BookingDetails";
 
 function LatestBookings() {
   const [selectedService, setSelectedService] = useState(null);
@@ -51,6 +52,13 @@ function LatestBookings() {
     };
     fetchData();
   }, [currentPage, debouncedSearch]);
+
+  const fetchLatestData = async () => {
+    const baseurl = `/admin/bookings?bookingStatus=PAYMENT_RECEIVED`;
+    const data = await getData(baseurl);
+    setLatestBookings(data?.content);
+    setTotalPage(data?.totalPages);
+  };
 
   return (
     <div className="text-gray-800 antialiased min-h-screen bg-gray-50">
@@ -196,9 +204,10 @@ function LatestBookings() {
       </main>
 
       {selectedService && (
-        <PriestAssignBookingDetails
+        <BookingDetails
           bookingId={selectedService}
           setOpenModal={setSelectedService}
+          onSucess={() => fetchLatestData()}
         />
       )}
     </div>

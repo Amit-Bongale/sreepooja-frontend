@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
 import AddPriestModal from "../../../components/staff/operationManager/AddPriestModal";
 import { notify } from "../../../utils/notify";
+import ViewPriestDetails from "../../../components/staff/operationManager/ViewPriestDetails";
 
 function ManagePriests() {
   const [priests, setPriests] = useState([]);
@@ -204,9 +205,8 @@ function ManagePriests() {
             className="bg-brand-500 text-white py-2 px-4 rounded-xl shrink-0 flex items-center gap-1"
             onClick={() => clearFilter()}
           >
-            <X className="size-5"/> Clear Filter
+            <X className="size-5" /> Clear Filter
           </button>
-          
         </div>
       )}
 
@@ -299,6 +299,13 @@ function ManagePriests() {
           }}
         />
       )}
+
+      {selectedId && (
+        <ViewPriestDetails
+          onClose={() => setSelectedId(null)}
+          priestId={selectedId}
+        />
+      )}
     </div>
   );
 }
@@ -309,7 +316,8 @@ const PriestCard = ({ priest, selected, onClick }) => {
   return (
     <div
       className={`w-full text-left rounded-xl border transition-all
-        ${  selected
+        ${
+          selected
             ? "border-orange-500 bg-orange-50 shadow-md ring-2 ring-orange-200"
             : "border-slate-200 hover:border-orange-300 hover:bg-orange-50/40"
         }
@@ -351,14 +359,17 @@ const PriestCard = ({ priest, selected, onClick }) => {
               label={priest?.languagesSpoken}
             />
 
-            <Badge icon={<Users size={14} />} label={priest.trimathastharu} />
+            <Badge icon={<Users size={14} />} label={priest.communityName} />
 
             <Badge icon={<MapPin size={14} />} label={priest.city} />
           </div>
         </div>
 
         <div className="self-start sm:self-center">
-          <button className="bg-brand-500 text-white px-4 py-2 rounded-md">
+          <button
+            onClick={onClick}
+            className="bg-brand-500 text-white px-4 py-2 rounded-md"
+          >
             View Details
           </button>
         </div>
