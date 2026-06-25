@@ -238,10 +238,10 @@ export default function ServiceDetails() {
                 {currentPackage?.includedItems && (
                   <div className="bg-gray-50 rounded-xl p-4 mb-6 border border-gray-100 flex-1">
                     <h4 className="font-bold text-gray-900 text-sm mb-3">
-                      What's included in {currentPackage.packageType}:
+                      What's included in {currentPackage?.packageType}:
                     </h4>
                     <ul className="space-y-2.5">
-                      {currentPackage.includedItems
+                      {currentPackage?.includedItems
                         .split("-")
                         .map((item, idx) => (
                           <li
@@ -268,13 +268,13 @@ export default function ServiceDetails() {
                       {!currentPackage?.isCustom && (
                         <IndianRupee className="h-6 w-6" />
                       )}
-                      {currentPackage == "custom"
+                      {selectedPackage == "custom"
                         ? "Varies"
                         : currentPackage?.price}
                     </span>
                   </div>
 
-                  {currentPackage == "custom" ? (
+                  {selectedPackage == "custom" ? (
                     <button className="w-full bg-gray-900 hover:bg-black text-white font-bold text-lg py-4 rounded-xl shadow-lg transition-all flex justify-center items-center gap-2">
                       <MessageCircle className="h-5 w-5" />
                       Contact Support

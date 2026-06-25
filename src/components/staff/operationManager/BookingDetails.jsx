@@ -25,11 +25,17 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
   const [selectedPriest, setSelectedPriest] = useState();
   const [confirmDate, setConfirmDate] = useState();
   const [confirmTime, setConfirmTime] = useState();
+  const [minDate, setMinDate] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
       const data = await getData(`/admin/bookings/${bookingId}`);
       setData(data);
+
+      const bookingDate = new Date(data?.bookedAt);
+      bookingDate.setDate(bookingDate.getDate() + 4);
+      const minDate = bookingDate.toISOString().split("T")[0];
+      setMinDate(minDate);
     };
     fetchData();
   }, [bookingId]);
@@ -66,9 +72,9 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
     setOpenModal(false);
   };
 
-  const handleCancelService = async () => {
+  const handleAction = async (action) => {
     const res = await fetch(
-      `${import.meta.env.VITE_API_BASE_URL}/admin/bookings/${bookingId}/cancel`,
+      `${import.meta.env.VITE_API_BASE_URL}/admin/bookings/${bookingId}/${action}`,
       {
         method: "PUT",
         headers: {
@@ -85,10 +91,17 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
       return;
     }
 
-    notify("Booking Cancelled", "success");
+    if (action == "complete") {
+      notify("Booking Completed", "success");
+    } else {
+      notify("Booking Cancelled", "success");
+    }
+
     onSucess();
     setOpenModal(false);
   };
+
+  
 
   return (
     <div className="fixed inset-0 z-60 bg-black/30 backdrop-blur-xs flex items-center justify-center p-4">
@@ -255,21 +268,25 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
               </p>
             </div>
 
-            <div className="flex gap-3">
-              Advance Amount:
-              <p className="flex items-center ">
-                <IndianRupee className="size-3.5" />
-                {data?.advanceAmount}
-              </p>
-            </div>
+            {data?.advanceAmount && (
+              <>
+                <div className="flex gap-3">
+                  Advance Amount:
+                  <p className="flex items-center ">
+                    <IndianRupee className="size-3.5" />
+                    {data?.advanceAmount}
+                  </p>
+                </div>
 
-            <div className="flex gap-3">
-              Balance Amount:
-              <p className="flex items-center ">
-                <IndianRupee className="size-3.5" />
-                {data?.balanceAmount}
-              </p>
-            </div>
+                <div className="flex gap-3">
+                  Balance Amount:
+                  <p className="flex items-center ">
+                    <IndianRupee className="size-3.5" />
+                    {data?.balanceAmount}
+                  </p>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
@@ -285,6 +302,7 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
                 <input
                   id="confirmDate"
                   type="date"
+                  min={minDate}
                   defaultValue={data?.confirmedDate}
                   onChange={(e) => setConfirmDate(e.target.value)}
                   className="border border-gray-300 p-3 bg-gray-100 rounded-xl w-full"
@@ -294,7 +312,7 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
               <div className="flex flex-col gap-1">
                 <label htmlFor="confirmDate">Confirm Time</label>
                 <input
-                  id="confirmDate"
+                  id="confirmTime"
                   type="time"
                   defaultValue={data?.confirmedTime}
                   onChange={(e) => setConfirmTime(e.target.value)}
@@ -341,7 +359,7 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
         >
           {!["COMPLETED", "CANCELLED"].includes(data?.bookingStatus) && (
             <button
-              onClick={handleCancelService}
+              onClick={() => handleAction("cancel")}
               className="px-5 py-2.5 rounded-xl border border-red-300 text-red-600 hover:bg-red-600 hover:text-white transition-all shrink-0"
             >
               Cancel Service
@@ -364,16 +382,15 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
               <Upload className="size-4" /> Submit
             </button>
 
-            {
-              data?.bookingStatus == "CONFIRMED" && (
-              <button
-              // onClick={() => handleComplete()}
-              className="px-5 py-2.5 rounded-xl bg-green-500 text-white hover:bg-green-600 flex items-center gap-2 shrink-0 disabled:opacity-50"
-            >
-              <Check className="size-4" /> Mark as Complete
-            </button>
-              )
-            }
+            {data?.bookingStatus == "CONFIRMED" &&
+              data?.paymentStatus == "PAID" && (
+                <button
+                  onClick={() => handleAction("complete")}
+                  className="px-5 py-2.5 rounded-xl bg-green-500 text-white hover:bg-green-600 flex items-center gap-2 shrink-0 disabled:opacity-50"
+                >
+                  <Check className="size-4" /> Mark as Complete
+                </button>
+              )}
           </div>
         </div>
       </div>

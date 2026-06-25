@@ -15,11 +15,10 @@ import {
 import { startPayment } from "../../utils/Payment";
 import Nav from "../../components/Nav";
 import { getData } from "../../api/Api";
-import {  useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import Select from "react-select";
 import { useSelector } from "react-redux";
 import { notify } from "../../Utils/notify";
-
 
 export default function CheckOut() {
   const { id } = useParams();
@@ -27,7 +26,7 @@ export default function CheckOut() {
   const user = useSelector((state) => state.user.user);
   const navigate = useNavigate();
 
-  const [paymentMode, setPaymentMode] = useState("ADVANCE");
+  const [paymentMode, setPaymentMode] = useState("FULL");
   const [loading, setLoading] = useState(false);
 
   const [serviceDetails, setServiceDetails] = useState([]);
@@ -65,6 +64,10 @@ export default function CheckOut() {
     setPincodes(data?.pincodes);
   };
 
+  const date = new Date();
+  date.setDate(date.getDate() + 4);
+  const minDate = date.toISOString().split("T")[0];
+
   // Form state
   const [formData, setFormData] = useState({
     packageId: Number(id),
@@ -78,7 +81,7 @@ export default function CheckOut() {
     pincodeId: "",
     specialInstructions: "",
     paymentOption: "ADVANCE",
-    paymentType: ""
+    paymentType: "",
   });
 
   const selectStyles = {
@@ -105,7 +108,10 @@ export default function CheckOut() {
           "Content-Type": "application/json",
           Authorization: localStorage.getItem("token"),
         },
-        body: JSON.stringify({...formData , packageType: serviceDetails?.packageType}),
+        body: JSON.stringify({
+          ...formData,
+          packageType: serviceDetails?.packageType,
+        }),
       });
       const data = await res.json();
 
@@ -113,9 +119,9 @@ export default function CheckOut() {
         notify(data.message, "error");
       }
 
-      await startPayment(data.bookingId , data.packageType);
+      await startPayment(data.bookingId, data.packageType);
 
-      notify("Booking Successfull" , "success")
+      notify("Booking Successfull", "success");
       navigate("/user/bookings");
     } catch (error) {
       console.log(error);
@@ -123,8 +129,6 @@ export default function CheckOut() {
       setLoading(false);
     }
   };
-
-
 
   return (
     <div className="font-sans text-gray-800 antialiased min-h-screen bg-gray-50 flex flex-col">
@@ -160,13 +164,20 @@ export default function CheckOut() {
                   <div className="relative">
                     <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <input
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        const selectedDate = e.target.value;
+
                         setFormData((data) => ({
                           ...data,
-                          preferredDate: e.target.value,
-                        }))
-                      }
+                          preferredDate: selectedDate,
+                        }));
+
+                        setPaymentMode(
+                          selectedDate === minDate ? "FULL" : paymentMode,
+                        );
+                      }}
                       type="date"
+                      min={minDate}
                       className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none"
                     />
                   </div>
@@ -244,7 +255,10 @@ export default function CheckOut() {
                     >
                       <option value={"any"}> Any Community</option>
                       {COMMUNITY?.map((community) => (
-                        <option key={community.id} value={community.communityName}>
+                        <option
+                          key={community.id}
+                          value={community.communityName}
+                        >
                           {community.communityName}
                         </option>
                       ))}
@@ -485,33 +499,35 @@ export default function CheckOut() {
 
               {/* Payment Options Selection */}
               <div className="px-6 pb-2 space-y-3 mt-4">
-                <label
-                  onClick={() => {
-                    setPaymentMode("ADVANCE");
-                    setFormData((data) => ({
-                      ...data,
-                      paymentOption: "ADVANCE",
-                    }));
-                  }}
-                  className={`flex items-center justify-between p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 ${paymentMode === "ADVANCE" ? "border-orange-500 bg-orange-50/50" : "border-gray-200 hover:border-orange-200"}`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-4 h-4 rounded-full border flex items-center justify-center ${paymentMode === "ADVANCE" ? "border-orange-500" : "border-gray-300"}`}
-                    >
-                      {paymentMode === "ADVANCE" && (
-                        <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-                      )}
+                {formData.preferredDate != minDate && (
+                  <label
+                    onClick={() => {
+                      setPaymentMode("ADVANCE");
+                      setFormData((data) => ({
+                        ...data,
+                        paymentOption: "ADVANCE",
+                      }));
+                    }}
+                    className={`flex items-center justify-between p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 ${paymentMode === "ADVANCE" ? "border-orange-500 bg-orange-50/50" : "border-gray-200 hover:border-orange-200"}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-4 h-4 rounded-full border flex items-center justify-center ${paymentMode === "ADVANCE" ? "border-orange-500" : "border-gray-300"}`}
+                      >
+                        {paymentMode === "ADVANCE" && (
+                          <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+                        )}
+                      </div>
+                      <span className="font-bold text-gray-900 text-sm">
+                        Pay Advance ({serviceDetails?.advancePercentage}%)
+                      </span>
                     </div>
-                    <span className="font-bold text-gray-900 text-sm">
-                      Pay Advance ({serviceDetails?.advancePercentage}%)
+                    <span className="font-bold text-gray-900 flex items-center text-sm">
+                      <IndianRupee className="h-3 w-3" />{" "}
+                      {serviceDetails?.advanceAmount}
                     </span>
-                  </div>
-                  <span className="font-bold text-gray-900 flex items-center text-sm">
-                    <IndianRupee className="h-3 w-3" />{" "}
-                    {serviceDetails?.advanceAmount}
-                  </span>
-                </label>
+                  </label>
+                )}
 
                 <label
                   onClick={() => {

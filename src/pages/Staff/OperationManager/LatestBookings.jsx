@@ -207,7 +207,10 @@ function LatestBookings() {
         <BookingDetails
           bookingId={selectedService}
           setOpenModal={setSelectedService}
-          onSucess={() => fetchLatestData()}
+          onSucess={() => {
+            fetchLatestData();
+            setSelectedService(null);
+          }}
         />
       )}
     </div>

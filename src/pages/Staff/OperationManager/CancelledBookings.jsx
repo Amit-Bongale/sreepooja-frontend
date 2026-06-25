@@ -52,6 +52,13 @@ function CancelledBookings() {
     fetchData();
   }, [currentPage, debouncedSearch]);
 
+  const fetchLatestData = async () => {
+    const baseurl = `/admin/bookings?bookingStatus=CANCELLED`;
+    const data = await getData(baseurl);
+    setLatestBookings(data?.content);
+    setTotalPage(data?.totalPages);
+  };
+
   return (
     <div className="text-gray-800 antialiased min-h-screen bg-gray-50">
       <header className="h-18 bg-white border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 mt-18 md:mt-0 shrink-0">
@@ -109,7 +116,11 @@ function CancelledBookings() {
 
                         <div className="flex items-center gap-2 text-gray-600">
                           <Clock className="size-4 shrink-0" />
-                          <span>{booking.poojaTime ? formatTime(booking?.poojaTime) : booking?.preferredTimeSlot}</span> 
+                          <span>
+                            {booking.poojaTime
+                              ? formatTime(booking?.poojaTime)
+                              : booking?.preferredTimeSlot}
+                          </span>
                         </div>
                       </div>
 
@@ -198,9 +209,12 @@ function CancelledBookings() {
           <BookingDetails
             bookingId={selectedService}
             setOpenModal={setSelectedService}
+            onSucess={() => {
+              fetchLatestData();
+              setSelectedService(null);
+            }}
           />
         )}
-
       </main>
     </div>
   );

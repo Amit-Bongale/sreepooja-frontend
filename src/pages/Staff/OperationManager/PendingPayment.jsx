@@ -12,7 +12,7 @@ import {
 
 import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
-import BookingDetails from "../../../components/staff/operationManager/BookingDetails2";
+import BookingDetails from "../../../components/staff/operationManager/BookingDetails";
 import { formatDate, formatTime } from "../../../utils/formatter";
 
 function PendingPayment() {
@@ -53,6 +53,13 @@ function PendingPayment() {
     };
     fetchData();
   }, [currentPage, debouncedSearch]);
+
+  const fetchLatestData = async () => {
+    const baseurl = `/admin/bookings?bookingStatusCONFIRMED&paymentStatus=PARTIALLY_PAID`;
+    const data = await getData(baseurl);
+    setLatestBookings(data?.content);
+    setTotalPage(data?.totalPages);
+  };
 
   return (
     <div className="text-gray-800 antialiased min-h-screen bg-gray-50">
@@ -208,6 +215,10 @@ function PendingPayment() {
         <BookingDetails
           bookingId={selectedService}
           setOpenModal={setSelectedService}
+          onSucess={() => {
+            fetchLatestData();
+            setSelectedService(null);
+          }}
         />
       )}
     </div>

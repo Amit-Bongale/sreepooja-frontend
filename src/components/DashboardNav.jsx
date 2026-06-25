@@ -17,6 +17,7 @@ import {
   CreditCard,
   Sparkle,
   CircleAlert,
+  SquarePen,
   // Bell,
   // Image,
   // MessageCircleQuestionMark,
@@ -84,10 +85,17 @@ function DashboardNav() {
         path: "/staff/bookings/cancelled",
       },
       {
+        name: "Custom Order",
+        icon: SquarePen,
+        path: "/staff/bookings/custom",
+      },
+      {
         name: "Priests Management",
         icon: Users2,
         path: "/staff/manage/priest",
       },
+      
+
     ],
 
     Content_Manager: [

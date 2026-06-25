@@ -6,19 +6,18 @@ import Signup from "../pages/Signup";
 import Auth from "../Auth/Auth";
 import ProtectedRoutes from "../auth/ProtectedRoutes";
 import Unauthorized from "../pages/Unauthorized";
-
-import Dashboard from "../pages/Dashboard";
+import UserInitilizer from "../redux/UserInitializer";
 
 import Home from "../pages/Website/Home";
 import Services from "../pages/Website/Services";
 import ServiceDetails from "../pages/Website/ServiceDetails";
 import CheckOut from "../pages/Website/CheckOut";
 
-import UserInitilizer from "../redux/UserInitializer";
-import UserDashboard from "../pages/User/UserDashboard";
-import Bookings from "../pages/User/Bookings";
+import Dashboard from "../pages/Dashboard";
 
+import UserDashboard from "../pages/User/UserDashboard";
 import Profile from "../pages/User/Profile";
+import Bookings from "../pages/User/Bookings";
 import ContentManagerDashboard from "../pages/Staff/contentManager/ContentManagerDashboard";
 import MangeServices from "../pages/Staff/contentManager/MangeServices";
 import ManageCategories from "../pages/Staff/contentManager/ManageCategories";
@@ -38,6 +37,7 @@ import AllBookings from "../pages/Staff/OperationManager/AllBookings.jsx";
 import CancelledBookings from "../pages/Staff/OperationManager/CancelledBookings.jsx";
 import ManagePriests from "../pages/Staff/OperationManager/ManagePriests.jsx";
 import Contact from "../pages/Website/Contact.jsx";
+import CustomOrder from "../pages/Staff/OperationManager/CustomOrder.jsx";
 
 function CustomRouter() {
   return (
@@ -64,6 +64,7 @@ function CustomRouter() {
 
           {/* Dashboard Routes */}
           <Route element={<Dashboard />}>
+
             {/*user protected routes*/}
             <Route element={<ProtectedRoutes allowedRoles={["USER"]} />}>
               <Route path="/account" element={<UserDashboard />} />
@@ -72,20 +73,13 @@ function CustomRouter() {
               <Route path="/user/profile" element={<Profile />} />
             </Route>
 
-            <Route
-              element={<ProtectedRoutes allowedRoles={["Content_Manager"]} />}
-            >
-              <Route
-                path="/content-manager/dashboard"
-                element={<ContentManagerDashboard />}
-              />
+
+            {/*Content_Manager protected routes*/}
+            <Route element={<ProtectedRoutes allowedRoles={["Content_Manager"]} />}>
+              <Route path="/content-manager/dashboard" element={<ContentManagerDashboard />} />
               <Route path="/staff/services" element={<MangeServices />} />
               <Route path="/staff/services/add" element={<AddService />} />
-              <Route
-                path="/staff/services/edit/:slug"
-                element={<EditService />}
-              />
-
+              <Route path="/staff/services/edit/:slug" element={<EditService />} />
               <Route path="/staff/categories" element={<ManageCategories />} />
               <Route path="/staff/community" element={<ManageCommunity />} />
               <Route path="/staff/language" element={<ManageLanguages />} />
@@ -94,19 +88,20 @@ function CustomRouter() {
               <Route path="/staff/:city/:cityId/pincodes" element={<ManagePincodes />} />
             </Route>
 
-            <Route
-              element={ <ProtectedRoutes allowedRoles={["Operations_Manager"]} />}
-            >
+
+            {/*Operations_Manager protected routes*/}
+            <Route element={ <ProtectedRoutes allowedRoles={["Operations_Manager"]} />}>
               <Route path="/operation-manager/dashboard" element={<OperationManagerDashboard />} />
               <Route path="/staff/bookings/latest" element={<LatestBookings />}/>
               <Route path="/staff/bookings/pending-payments" element={<PendingPayment />}/>
               <Route path="/staff/bookings/active" element={<ActivePoojas />}/>
               <Route path="/staff/bookings/all" element={<AllBookings />}/>
               <Route path="/staff/bookings/cancelled" element={<CancelledBookings />}/>
+              <Route path="/staff/bookings/custom" element={<CustomOrder />}/>
               <Route path="/staff/manage/priest" element={<ManagePriests />}/>
-
-
             </Route>
+
+
           </Route>
         </Route>
       </Routes>

@@ -33,7 +33,7 @@ function ActivePoojas() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const baseurl = `/admin/bookings?bookingStatus=CONFIRMED&paymentStatus=PAID`;
+      const baseurl = `/admin/bookings?bookingStatus=CONFIRMED`;
       const queryParams = [];
 
       if (currentPage) {
@@ -52,6 +52,13 @@ function ActivePoojas() {
     };
     fetchData();
   }, [currentPage, debouncedSearch]);
+
+  const fetchLatestData = async () => {
+    const baseurl = `/admin/bookings?bookingStatus=CONFIRMED`;
+    const data = await getData(baseurl);
+    setLatestBookings(data?.content);
+    setTotalPage(data?.totalPages);
+  };
 
   return (
     <div className="text-gray-800 antialiased min-h-screen bg-gray-50">
@@ -202,6 +209,10 @@ function ActivePoojas() {
         <BookingDetails
           bookingId={selectedService}
           setOpenModal={setSelectedService}
+            onSucess={() => {
+            fetchLatestData();
+            setSelectedService(null);
+          }}
         />
       )}
     </div>

@@ -15,6 +15,7 @@ import BookingDetails from "../../../components/staff/operationManager/BookingDe
 import { formatDate } from "../../../utils/formatter";
 
 function AllBookings() {
+
   const [selectedService, setSelectedService] = useState(null);
   const [latestBookngs, setLatestBookings] = useState([]);
   const [totalPages, setTotalPage] = useState();
@@ -86,6 +87,13 @@ function AllBookings() {
     endDate,
     startDate,
   ]);
+
+  const fetchLatestData = async () => {
+    const baseurl = `/admin/bookings`;
+    const data = await getData(baseurl);
+    setLatestBookings(data?.content);
+    setTotalPage(data?.totalPages);
+  };
 
   return (
     <div className="text-gray-800 antialiased min-h-screen bg-gray-50">
@@ -223,7 +231,7 @@ function AllBookings() {
                       <div className="space-y-2">
                         <div className="flex items-center gap-2 text-gray-600">
                           <Calendar className="size-4 shrink-0" />
-                          <span>{formatDate( booking?.poojaDate)}</span>
+                          <span>{formatDate(booking?.poojaDate)}</span>
                         </div>
 
                         <div className="flex items-center gap-2 text-gray-600">
@@ -314,15 +322,19 @@ function AllBookings() {
         )}
       </main>
 
-      {
-        selectedService && <BookingDetails 
-        bookingId={selectedService}
-        setOpenModal={setSelectedService}/>
-      }
+      {selectedService && (
+        <BookingDetails
+          bookingId={selectedService}
+          setOpenModal={setSelectedService}
+          onSucess={() => {
+            fetchLatestData();
+            setSelectedService(null);
+          }}
+        />
+      )}
+      
     </div>
   );
 }
 
 export default AllBookings;
-
-

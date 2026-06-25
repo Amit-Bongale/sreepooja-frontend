@@ -218,7 +218,7 @@ function Bookings() {
                   <ChevronLeft className="h-5 w-5" />
                 </button>
 
-                {[...Array(toalpages - 1)].map((_, i) => (
+                {[...Array(toalpages )].map((_, i) => (
                   <button
                     key={i}
                     onClick={() => setCurrentPage(i + 1)}
