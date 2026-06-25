@@ -19,6 +19,21 @@ export const formatTime = (time) => {
   return `${formattedHour}:${minutes} ${period}`;
 };
 
+  export const formatDuration = (minutes) => {
+    const hrs = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+
+    if (hrs && mins) {
+      return `${hrs} hr ${mins} min`;
+    }
+
+    if (hrs) {
+      return `${hrs} hr`;
+    }
+
+    return `${mins} min`;
+  }
+
 
 export const formatCurrency = (amount) => {
   return new Intl.NumberFormat("en-IN", {

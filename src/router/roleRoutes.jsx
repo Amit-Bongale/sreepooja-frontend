@@ -1,7 +1,7 @@
 const roleRoutes = {
   USER: "/account",
-  Content_Manager: "/content-manager/dashboard",
-  Operations_Manager: "/operation-manager/dashboard",
+  CONTENT_MANAGER: "/content-manager/dashboard",
+  OPERATIONS_MANAGER: "/staff/bookings/latest",
   admin: "/admin",
   priest: "/priest/dashboard",
 };

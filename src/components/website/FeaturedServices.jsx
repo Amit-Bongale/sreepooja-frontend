@@ -30,10 +30,10 @@ function FeaturedServices() {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((s) => (
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden card-hover group relative flex flex-col">
+          {services.map((s , index) => (
+            <div key={index} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden card-hover group relative flex flex-col">
               <div className="h-48 bg-linear-to-br from-brand-100 to-amber-50 relative flex items-center justify-center overflow-hidden">
-                <img src={`${import.meta.env.VITE_API_BASE_URL}${s?.thumbnailImage}`} alt="" srcset="" />
+                <img src={`${import.meta.env.VITE_API_BASE_URL}${s?.thumbnailImage}`} alt={s?.serviceName}  />
                 <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-brand-700">
                   Most Popular
                 </div>

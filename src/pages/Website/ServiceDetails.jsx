@@ -18,6 +18,7 @@ import Nav from "../../components/Nav";
 import { Link, useParams } from "react-router";
 import { getData } from "../../api/Api";
 import { Helmet } from "react-helmet-async";
+import { formatDuration } from "../../utils/formatter";
 
 export default function ServiceDetails() {
   const { slug } = useParams();
@@ -31,20 +32,7 @@ export default function ServiceDetails() {
     fetchData();
   }, [slug]);
 
-  function formatDuration(minutes) {
-    const hrs = Math.floor(minutes / 60);
-    const mins = minutes % 60;
 
-    if (hrs && mins) {
-      return `${hrs} hr ${mins} min`;
-    }
-
-    if (hrs) {
-      return `${hrs} hr`;
-    }
-
-    return `${mins} min`;
-  }
 
   // --- STATE ---
   const [selectedPackage, setSelectedPackage] = useState("CLASSIC"); // Default to platinm for better upselling

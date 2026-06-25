@@ -53,7 +53,7 @@ function DashboardNav() {
       // { name: "Queries", icon: MessageCircleQuestionMark, path: "/user/queries" },
     ],
 
-     Operations_Manager: [
+    OPERATIONS_MANAGER: [
       {
         name: "Dashboard",
         icon: LayoutDashboard,
@@ -94,11 +94,9 @@ function DashboardNav() {
         icon: Users2,
         path: "/staff/manage/priest",
       },
-      
-
     ],
-
-    Content_Manager: [
+    
+    CONTENT_MANAGER: [
       {
         name: "Dashboard",
         icon: LayoutDashboard,

@@ -15,20 +15,7 @@ import {
 import { getData } from "../../../api/Api";
 import Select from "react-select";
 import { notify } from "../../../Utils/notify";
-
-// --- MOCK DATA FOR DROPDOWNS ---
-const mockUsers = [
-  { id: 1, name: "Ramesh Kumar", phone: "9876543210" },
-  { id: 2, name: "Anjali Sharma", phone: "9123456789" },
-  { id: 3, name: "Suresh Menon", phone: "9988776655" },
-];
-
-const mockServices = [
-  { id: 10, name: "Satyanarayana Swamy Vratham" },
-  { id: 14, name: "Maha Ganapati Homa" },
-  { id: 15, name: "Gruhapravesham" },
-  { id: 22, name: "Chandi Homa" },
-];
+import ServiceSelectionModal from "../../../components/staff/operationManager/ServiceSelectionModal";
 
 function CustomOrder() {
   const [formData, setFormData] = useState({
@@ -53,6 +40,12 @@ function CustomOrder() {
   const [STATES, setStates] = useState([]);
   const [CITIES, setCities] = useState([]);
   const [PINCODES, setPincodes] = useState([]);
+
+  const [selectedService, setSelectedService] = useState(null);
+  const [userMobile, setUserMobile] = useState("");
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [openServiceSelectionModal, setOpenServiceSelectionModal] =
+    useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -102,17 +95,15 @@ function CustomOrder() {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+
     setIsSubmitting(true);
 
     // Formatting the payload
     const payload = {
       ...formData,
-      //   userId: Number(formData.userId),
-      //   serviceId: Number(formData.serviceId),
-      userId: Number(2),
-      serviceId: Number(1),
+      userId: Number(selectedCustomer?.id),
+      serviceId: Number(selectedService?.id),
       stateId: Number(formData.stateId),
       cityId: Number(formData.cityId),
       pincodeId: Number(formData.pincodeId),
@@ -178,6 +169,11 @@ function CustomOrder() {
     }),
   };
 
+  const searchUser = async () => {
+    const data = await getData(`/admin/bookings/users/search?mobileNo=${userMobile}`);
+    setSelectedCustomer(data);
+  };
+
   return (
     <div className="text-gray-800 antialiased min-h-screen bg-gray-50">
       <header className="h-18 bg-white border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 mt-18 md:mt-0 shrink-0">
@@ -187,9 +183,8 @@ function CustomOrder() {
       </header>
 
       <main className="grow p-4 md:p-8 mx-auto w-full">
-        <form
+        <div
           id="customOrderForm"
-          onSubmit={handleSubmit}
           className="flex flex-col lg:flex-row gap-8"
         >
           {/* Left Column: Form Fields */}
@@ -202,30 +197,70 @@ function CustomOrder() {
                 description="Select the user and the base service for this custom order."
               />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormGroup
-                  label="Select Customer"
-                  name="userId"
-                  type="select"
-                  required
-                  value={formData.userId}
-                  onChange={handleChange}
-                  options={mockUsers.map((u) => ({
-                    value: u.id,
-                    label: `${u.name} (${u.phone})`,
-                  }))}
-                />
-                <FormGroup
-                  label="Select Base Service"
-                  name="serviceId"
-                  type="select"
-                  required
-                  value={formData.serviceId}
-                  onChange={handleChange}
-                  options={mockServices.map((s) => ({
-                    value: s.id,
-                    label: s.name,
-                  }))}
-                />
+                <div>
+                  <label
+                    htmlFor="service"
+                    className="text-sm font-medium text-gray-700 mb-1 flex items-center"
+                  >
+                    Select customer<span className="text-red-500 ml-1">*</span>
+                  </label>
+
+                  <div className={``}>
+                    <div className="flex justify-between items-center gap-2">
+                      <input
+                        type="text"
+                        name="mobile"
+                        id="mobile"
+                        className="border rounded-xl border-gray-300 p-2 gap-4 w-full"
+                        onChange={(e) => setUserMobile(e.target.value)}
+                      />
+
+                      <button
+                        onClick={() => searchUser()}
+                        className="bg-brand-500 rounded-xl text-white px-4 py-2"
+                      >
+                        Search
+                      </button>
+                    </div>
+
+                    {selectedCustomer && (
+                      <div>
+                        <h3>
+                          #{selectedCustomer?.id} - {selectedCustomer?.fullName}{" "}
+                        </h3>
+                      </div>
+                    )} 
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="service"
+                    className="text-sm font-medium text-gray-700 mb-1 flex items-center"
+                  >
+                    Choose Service<span className="text-red-500 ml-1">*</span>
+                  </label>
+
+                  <div
+                    className={`flex ${selectedService ? "justify-between" : "justify-end"}  border rounded-xl border-gray-200 items-center p-2`}
+                  >
+                    {selectedService && (
+                      <div>
+                        <h3>
+                          #SP{selectedService?.id} -{" "}
+                          {selectedService?.serviceName}
+                        </h3>
+                      </div>
+                    )}
+
+                    <button
+                      onClick={() => setOpenServiceSelectionModal(true)}
+                      className="bg-brand-500 rounded-xl text-white px-4 py-2"
+                    >
+                      {selectedService ? "Change Service" : "select servie"}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -530,6 +565,7 @@ function CustomOrder() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
+                  onClick={() => handleSubmit()}
                   className={`w-full mt-6 bg-orange-600 hover:bg-orange-700 text-white font-medium py-3.5 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center space-x-2 ${isSubmitting ? "opacity-80 cursor-wait" : ""}`}
                 >
                   {isSubmitting ? (
@@ -566,8 +602,18 @@ function CustomOrder() {
               </div>
             </div>
           </div>
-        </form>
+        </div>
       </main>
+
+      {openServiceSelectionModal && (
+        <ServiceSelectionModal
+          onClose={() => setOpenServiceSelectionModal(false)}
+          onSelect={(s) => {
+            setSelectedService(s);
+            setOpenServiceSelectionModal(false);
+          }}
+        />
+      )}
     </div>
   );
 }

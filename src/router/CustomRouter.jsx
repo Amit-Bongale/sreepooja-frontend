@@ -73,9 +73,8 @@ function CustomRouter() {
               <Route path="/user/profile" element={<Profile />} />
             </Route>
 
-
             {/*Content_Manager protected routes*/}
-            <Route element={<ProtectedRoutes allowedRoles={["Content_Manager"]} />}>
+            <Route element={<ProtectedRoutes allowedRoles={["CONTENET_MANAGER"]} />}>
               <Route path="/content-manager/dashboard" element={<ContentManagerDashboard />} />
               <Route path="/staff/services" element={<MangeServices />} />
               <Route path="/staff/services/add" element={<AddService />} />
@@ -90,7 +89,7 @@ function CustomRouter() {
 
 
             {/*Operations_Manager protected routes*/}
-            <Route element={ <ProtectedRoutes allowedRoles={["Operations_Manager"]} />}>
+            <Route element={ <ProtectedRoutes allowedRoles={["OPERATIONS_MANAGER"]} />}>
               <Route path="/operation-manager/dashboard" element={<OperationManagerDashboard />} />
               <Route path="/staff/bookings/latest" element={<LatestBookings />}/>
               <Route path="/staff/bookings/pending-payments" element={<PendingPayment />}/>
@@ -100,7 +99,6 @@ function CustomRouter() {
               <Route path="/staff/bookings/custom" element={<CustomOrder />}/>
               <Route path="/staff/manage/priest" element={<ManagePriests />}/>
             </Route>
-
 
           </Route>
         </Route>
