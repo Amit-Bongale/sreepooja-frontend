@@ -74,11 +74,16 @@ function CustomRouter() {
               <Route path="/account" element={<UserDashboard />} />
               <Route path="/user/bookings" element={<Bookings />} />
               <Route path="/user/bookings/:id" element={<BookingDetailas />} />
+            </Route>
+
+            <Route element={<ProtectedRoutes 
+              allowedRoles={["USER" , "CONTENT_MANAGER" , "OPERATIONS_MANAGER", "SUPER_ADMIN"]} />}>
               <Route path="/user/profile" element={<Profile />} />
             </Route>
 
+
             {/*Content_Manager protected routes*/}
-            <Route element={<ProtectedRoutes allowedRoles={["CONTENET_MANAGER"]} />}>
+            <Route element={<ProtectedRoutes allowedRoles={["CONTENT_MANAGER"]} />}>
               <Route path="/content-manager/dashboard" element={<ContentManagerDashboard />} />
               <Route path="/staff/services" element={<MangeServices />} />
               <Route path="/staff/services/add" element={<AddService />} />

@@ -94,8 +94,11 @@ function DashboardNav() {
         icon: Users2,
         path: "/staff/manage/priest",
       },
+      { name: "My Profile",
+        icon: User,
+        path: "/user/profile" },
     ],
-    
+
     CONTENT_MANAGER: [
       {
         name: "Dashboard",
@@ -127,6 +130,12 @@ function DashboardNav() {
         icon: MapPin,
         path: "/staff/locations",
       },
+      { 
+        name: "My Profile",
+        icon: User,
+        path: "/user/profile" 
+      },
+
       // {
       //   name: "Notifications",
       //   icon: Bell,
@@ -154,9 +163,14 @@ function DashboardNav() {
         path: "/superadmin/dashboard",
       },
       {
-        name: "Manage All Users",
+        name: "Manage Staff",
         icon: Users2,
         path: "/manage/staff",
+      },
+      { 
+        name: "My Profile",
+        icon: User,
+        path: "/user/profile" 
       },
     ],
   };

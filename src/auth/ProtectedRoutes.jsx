@@ -3,7 +3,7 @@ import { Navigate, Outlet } from "react-router";
 
 function ProtectedRoutes({ allowedRoles = [] }) {
   const { user, isAuthenticated } = useSelector((state) => state.user);
- 
+
   if (!isAuthenticated || !user) {
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
@@ -12,10 +12,10 @@ function ProtectedRoutes({ allowedRoles = [] }) {
     allowedRoles.length > 0 &&
     !user.roles.some((role) => allowedRoles.includes(role))
   ) {
-    return <Navigate to="/"  replace />;
+    return <Navigate to="/" replace />;
   }
 
-  return <Outlet />
-};
+  return <Outlet />;
+}
 
-export default ProtectedRoutes
+export default ProtectedRoutes;
