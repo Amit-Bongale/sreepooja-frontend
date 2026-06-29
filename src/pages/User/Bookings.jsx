@@ -51,12 +51,10 @@ function Bookings() {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "Confirmed":
-        return "bg-green-100 text-green-700 border-green-200";
-      case "Pending":
-        return "bg-yellow-100 text-yellow-700 border-yellow-200";
-      case "Completed":
-        return "bg-gray-100 text-gray-700 border-gray-200";
+      case "PLATINUM":
+        return "bg-blue-100 text-blue-700 border-blue-200";
+      case "CUSTOM":
+        return "bg-brand-100 text-brand-700 border-brand-200";
       default:
         return "bg-gray-100 text-gray-700 border-gray-200";
     }
@@ -114,9 +112,9 @@ function Bookings() {
                       </h4>
                     </div>
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusColor(booking.bookingStatus)}`}
+                      className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusColor(booking.packageType)}`}
                     >
-                      {booking?.bookingStatus}
+                      {booking?.packageType} 
                     </span>
                   </div>
 
@@ -192,6 +190,7 @@ function Bookings() {
                           View Details
                         </button>{" "}
                       </Link>
+
                       {booking.paymentStatus === "PARTIALLY_PAID" && (
                         <button
                           className="px-4 py-2 bg-orange-600 text-white rounded-lg text-sm font-bold hover:bg-orange-700 transition-colors flex items-center gap-1"

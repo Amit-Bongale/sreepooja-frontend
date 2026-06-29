@@ -151,12 +151,12 @@ function DashboardNav() {
       {
         name: "Dashboard",
         icon: LayoutDashboard,
-        path: "/admin/dashboard",
+        path: "/superadmin/dashboard",
       },
       {
         name: "Manage All Users",
         icon: Users2,
-        path: "/manage/users/all",
+        path: "/manage/staff",
       },
     ],
   };

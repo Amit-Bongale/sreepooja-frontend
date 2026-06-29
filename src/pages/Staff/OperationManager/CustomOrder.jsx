@@ -202,7 +202,7 @@ function CustomOrder() {
                     htmlFor="service"
                     className="text-sm font-medium text-gray-700 mb-1 flex items-center"
                   >
-                    Select customer<span className="text-red-500 ml-1">*</span>
+                    Enter customer Mobile No<span className="text-red-500 ml-1">*</span>
                   </label>
 
                   <div className={``}>
@@ -211,7 +211,7 @@ function CustomOrder() {
                         type="text"
                         name="mobile"
                         id="mobile"
-                        className="border rounded-xl border-gray-300 p-2 gap-4 w-full"
+                        className="border rounded-xl border-gray-300 p-2 gap-4 w-full border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none"
                         onChange={(e) => setUserMobile(e.target.value)}
                       />
 

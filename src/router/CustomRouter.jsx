@@ -38,11 +38,14 @@ import CancelledBookings from "../pages/Staff/OperationManager/CancelledBookings
 import ManagePriests from "../pages/Staff/OperationManager/ManagePriests.jsx";
 import Contact from "../pages/Website/Contact.jsx";
 import CustomOrder from "../pages/Staff/OperationManager/CustomOrder.jsx";
+import SuperAdminDashboard from "../pages/Super_Admin/SuperAdminDashboard.jsx";
+import ManageStaff from "../pages/Super_Admin/ManageStaff.jsx";
 
 function CustomRouter() {
   return (
     <div>
       <Routes>
+
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/services" element={<Services />} />
@@ -60,6 +63,7 @@ function CustomRouter() {
             </Auth>
           }
         >
+
           <Route path="/checkout/:id" element={<CheckOut />} />
 
           {/* Dashboard Routes */}
@@ -89,7 +93,7 @@ function CustomRouter() {
 
 
             {/*Operations_Manager protected routes*/}
-            <Route element={ <ProtectedRoutes allowedRoles={["OPERATIONS_MANAGER"]} />}>
+            <Route element={<ProtectedRoutes allowedRoles={["OPERATIONS_MANAGER"]} />}>
               <Route path="/operation-manager/dashboard" element={<OperationManagerDashboard />} />
               <Route path="/staff/bookings/latest" element={<LatestBookings />}/>
               <Route path="/staff/bookings/pending-payments" element={<PendingPayment />}/>
@@ -98,6 +102,11 @@ function CustomRouter() {
               <Route path="/staff/bookings/cancelled" element={<CancelledBookings />}/>
               <Route path="/staff/bookings/custom" element={<CustomOrder />}/>
               <Route path="/staff/manage/priest" element={<ManagePriests />}/>
+            </Route>
+
+            <Route element={<ProtectedRoutes allowedRoles={["SUPER_ADMIN"]} />}>
+              <Route path="/superadmin/dashboard" element={<SuperAdminDashboard />} />
+              <Route path="/manage/staff" element={<ManageStaff />}/>
             </Route>
 
           </Route>
