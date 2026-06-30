@@ -41,6 +41,21 @@ export default function ServiceDetails() {
     (pkg) => pkg.packageType === selectedPackage,
   );
 
+  const handleWhatsapp = (details) => {
+    const phone = "919611504567";
+
+    const message = `
+    Hello,
+    I want to enquire about a pooja.
+    Service: ${details?.serviceName},
+    service Id: ${details.id}
+    `;
+    window.open(
+      `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
+      "_blank",
+    );
+  };
+
   return (
     <div className="font-sans text-gray-800 antialiased min-h-screen bg-gray-50 flex flex-col">
       {/* SEO meta tags */}
@@ -127,14 +142,15 @@ export default function ServiceDetails() {
                 Divine Benefits
               </h2>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {details?.benefits.split("-")
-                .filter((benefit) => benefit.trim() !== "")
-                .map((benefit, index) => (
-                  <li key={index} className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
-                    <span className="text-gray-700">{benefit}</span>
-                  </li>
-                ))}
+                {details?.benefits
+                  .split("-")
+                  .filter((benefit) => benefit.trim() !== "")
+                  .map((benefit, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
+                      <span className="text-gray-700">{benefit}</span>
+                    </li>
+                  ))}
               </ul>
             </section>
           </div>
@@ -255,18 +271,26 @@ export default function ServiceDetails() {
                         ? "Estimated Price"
                         : "Total Price"}
                     </span>
-                    <span className="text-3xl font-bold text-gray-900 flex items-center">
-                      {!currentPackage?.isCustom && (
-                        <IndianRupee className="h-6 w-6" />
-                      )}
-                      {selectedPackage == "custom"
-                        ? "Varies"
-                        : currentPackage?.price}
-                    </span>
+                    <div className="flex shrink-0 items-end gap-1">
+                      <span className="text-3xl font-bold text-gray-900 flex items-center">
+                        {!currentPackage?.isCustom && (
+                          <IndianRupee className="h-6 w-6" />
+                        )}
+                        {selectedPackage == "custom"
+                          ? "Varies"
+                          : currentPackage?.price}
+                      </span>
+                      <span className="text-sm font-medium">
+                        {selectedPackage == "custom" ? "" : "+GST"}{" "}
+                      </span>
+                    </div>
                   </div>
 
                   {selectedPackage == "custom" ? (
-                    <button className="w-full bg-gray-900 hover:bg-black text-white font-bold text-lg py-4 rounded-xl shadow-lg transition-all flex justify-center items-center gap-2">
+                    <button
+                      onClick={() => handleWhatsapp(details)}
+                      className="w-full bg-gray-900 hover:bg-black text-white font-bold text-lg py-4 rounded-xl shadow-lg transition-all flex justify-center items-center gap-2"
+                    >
                       <MessageCircle className="h-5 w-5" />
                       Contact Support
                     </button>

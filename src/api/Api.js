@@ -1,3 +1,5 @@
+import { notify } from "../Utils/notify";
+
 export const getData = async (path) => {
   try {
     const response = await fetch(
@@ -10,6 +12,8 @@ export const getData = async (path) => {
       },
     );
     if (!response.ok) {
+      const data = await response.json();
+      notify(data.message)
       throw new Error("Failed to fetch data");
     }
     return await response.json();

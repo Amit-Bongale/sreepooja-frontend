@@ -211,7 +211,7 @@ function CustomOrder() {
                         type="text"
                         name="mobile"
                         id="mobile"
-                        className="border rounded-xl border-gray-300 p-2 gap-4 w-full border-gray-200 rounded-xl focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none"
+                        className="border rounded-xl border-gray-300 p-2 gap-4 w-full focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all outline-none"
                         onChange={(e) => setUserMobile(e.target.value)}
                       />
 
