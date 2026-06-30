@@ -215,10 +215,7 @@ function AllBookings() {
                       <span className="text-xs font-medium text-gray-500">
                         {booking?.bookingNumber}
                       </span>
-
-                      <span className="px-3 py-1 rounded-full bg-brand-50 text-brand-700 text-xs font-medium">
-                        {booking?.packageType}
-                      </span>
+                      {getStatusBadge(booking?.packageType)} 
                     </div>
 
                     {/* Pooja Name */}

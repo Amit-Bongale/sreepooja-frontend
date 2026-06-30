@@ -2,7 +2,6 @@ import {
   Calendar,
   ChevronLeft,
   ChevronRight,
-  CircleAlert,
   Clock,
   MapPin,
   Search,
@@ -13,6 +12,7 @@ import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
 import { formatDate, formatTime } from "../../../utils/formatter";
 import BookingDetails from "../../../components/staff/operationManager/BookingDetails";
+import { getStatusBadge } from "../../../utils/getStatusBadge";
 
 function ActivePoojas() {
   const [selectedService, setSelectedService] = useState(null);
@@ -96,10 +96,7 @@ function ActivePoojas() {
                       <span className="text-xs font-medium text-gray-500">
                         {booking?.bookingNumber}
                       </span>
-
-                      <span className="px-3 py-1 rounded-full bg-brand-50 text-brand-700 text-xs font-medium">
-                        {booking?.packageType}
-                      </span>
+                      {getStatusBadge(booking?.packageType)}
                     </div>
 
                     {/* Pooja Name */}
@@ -143,7 +140,6 @@ function ActivePoojas() {
                   {/* Right Actions */}
                   <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between gap-3">
                     <span className="inline-flex items-center gap-1 rounded-full bg-green-50 text-green-700 border border-green-200 px-3 py-1 text-xs font-medium">
-                      <CircleAlert className="size-3" />
                       {booking?.bookingStatus}
                     </span>
 

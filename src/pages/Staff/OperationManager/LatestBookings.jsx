@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
 import { formatDate } from "../../../utils/formatter";
 import BookingDetails from "../../../components/staff/operationManager/BookingDetails";
+import { getStatusBadge } from "../../../utils/getStatusBadge";
 
 function LatestBookings() {
   const [selectedService, setSelectedService] = useState(null);
@@ -96,10 +97,7 @@ function LatestBookings() {
                       <span className="text-xs font-medium text-gray-500">
                         {booking?.bookingNumber}
                       </span>
-
-                      <span className="px-3 py-1 rounded-full bg-brand-50 text-brand-700 text-xs font-medium">
-                        {booking?.packageType}
-                      </span>
+                      {getStatusBadge(booking?.packageType)} 
                     </div>
 
                     {/* Pooja Name */}

@@ -8,6 +8,9 @@ export const getStatusBadge = (status) => {
     SENT: "bg-green-100 text-green-700 border-green-200",
     true: "bg-green-100 text-green-700 border-green-200",
 
+    CUSTOM : "bg-brand-100 text-brand-700 border-brand-200",
+    PLATINUM : "bg-blue-100 text-blue-700 border-blue-200",
+
     DRAFT: "bg-amber-100 text-amber-700 border-amber-200",
     SCHEDULED: "bg-amber-100 text-amber-700 border-amber-200",
     PENDING_PAYMENT: "bg-amber-100 text-amber-700 border-amber-200",
