@@ -718,7 +718,7 @@ function EditService() {
                     className="relative p-5 rounded-xl border border-gray-200 bg-gray-50 group"
                   >
                     {/* Delete Package Button */}
-                    {formData.packages.length > 1 && (
+                    {formData.packages.length > 0 && (
                       <button
                         type="button"
                         onClick={() => handleRemovePackage(index)}
@@ -776,7 +776,25 @@ function EditService() {
                           max="100"
                           name="advancePercentage"
                           value={pkg.advancePercentage}
-                          onChange={(e) => handlePackageChange(index, e)}
+                          onChange={(e) => {
+                            const value = Math.max(
+                              0,
+                              Math.min(Number(e.target.value), 100),
+                            );
+
+                            setFormData((prev) => {
+                              const updatedPackages = [...prev.packages];
+                              updatedPackages[index] = {
+                                ...updatedPackages[index],
+                                advancePercentage: value,
+                              };
+
+                              return {
+                                ...prev,
+                                packages: updatedPackages,
+                              };
+                            });
+                          }}
                           placeholder="20"
                           className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:border-orange-500 outline-none text-sm"
                         />

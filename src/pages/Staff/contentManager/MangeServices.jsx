@@ -96,7 +96,7 @@ function MangeServices() {
                         Starts from
                       </span>
                       <div className="flex items-center text-gray-900 font-bold text-lg">
-                        <IndianRupee className="h-4 w-4" /> {service.startingPrice}
+                        <IndianRupee className="h-4 w-4" /> {service?.startingPrice == 0 ? "Custom" : service?.startingPrice }
                       </div>
                     </div>
                     <Link to={`/staff/services/edit/${service.slug}`}>

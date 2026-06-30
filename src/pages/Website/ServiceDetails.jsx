@@ -24,18 +24,18 @@ export default function ServiceDetails() {
   const { slug } = useParams();
   const [details, setDetails] = useState();
 
+  const [selectedPackage, setSelectedPackage] = useState();
+
   useEffect(() => {
     const fetchData = async () => {
       const data = await getData(`/pooja-services/${slug}`);
       setDetails(data);
+      data.packages.length > 0
+        ? setSelectedPackage("CLASSIC")
+        : setSelectedPackage("custom");
     };
     fetchData();
   }, [slug]);
-
-
-
-  // --- STATE ---
-  const [selectedPackage, setSelectedPackage] = useState("CLASSIC"); // Default to platinm for better upselling
 
   const currentPackage = details?.packages.find(
     (pkg) => pkg.packageType === selectedPackage,
@@ -127,7 +127,9 @@ export default function ServiceDetails() {
                 Divine Benefits
               </h2>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {details?.benefits.split("-").map((benefit, index) => (
+                {details?.benefits.split("-")
+                .filter((benefit) => benefit.trim() !== "")
+                .map((benefit, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
                     <span className="text-gray-700">{benefit}</span>
@@ -231,6 +233,7 @@ export default function ServiceDetails() {
                     <ul className="space-y-2.5">
                       {currentPackage?.includedItems
                         .split("-")
+                        .filter((items) => items.trim() !== "")
                         .map((item, idx) => (
                           <li
                             key={idx}

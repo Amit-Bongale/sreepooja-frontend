@@ -363,7 +363,7 @@ export default function Services() {
                           </span>
                           <div className="flex items-center text-gray-900 font-bold text-lg">
                             <IndianRupee className="h-4 w-4" />{" "}
-                            {service.startingPrice}
+                            {service?.startingPrice == 0 ? "CUSTOM" : service?.startingPrice}
                           </div>
                         </div>
                         <Link to={`/services/${service.slug}`}>

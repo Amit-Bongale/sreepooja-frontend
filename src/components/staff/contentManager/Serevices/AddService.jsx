@@ -26,6 +26,16 @@ function AddService() {
   const [COMMUNITY, setCommunity] = useState([]);
   const [CITIES, setCities] = useState([]);
 
+  const initialPackageState = {
+    packageType: "CLASSIC",
+    shortDescription: "",
+    includedItems: "",
+    price: "",
+    advancePercentage: "",
+    durationMinutes: "",
+    status: "ACTIVE",
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const categories = await getData("/pooja-services/categories");
@@ -44,17 +54,7 @@ function AddService() {
     fetchData();
   }, []);
 
-  const PACKAGE_TYPES = ["CLASSIC", "PLATINUM"];
-
-  const initialPackageState = {
-    packageType: "CLASSIC",
-    shortDescription: "",
-    includedItems: "",
-    price: "",
-    advancePercentage: "",
-    durationMinutes: "",
-    status: "ACTIVE",
-  };
+  const PACKAGE_TYPES = ["", "CLASSIC", "PLATINUM"];
 
   const [formData, setFormData] = useState({
     serviceName: "",
@@ -74,7 +74,7 @@ function AddService() {
     languageIds: [],
     communityIds: [],
     cityIds: [],
-    packages: [{ ...initialPackageState }],
+    packages: [],
   });
 
   const [files, setFiles] = useState({
@@ -664,7 +664,7 @@ function AddService() {
                     className="relative p-5 rounded-xl border border-gray-200 bg-gray-50 group"
                   >
                     {/* Delete Package Button */}
-                    {formData.packages.length > 1 && (
+                    {formData.packages.length > 0 && (
                       <button
                         type="button"
                         onClick={() => handleRemovePackage(index)}
@@ -681,7 +681,6 @@ function AddService() {
                           Package Type <span className="text-red-500">*</span>
                         </label>
                         <select
-                          required
                           name="packageType"
                           value={pkg.packageType}
                           onChange={(e) => handlePackageChange(index, e)}
@@ -699,7 +698,6 @@ function AddService() {
                           Price (₹) <span className="text-red-500">*</span>
                         </label>
                         <input
-                          required
                           type="number"
                           step="0.01"
                           min="0"
@@ -715,14 +713,31 @@ function AddService() {
                           Advance % <span className="text-red-500">*</span>
                         </label>
                         <input
-                          required
                           type="number"
                           step="0.01"
                           min="0"
                           max="100"
                           name="advancePercentage"
                           value={pkg.advancePercentage}
-                          onChange={(e) => handlePackageChange(index, e)}
+                          onChange={(e) => {
+                            const value = Math.max(
+                              0,
+                              Math.min(Number(e.target.value), 100),
+                            );
+
+                            setFormData((prev) => {
+                              const updatedPackages = [...prev.packages];
+                              updatedPackages[index] = {
+                                ...updatedPackages[index],
+                                advancePercentage: value,
+                              };
+
+                              return {
+                                ...prev,
+                                packages: updatedPackages,
+                              };
+                            });
+                          }}
                           placeholder="20"
                           className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:border-orange-500 outline-none text-sm"
                         />
@@ -747,7 +762,6 @@ function AddService() {
                           <span className="text-red-500">*</span>
                         </label>
                         <input
-                          required
                           type="text"
                           name="shortDescription"
                           value={pkg.shortDescription}
