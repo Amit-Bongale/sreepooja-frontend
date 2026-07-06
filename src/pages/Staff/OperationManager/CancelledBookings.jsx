@@ -11,7 +11,8 @@ import {
 import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
 import BookingDetails from "../../../components/staff/operationManager/BookingDetails";
-import { formatTime } from "../../../utils/formatter";
+import { formatDate, formatTime } from "../../../utils/formatter";
+import { getStatusBadge } from "../../../utils/getStatusBadge";
 
 function CancelledBookings() {
   const [selectedService, setSelectedService] = useState(null);
@@ -95,10 +96,7 @@ function CancelledBookings() {
                       <span className="text-xs font-medium text-gray-500">
                         {booking?.bookingNumber}
                       </span>
-
-                      <span className="px-3 py-1 rounded-full bg-brand-50 text-brand-700 text-xs font-medium">
-                        {booking?.packageType}
-                      </span>
+                      {getStatusBadge(booking?.packageType)}
                     </div>
 
                     {/* Pooja Name */}
@@ -111,7 +109,7 @@ function CancelledBookings() {
                       <div className="space-y-2">
                         <div className="flex items-center gap-2 text-gray-600">
                           <Calendar className="size-4 shrink-0" />
-                          <span>{booking?.poojaDate}</span>
+                          <span>{formatDate(booking?.poojaDate)}</span>
                         </div>
 
                         <div className="flex items-center gap-2 text-gray-600">

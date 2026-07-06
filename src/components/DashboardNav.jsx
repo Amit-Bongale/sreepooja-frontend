@@ -46,7 +46,7 @@ function DashboardNav() {
   const roleMenus = {
     USER: [
       { name: "Home", icon: Home, path: "/" },
-      { name: "Dashboard", icon: LayoutDashboard, path: "/account" },
+      // { name: "Dashboard", icon: LayoutDashboard, path: "/account" },
       { name: "My Bookings", icon: CalendarDays, path: "/user/bookings" },
       { name: "Profile Details", icon: User, path: "/user/profile" },
       // { name: "Wishlist", icon: Heart, path: "/user/wishlist" },
@@ -54,11 +54,11 @@ function DashboardNav() {
     ],
 
     OPERATIONS_MANAGER: [
-      {
-        name: "Dashboard",
-        icon: LayoutDashboard,
-        path: "/operation-manager/dashboard",
-      },
+      // {
+      //   name: "Dashboard",
+      //   icon: LayoutDashboard,
+      //   path: "/operation-manager/dashboard",
+      // },
       {
         name: "Latest Bookings",
         icon: CalendarDays,
@@ -100,11 +100,11 @@ function DashboardNav() {
     ],
 
     CONTENT_MANAGER: [
-      {
-        name: "Dashboard",
-        icon: LayoutDashboard,
-        path: "/content-manager/dashboard",
-      },
+      // {
+      //   name: "Dashboard",
+      //   icon: LayoutDashboard,
+      //   path: "/content-manager/dashboard",
+      // },
       {
         name: "Manage Services",
         icon: Book,
@@ -157,11 +157,11 @@ function DashboardNav() {
     ],
 
     SUPER_ADMIN: [
-      {
-        name: "Dashboard",
-        icon: LayoutDashboard,
-        path: "/superadmin/dashboard",
-      },
+      // {
+      //   name: "Dashboard",
+      //   icon: LayoutDashboard,
+      //   path: "/superadmin/dashboard",
+      // },
       {
         name: "Manage Staff",
         icon: Users2,

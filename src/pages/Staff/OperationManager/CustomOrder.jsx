@@ -242,7 +242,7 @@ function CustomOrder() {
                   </label>
 
                   <div
-                    className={`flex ${selectedService ? "justify-between" : "justify-end"}  border rounded-xl border-gray-200 items-center p-2`}
+                    className={`flex ${selectedService ? "justify-between" : "justify-end"} border rounded-xl border-gray-200 items-center px-2 py-1`}
                   >
                     {selectedService && (
                       <div>

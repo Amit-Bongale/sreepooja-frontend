@@ -11,11 +11,10 @@ import {
 import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
 import BookingDetails from "../../../components/staff/operationManager/BookingDetails";
-import { formatDate } from "../../../utils/formatter";
+import { formatDate, formatTime } from "../../../utils/formatter";
 import { getStatusBadge } from "../../../utils/getStatusBadge";
 
 function AllBookings() {
-
   const [selectedService, setSelectedService] = useState(null);
   const [latestBookngs, setLatestBookings] = useState([]);
   const [totalPages, setTotalPage] = useState();
@@ -213,9 +212,9 @@ function AllBookings() {
                     {/* Header */}
                     <div className="flex flex-wrap items-center gap-2 mb-3">
                       <span className="text-xs font-medium text-gray-500">
-                        {booking?.bookingNumber}
+                        #{booking?.bookingNumber}
                       </span>
-                      {getStatusBadge(booking?.packageType)} 
+                      {getStatusBadge(booking?.packageType)}
                     </div>
 
                     {/* Pooja Name */}
@@ -233,7 +232,11 @@ function AllBookings() {
 
                         <div className="flex items-center gap-2 text-gray-600">
                           <Clock className="size-4 shrink-0" />
-                          <span>{booking?.preferredTimeSlot}</span>
+                          <span>
+                            {booking?.poojaTime
+                              ? formatTime(booking?.poojaTime)
+                              : booking?.preferredTimeSlot}
+                          </span>
                         </div>
                       </div>
 
@@ -281,7 +284,7 @@ function AllBookings() {
               <div className="mt-10 flex items-center justify-center gap-2">
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  disabled={currentPage === 0}
+                  disabled={currentPage === 1}
                   className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <ChevronLeft className="h-5 w-5" />
@@ -331,7 +334,6 @@ function AllBookings() {
           }}
         />
       )}
-      
     </div>
   );
 }

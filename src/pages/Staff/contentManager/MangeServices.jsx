@@ -18,10 +18,9 @@ function MangeServices() {
     fetchData();
   }, []);
 
-  const filterdData = services.filter((s) => 
-     s.serviceName.toLowerCase().includes(searchTerm.toLowerCase())
+  const filterdData = services.filter((s) =>
+    s.serviceName.toLowerCase().includes(searchTerm.toLowerCase()),
   );
-
 
   return (
     <div className="font-sans text-gray-800 antialiased min-h-screen bg-gray-50">
@@ -58,6 +57,11 @@ function MangeServices() {
               >
                 {/* Image Container */}
                 <div className="relative aspect-4/3 overflow-hidden bg-orange-50">
+                  {service?.featured === true && (
+                    <span className="bg-brand-100 absolute right-2 top-2 px-2 text-brand-700 border-brand-500 text-center text-sm font-bold rounded-2xl z-60">
+                      Featured
+                    </span>
+                  )}
                   <img
                     src={`${
                       service.thumbnailImage
@@ -72,7 +76,7 @@ function MangeServices() {
                 {/* Content Container */}
                 <div className="p-5 flex flex-col flex-1">
                   <div className="text-xs flex justify-between font-bold text-orange-600 uppercase tracking-wider">
-                    {service.categoryId} {getStatusBadge(service.status)}
+                    {service.categorySlug} {getStatusBadge(service.status)}
                   </div>
                   <h3 className="font-bold text-lg text-gray-900 line-clamp-2">
                     {service.serviceName}
@@ -96,7 +100,10 @@ function MangeServices() {
                         Starts from
                       </span>
                       <div className="flex items-center text-gray-900 font-bold text-lg">
-                        <IndianRupee className="h-4 w-4" /> {service?.startingPrice == 0 ? "Custom" : service?.startingPrice }
+                        <IndianRupee className="h-4 w-4" />{" "}
+                        {service?.startingPrice == 0
+                          ? "Custom"
+                          : service?.startingPrice}
                       </div>
                     </div>
                     <Link to={`/staff/services/edit/${service.slug}`}>

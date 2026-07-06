@@ -40,6 +40,8 @@ import Contact from "../pages/Website/Contact.jsx";
 import CustomOrder from "../pages/Staff/OperationManager/CustomOrder.jsx";
 import SuperAdminDashboard from "../pages/Super_Admin/SuperAdminDashboard.jsx";
 import ManageStaff from "../pages/Super_Admin/ManageStaff.jsx";
+import PriestRegistration from "../pages/Priest/PriestRegistration.jsx";
+
 
 function CustomRouter() {
   return (
@@ -54,6 +56,10 @@ function CustomRouter() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
+
+        <Route path="/onboarding" element={<PriestRegistration />} />
+  
+
 
         {/* Protected Routes */}
         <Route

@@ -48,6 +48,13 @@ function Nav() {
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8">
             <Link
+              to="/"
+              className="text-gray-600 hover:text-brand-600 font-medium transition"
+            >
+              Home
+            </Link>
+
+            <Link
               to="/services"
               className="text-gray-600 hover:text-brand-600 font-medium transition"
             >
@@ -107,6 +114,14 @@ function Nav() {
         }`}
       >
         <div className="bg-white px-6 py-4 flex flex-col gap-4">
+          <Link
+            to="/"
+            onClick={() => setIsOpen(false)}
+            className="text-gray-600 hover:text-brand-600"
+          >
+            Home
+          </Link>
+
           <Link
             to="/services"
             onClick={() => setIsOpen(false)}

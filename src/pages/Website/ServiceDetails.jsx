@@ -280,9 +280,9 @@ export default function ServiceDetails() {
                           ? "Varies"
                           : currentPackage?.price}
                       </span>
-                      <span className="text-sm font-medium">
+                      {/* <span className="text-sm font-medium">
                         {selectedPackage == "custom" ? "" : "+GST"}{" "}
-                      </span>
+                      </span> */}
                     </div>
                   </div>
 
