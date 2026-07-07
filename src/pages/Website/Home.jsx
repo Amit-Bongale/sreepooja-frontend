@@ -15,6 +15,8 @@ import Nav from "../../components/Nav";
 import FeaturedServices from "../../components/website/FeaturedServices";
 import Footer from "../../components/website/Footer";
 import { Link } from "react-router";
+import image from "../../assets/sreepooja_1.jpg"
+// import hero from "../../assets/hero.png"
 
 function Home() {
   return (
@@ -23,6 +25,7 @@ function Home() {
       {/* Hero section */}
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-divine-cream">
         <div className="absolute inset-0 bg-hero-pattern opacity-50"></div>
+        {/* <img src={hero} alt="hero" className="inset-0 absolute opacity-25 w-full object-cover" /> */}
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-gray-900 leading-tight mb-6">
@@ -150,8 +153,7 @@ function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center gap-16">
             <div className="w-full lg:w-1/2 relative">
-              <div className="bg-orange-200 w-70 h-55 lg:w-150 lg:h-130"></div>
-              {/* image here} */}
+              <img src={image} alt="sreepooja" />
             </div>
 
             <div className="w-full lg:w-1/2">
