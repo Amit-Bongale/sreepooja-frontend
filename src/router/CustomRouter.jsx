@@ -41,6 +41,7 @@ import CustomOrder from "../pages/Staff/OperationManager/CustomOrder.jsx";
 import SuperAdminDashboard from "../pages/Super_Admin/SuperAdminDashboard.jsx";
 import ManageStaff from "../pages/Super_Admin/ManageStaff.jsx";
 import PriestRegistration from "../pages/Priest/PriestRegistration.jsx";
+import AboutUs from "../pages/Website/Aboutus.jsx";
 
 
 function CustomRouter() {
@@ -53,6 +54,8 @@ function CustomRouter() {
         <Route path="/services" element={<Services />} />
         <Route path="/services/:slug" element={<ServiceDetails />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<AboutUs />} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/unauthorized" element={<Unauthorized />} />

@@ -620,7 +620,7 @@ export default function PriestRegistration({ onSuccess }) {
                 </span>
               ) : (
                 <span className="flex items-center gap-2">
-                  <CheckCircle2 size={22} /> Register 
+                  <CheckCircle2 size={22} /> Register  
                 </span>
               )}
             </button>

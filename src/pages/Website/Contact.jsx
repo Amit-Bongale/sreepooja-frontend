@@ -38,8 +38,8 @@ function Contact() {
               <ContactInfoCard
                 icon={Phone}
                 title="Call Us"
-                content="+91 98765 43210"
-                subContent="Toll-free, Mon to Sun, 8 AM - 8 PM"
+                content="+91 96115 04567"
+                subContent="Mon to Sat, 10 AM - 6 PM"
               />
 
               <ContactInfoCard
@@ -52,15 +52,15 @@ function Contact() {
               <ContactInfoCard
                 icon={MapPin}
                 title="Head Office"
-                content="108, Temple Road, Rajaii Nagar"
-                subContent="Bengaluru, Karnataka 560011, India"
+                content="#87, 2nd Floor, Chord Rd, above Pizza Hut, opposite to Cafe Coffee Day, Bimajyothi LIC Colony, 3rd Stage, Basaveshwar Nagar"
+                subContent="Bengaluru, Karnataka 560079, India"
               />
 
               <ContactInfoCard
                 icon={Clock}
                 title="Support Hours"
-                content="Monday - Sunday"
-                subContent="8:00 AM - 8:00 PM (IST)"
+                content="Monday - Saturday"
+                subContent="10:00 AM - 6:00 PM (IST)"
               />
             </div>
 
@@ -72,8 +72,8 @@ function Contact() {
         </div>
 
         {/* Map / Location Highlight (Visual Map Placeholder) */}
-        <div className="w-full h-100 bg-gray-200 relative">
-          
+        <div >
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d621.914573309608!2d77.54050596741807!3d12.997093671686521!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae3d1200e15b97%3A0x35d3914e01dc541d!2sT%20Studios!5e1!3m2!1sen!2sin!4v1783437812800!5m2!1sen!2sin" className="w-full h-100 bg-gray-200 relative" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
         </div>
 
       </main>

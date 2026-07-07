@@ -1,5 +1,6 @@
 import { Mail, MapPin } from "lucide-react";
 import logo from "../../assets/sreePooja.png";
+import { Link } from "react-router";
 
 function Footer() {
   return (
@@ -50,14 +51,14 @@ function Footer() {
             <h4 className="text-white font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" className="hover:text-brand-400 transition-colors">
+                <Link to="/about" className="hover:text-brand-400 transition-colors">
                   About Us
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-brand-400 transition-colors">
+                <Link to="/onboarding" className="hover:text-brand-400 transition-colors">
                   Join as a Priest
-                </a>
+                </Link>
               </li>
               <li>
                 <a href="#" className="hover:text-brand-400 transition-colors">
@@ -65,7 +66,7 @@ function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-brand-400 transition-colors">
+                <a href="/contact" className="hover:text-brand-400 transition-colors">
                   Contact Support
                 </a>
               </li>
@@ -76,8 +77,8 @@ function Footer() {
             <h4 className="text-white font-semibold mb-4">Contact</h4>
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2">
-                <MapPin className="text-brand-500 h-4 w-4 mt-0.5" />
-                <span>108 Spiritual Way, rajajinagar, Bengaluru 560001</span>
+                <MapPin className="text-brand-500 h-4 w-4 mt-0.5 shrink-0" />
+                <span>#87, 2nd Floor, Chord Rd, above Pizza Hut, opposite to Cafe Coffee Day, Bimajyothi LIC Colony, 3rd Stage, Basaveshwar Nagar, Bengaluru, Karnataka 560079</span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="text-brand-500 h-4 w-4 " />
@@ -94,7 +95,7 @@ function Footer() {
 
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-gray-500">
-            &copy; 2026 SreePooja. All rights reserved.
+            &copy; {new Date().getFullYear()}  SreePooja. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
             <a

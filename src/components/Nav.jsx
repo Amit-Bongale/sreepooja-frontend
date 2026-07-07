@@ -62,7 +62,7 @@ function Nav() {
             </Link>
 
             <Link
-              to="/"
+              to="/about"
               className="text-gray-600 hover:text-brand-600 font-medium transition"
             >
               About
