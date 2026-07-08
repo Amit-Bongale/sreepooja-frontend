@@ -21,7 +21,7 @@ import { useSelector } from "react-redux";
 import { notify } from "../../Utils/notify";
 
 export default function CheckOut() {
-  const { id } = useParams();
+  const { id, type } = useParams();
   // --- STATE ---
   const user = useSelector((state) => state.user.user);
   const navigate = useNavigate();
@@ -52,7 +52,7 @@ export default function CheckOut() {
     };
 
     fetchData();
-  }, [id]);
+  }, [id, type]);
 
   const fetchCities = async (id) => {
     const data = await getData(`/masters/states/${id}`);
@@ -100,33 +100,69 @@ export default function CheckOut() {
 
   const handleSubmit = async () => {
     setLoading(true);
-    console.log(formData);
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/bookings`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: localStorage.getItem("token"),
-        },
-        body: JSON.stringify({
-          ...formData,
-          packageType: serviceDetails?.packageType,
-        }),
-      });
-      const data = await res.json();
 
-      if (!res.ok) {
-        notify(data.message, "error");
+    if (serviceDetails?.packageType === "CUSTOM") {
+      // eslint-disable-next-line no-unused-vars
+      const { paymentOption, paymentType, ...requestBody } = formData;
+
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/bookings/custom`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: localStorage.getItem("token"),
+            },
+
+            body: JSON.stringify(requestBody),
+          },
+        );
+
+        if (!res.ok) {
+          const data = await res.json();
+          notify(data.message, "error");
+          return;
+        }
+
+        notify("Query Created Successfull", "success");
+        navigate("/user/bookings");
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
       }
+    } else {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/bookings`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: localStorage.getItem("token"),
+            },
+            body: JSON.stringify({
+              ...formData,
+              packageType: serviceDetails?.packageType,
+            }),
+          },
+        );
+        const data = await res.json();
 
-      await startPayment(data.bookingId, data.packageType);
+        if (!res.ok) {
+          notify(data.message, "error");
+        }
 
-      notify("Booking Successfull", "success");
-      navigate("/user/bookings");
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
+        await startPayment(data.bookingId, data.packageType);
+
+        notify("Booking Successfull", "success");
+        navigate("/user/bookings");
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -498,65 +534,67 @@ export default function CheckOut() {
               </div> */}
 
               {/* Payment Options Selection */}
-              <div className="px-6 pb-2 space-y-3 mt-4">
-                {formData.preferredDate != minDate && (
+              {serviceDetails?.packageType != "CUSTOM" && (
+                <div className="px-6 pb-2 space-y-3 mt-4">
+                  {formData.preferredDate != minDate && (
+                    <label
+                      onClick={() => {
+                        setPaymentMode("ADVANCE");
+                        setFormData((data) => ({
+                          ...data,
+                          paymentOption: "ADVANCE",
+                        }));
+                      }}
+                      className={`flex items-center justify-between p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 ${paymentMode === "ADVANCE" ? "border-orange-500 bg-orange-50/50" : "border-gray-200 hover:border-orange-200"}`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-4 h-4 rounded-full border flex items-center justify-center ${paymentMode === "ADVANCE" ? "border-orange-500" : "border-gray-300"}`}
+                        >
+                          {paymentMode === "ADVANCE" && (
+                            <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+                          )}
+                        </div>
+                        <span className="font-bold text-gray-900 text-sm">
+                          Pay Advance ({serviceDetails?.advancePercentage}%)
+                        </span>
+                      </div>
+                      <span className="font-bold text-gray-900 flex items-center text-sm">
+                        <IndianRupee className="h-3 w-3" />{" "}
+                        {serviceDetails?.advanceAmount}
+                      </span>
+                    </label>
+                  )}
+
                   <label
                     onClick={() => {
-                      setPaymentMode("ADVANCE");
+                      setPaymentMode("FULL");
                       setFormData((data) => ({
                         ...data,
-                        paymentOption: "ADVANCE",
+                        paymentOption: "FULL",
                       }));
                     }}
-                    className={`flex items-center justify-between p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 ${paymentMode === "ADVANCE" ? "border-orange-500 bg-orange-50/50" : "border-gray-200 hover:border-orange-200"}`}
+                    className={`flex items-center justify-between p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 ${paymentMode === "FULL" ? "border-orange-500 bg-orange-50/50" : "border-gray-200 hover:border-orange-200"}`}
                   >
                     <div className="flex items-center gap-3">
                       <div
-                        className={`w-4 h-4 rounded-full border flex items-center justify-center ${paymentMode === "ADVANCE" ? "border-orange-500" : "border-gray-300"}`}
+                        className={`w-4 h-4 rounded-full border flex items-center justify-center ${paymentMode === "FULL" ? "border-orange-500" : "border-gray-300"}`}
                       >
-                        {paymentMode === "ADVANCE" && (
+                        {paymentMode === "FULL" && (
                           <div className="w-2 h-2 rounded-full bg-orange-500"></div>
                         )}
                       </div>
                       <span className="font-bold text-gray-900 text-sm">
-                        Pay Advance ({serviceDetails?.advancePercentage}%)
+                        Pay Full Amount
                       </span>
                     </div>
                     <span className="font-bold text-gray-900 flex items-center text-sm">
                       <IndianRupee className="h-3 w-3" />{" "}
-                      {serviceDetails?.advanceAmount}
+                      {serviceDetails?.packagePrice}
                     </span>
                   </label>
-                )}
-
-                <label
-                  onClick={() => {
-                    setPaymentMode("FULL");
-                    setFormData((data) => ({
-                      ...data,
-                      paymentOption: "FULL",
-                    }));
-                  }}
-                  className={`flex items-center justify-between p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 ${paymentMode === "FULL" ? "border-orange-500 bg-orange-50/50" : "border-gray-200 hover:border-orange-200"}`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-4 h-4 rounded-full border flex items-center justify-center ${paymentMode === "FULL" ? "border-orange-500" : "border-gray-300"}`}
-                    >
-                      {paymentMode === "FULL" && (
-                        <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-                      )}
-                    </div>
-                    <span className="font-bold text-gray-900 text-sm">
-                      Pay Full Amount
-                    </span>
-                  </div>
-                  <span className="font-bold text-gray-900 flex items-center text-sm">
-                    <IndianRupee className="h-3 w-3" />{" "}
-                    {serviceDetails?.packagePrice}
-                  </span>
-                </label>
-              </div>
+                </div>
+              )}
 
               {/* Payment Highlight & Actions */}
               <div className="px-6 pb-6">
@@ -583,9 +621,12 @@ export default function CheckOut() {
                       the pooja date.
                     </p>
                   ) : (
-                    <p className="text-xs text-orange-600/80 leading-relaxed mt-1">
-                      You are paying the full amount upfront. No remaining dues!
-                    </p>
+                    serviceDetails.packageType != "CUSTOM" && (
+                      <p className="text-xs text-orange-600/80 leading-relaxed mt-1">
+                        You are paying the full amount upfront. No remaining
+                        dues!
+                      </p>
+                    )
                   )}
                 </div>
 
@@ -595,9 +636,11 @@ export default function CheckOut() {
                   className={`w-full ${loading ? " bg-gray-800" : "bg-brand-600 hover:bg-brnad-700 "}  text-white font-bold py-3.5 rounded-xl shadow-md transition-all flex justify-center items-center gap-2`}
                 >
                   <CreditCard className="h-5 w-5" />
-                  {paymentMode === "ADVANCE"
-                    ? "Pay Advance & Book"
-                    : "Pay Full Amount"}
+                  {serviceDetails?.packageType === "CUSTOM"
+                    ? "Book Now"
+                    : paymentMode === "ADVANCE"
+                      ? "Pay Advance & Book"
+                      : "Pay Full Amount"}
                 </button>
 
                 {/* Trust Indicators */}

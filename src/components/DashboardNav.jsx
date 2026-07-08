@@ -18,6 +18,7 @@ import {
   Sparkle,
   CircleAlert,
   SquarePen,
+  OctagonAlert,
   // Bell,
   // Image,
   // MessageCircleQuestionMark,
@@ -88,6 +89,11 @@ function DashboardNav() {
         name: "Custom Order",
         icon: SquarePen,
         path: "/staff/bookings/custom",
+      },
+      {
+        name: "Review Custom Order",
+        icon: OctagonAlert,
+        path: "/staff/bookings/pending/custom",
       },
       {
         name: "Priests Management",

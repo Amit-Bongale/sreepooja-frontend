@@ -37,11 +37,14 @@ import AllBookings from "../pages/Staff/OperationManager/AllBookings.jsx";
 import CancelledBookings from "../pages/Staff/OperationManager/CancelledBookings.jsx";
 import ManagePriests from "../pages/Staff/OperationManager/ManagePriests.jsx";
 import Contact from "../pages/Website/Contact.jsx";
-import CustomOrder from "../pages/Staff/OperationManager/CustomOrder.jsx";
+
 import SuperAdminDashboard from "../pages/Super_Admin/SuperAdminDashboard.jsx";
 import ManageStaff from "../pages/Super_Admin/ManageStaff.jsx";
 import PriestRegistration from "../pages/Priest/PriestRegistration.jsx";
 import AboutUs from "../pages/Website/Aboutus.jsx";
+import CustomOrder from "../pages/Staff/OperationManager/CustomOrder.jsx"
+import CreateCustomBooking from "../components/staff/operationManager/CreateCustomBooking.jsx";
+import PendingCustomOrders from "../pages/Staff/OperationManager/PendingCustomOrders.jsx";
 
 
 function CustomRouter() {
@@ -73,7 +76,7 @@ function CustomRouter() {
           }
         >
 
-          <Route path="/checkout/:id" element={<CheckOut />} />
+          <Route path="/checkout/:id/:type" element={<CheckOut />} />
 
           {/* Dashboard Routes */}
           <Route element={<Dashboard />}>
@@ -115,6 +118,8 @@ function CustomRouter() {
               <Route path="/staff/bookings/all" element={<AllBookings />}/>
               <Route path="/staff/bookings/cancelled" element={<CancelledBookings />}/>
               <Route path="/staff/bookings/custom" element={<CustomOrder />}/>
+              <Route path="/staff/bookings/pending/custom" element={<PendingCustomOrders />}/>
+              <Route path="/staff/bookings/custom/create" element={<CreateCustomBooking />}/>
               <Route path="/staff/manage/priest" element={<ManagePriests />}/>
             </Route>
 

@@ -8,28 +8,31 @@ import {
   Calendar,
   Command,
   Upload,
-  Notebook,
-  IndianRupee,
   Clock,
-  Check,
+  MessageCircleQuestionMark,
+  AlertCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
-import PriestSelectionModal from "./PriestSelectionModal";
 import { formatDate, formatTime } from "../../../utils/formatter";
 import { notify } from "../../../Utils/notify";
 
-function BookingDetails({ bookingId, setOpenModal, onSucess }) {
-  const [data, setData] = useState();
-  const [openPriestModal, setOpenPriestModal] = useState(false);
-  const [selectedPriest, setSelectedPriest] = useState();
-  const [confirmDate, setConfirmDate] = useState();
-  const [confirmTime, setConfirmTime] = useState();
+function CustomOrderDetails({ bookingId, setOpenModal, onSucess }) {
+  const [data, setData] = useState({});
   const [minDate, setMinDate] = useState();
+
+  const calculatedAdvance = data.packagePrice
+    ? Math.round(
+        (parseFloat(data.packagePrice) * parseFloat(data.advancePercentage)) /
+          100,
+      )
+    : 0;
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getData(`/admin/bookings/${bookingId}`);
+      const data = await getData(
+        `/admin/bookings/custom-requests/${bookingId}`,
+      );
       setData(data);
 
       const bookingDate = new Date(data?.bookedAt);
@@ -41,16 +44,15 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
   }, [bookingId]);
 
   const handleSubmit = async () => {
-    let data = {
-      confirmedDate: confirmDate,
-      confirmedTime: confirmTime,
-      priestId: selectedPriest?.priestId,
+    let formdata = {
+      confirmedDate: data.confirmedDate,
+      confirmedTime: data.confirmedTime,
+      customDescription: data.customDescription,
+      packagePrice: data.packagePrice,
+      advancePercentage: data.advancePercentage,
     };
 
-    const baseurl =
-      data?.bookingstatus == "CONFIRMED"
-        ? `admin/bookings/${bookingId}/reassign`
-        : `admin/bookings/${bookingId}/confirm`;
+    const baseurl = `admin/bookings/custom/${bookingId}/respond`;
 
     const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/${baseurl}`, {
       method: "PUT",
@@ -58,7 +60,7 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
         "Content-Type": "application/json",
         Authorization: localStorage.getItem("token"),
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(formdata),
     });
 
     if (!res.ok) {
@@ -67,7 +69,7 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
       return;
     }
 
-    notify("Priest Assigned Successfully", "success");
+    notify("Custom Order Created Successfully", "success");
     onSucess();
     setOpenModal(false);
   };
@@ -92,16 +94,27 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
     }
 
     if (action == "complete") {
-      notify("Booking Completed", "success");
+      notify("Custom Order Completed", "success");
     } else {
-      notify("Booking Cancelled", "success");
+      notify("Custom Order Cancelled", "success");
     }
 
     onSucess();
     setOpenModal(false);
   };
 
-  
+  console.log(
+    "states",
+    !data.confirmedDate,
+    !data.confirmedTime,
+    !data.packagePrice,
+    !data.advancePercentage,
+  );
+  console.log(typeof data.packagePrice, data.packagePrice);
+  console.log(typeof data.advancePercentage, data.advancePercentage);
+  console.log("confirmDate:", data.confirmedDate);
+  console.log("confirmTime:", data.confirmedTime);
+  console.log("data:", data);
 
   return (
     <div className="fixed inset-0 z-60 bg-black/30 backdrop-blur-xs flex items-center justify-center p-4">
@@ -205,17 +218,17 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
                   {data?.preferredCommunity}
                 </span>
               </div>
-
-              <div className="flex flex-col justify-between border border-gray-300 bg-gray-50 rounded-xl p-3">
-                <div className="flex gap-2 items-center">
-                  <Notebook size={18} />
-                  Special Instructions
-                </div>
-                <span className="font-semibold text-black">
-                  {data?.specialInstructions}{" "}
-                </span>
-              </div>
             </div>
+          </div>
+
+          <div className="flex col-span-2 flex-col justify-between border border-gray-300 bg-gray-50 rounded-xl p-3">
+            <div className="flex gap-2 items-center">
+              <MessageCircleQuestionMark size={18} />
+              Requirements
+            </div>
+            <span className="font-semibold text-black">
+              {data?.specialInstructions}{" "}
+            </span>
           </div>
 
           {data?.bookingStatus == "CONFIRMED" && (
@@ -254,104 +267,114 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
               </div>
             </div>
           )}
-
-          <div className="space-y-2">
-            <h3 className="font-semibold text-gray-400 uppercase text-sm mb-4">
-              Payment Summary
-            </h3>
-
-            <div className="flex gap-3 text-brand-500">
-              Total Amount:
-              <p className="flex items-center font-semibold ">
-                <IndianRupee className="size-3.5" />
-                {data?.totalAmount}
-              </p>
-            </div>
-
-            {data?.advanceAmount && (
-              <>
-                <div className="flex gap-3">
-                  Advance Amount:
-                  <p className="flex items-center ">
-                    <IndianRupee className="size-3.5" />
-                    {data?.advanceAmount}
-                  </p>
-                </div>
-
-                <div className="flex gap-3">
-                  Balance Amount:
-                  <p className="flex items-center ">
-                    <IndianRupee className="size-3.5" />
-                    {data?.balanceAmount}
-                  </p>
-                </div>
-              </>
-            )}
-          </div>
         </div>
 
-        {!["COMPLETED", "CANCELLED"].includes(data?.bookingStatus) && (
-          <div className="w-full p-6">
-            <h3 className="font-semibold text-gray-400 uppercase text-sm mb-4">
-              Assignment
-            </h3>
+        <div className="w-full p-6">
+          <h3 className="font-semibold text-gray-400 uppercase text-sm mb-4">
+            Assignment
+          </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 items-end">
-              <div className="flex flex-col gap-1">
-                <label htmlFor="confirmDate">Confirm Date</label>
-                <input
-                  id="confirmDate"
-                  type="date"
-                  min={minDate}
-                  defaultValue={data?.confirmedDate}
-                  onChange={(e) => setConfirmDate(e.target.value)}
-                  className="border border-gray-300 p-3 bg-gray-100 rounded-xl w-full"
-                />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label htmlFor="confirmDate">Confirm Time</label>
-                <input
-                  id="confirmTime"
-                  type="time"
-                  defaultValue={data?.confirmedTime}
-                  onChange={(e) => setConfirmTime(e.target.value)}
-                  className="border-gray-300 border p-3 bg-gray-100 rounded-xl w-full"
-                />
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 items-end">
+            <div className="flex flex-col gap-1">
+              <label htmlFor="confirmDate">Confirm Date</label>
+              <input
+                id="confirmDate"
+                type="date"
+                min={minDate}
+                value={data?.confirmedDate}
+                onChange={(e) =>
+                  setData({ ...data, confirmedDate: e.target.value })
+                }
+                className="border border-gray-300 p-3 bg-gray-100 rounded-xl w-full"
+              />
             </div>
 
-            <div className="mt-6">
-              <h3 className="font-semibold text-gray-400 uppercase text-sm mb-1">
-                Priest Details
-              </h3>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="confirmDate">Confirm Time</label>
+              <input
+                id="confirmTime"
+                type="time"
+                defaultValue={data?.confirmedTime}
+                onChange={(e) =>
+                  setData({ ...data, confirmedTime: e.target.value })
+                }
+                className="border-gray-300 border p-3 bg-gray-50 rounded-xl w-full"
+              />
+            </div>
 
-              <div className="flex md:flex-row flex-col justify-between gap-2">
-                <div className="flex flex-col gap-1 items-center">
-                  {selectedPriest && (
-                    <div>
-                      <p className="flex gap-2 items-center">
-                        Name: {selectedPriest?.firstName}{" "}
-                        {selectedPriest?.lastName}
-                        <span className="bg-brand-100 px-2 rounded-xl text-sm text-brand-600">
-                          {" "}
-                          {selectedPriest?.communityName}
-                        </span>
-                      </p>
-                      <p>Mobile Number: {selectedPriest?.mobileNumber}</p>
-                    </div>
-                  )}
-                </div>
-                <button
-                  onClick={() => setOpenPriestModal(true)}
-                  className="border border-brand-500 px-4 py-2 rounded-xl text-brand-500"
-                >
-                  {selectedPriest ? "Change Priest" : "Choose priest"}
-                </button>
-              </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="confirmDate">Package Price (₹)</label>
+              <input
+                id="packagePrice"
+                type="number"
+                defaultValue={data?.packagePrice}
+                onChange={(e) =>
+                  setData({ ...data, packagePrice: Number(e.target.value) })
+                }
+                className="border-gray-300 border p-3 bg-gray-50 rounded-xl w-full"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label htmlFor="confirmDate">Advance Percentage (%)</label>
+              <input
+                id="advancePercentage"
+                type="text"
+                value={data?.advancePercentage}
+                onChange={(e) =>
+                  setData({
+                    ...data,
+                    advancePercentage: Number(Math.min(e.target.value, 100)),
+                  })
+                }
+                className="border-gray-300 border p-3 bg-gray-50 rounded-xl w-full"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1 col-span-2 ">
+              <label htmlFor="confirmDate">Custom Description</label>
+              <textarea
+                id="customDescription"
+                type="text"
+                defaultValue={data?.customDescription}
+                onChange={(e) =>
+                  setData({ ...data, customDescription: e.target.value })
+                }
+                className="border-gray-300 border p-3 bg-gray-50 rounded-xl w-full"
+              />
             </div>
           </div>
-        )}
+
+          <div className="pt-4 border-t border-gray-100">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-gray-500 font-medium">
+                To be paid as advance:
+              </span>
+              <span className="text-lg font-bold text-orange-600">
+                ₹ {calculatedAdvance.toLocaleString("en-IN")}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-500 text-sm">
+                Balance post-service:
+              </span>
+              <span className="text-gray-900 font-medium">
+                ₹{" "}
+                {(
+                  Number(data.packagePrice || 0) - calculatedAdvance
+                ).toLocaleString("en-IN")}
+              </span>
+            </div>
+
+            <div className="bg-orange-50 rounded-xl p-4 flex items-start space-x-3 mt-6">
+              <AlertCircle className="w-5 h-5 text-orange-600 shrink-0 mt-0.5" />
+              <p className="text-xs text-orange-800 leading-relaxed">
+                Verify the total amount carefully. A Custom order will be
+                generated for Customer once this order is created.
+              </p>
+            </div>
+          </div>
+        </div>
 
         {/* Footer */}
         <div
@@ -375,37 +398,22 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
             </button>
 
             <button
-              disabled={!selectedPriest}
+              disabled={
+                !data?.confirmedDate ||
+                !data?.confirmedTime ||
+                !data?.packagePrice ||
+                !data?.advancePercentage
+              }
               onClick={() => handleSubmit()}
               className="px-5 py-2.5 rounded-xl bg-brand-500 text-white hover:bg-brand-600 flex items-center gap-2 shrink-0 disabled:opacity-50"
             >
               <Upload className="size-4" /> Submit
             </button>
-
-            {data?.bookingStatus == "CONFIRMED" &&
-              data?.paymentStatus == "PAID" && (
-                <button
-                  onClick={() => handleAction("complete")}
-                  className="px-5 py-2.5 rounded-xl bg-green-500 text-white hover:bg-green-600 flex items-center gap-2 shrink-0 disabled:opacity-50"
-                >
-                  <Check className="size-4" /> Mark as Complete
-                </button>
-              )}
           </div>
         </div>
       </div>
-
-      {openPriestModal && (
-        <PriestSelectionModal
-          onClose={() => setOpenPriestModal(false)}
-          onSelect={(priest) => {
-            setSelectedPriest(priest);
-            setOpenPriestModal(false);
-          }}
-        />
-      )}
     </div>
   );
 }
 
-export default BookingDetails;
+export default CustomOrderDetails;

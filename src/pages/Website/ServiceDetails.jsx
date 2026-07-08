@@ -32,7 +32,7 @@ export default function ServiceDetails() {
       setDetails(data);
       data.packages.length > 0
         ? setSelectedPackage("CLASSIC")
-        : setSelectedPackage("custom");
+        : setSelectedPackage(null);
     };
     fetchData();
   }, [slug]);
@@ -185,59 +185,27 @@ export default function ServiceDetails() {
                         <div className="flex justify-between items-start mb-2">
                           <div className="flex items-center gap-3">
                             <div
-                              className={`w-5 h-5 rounded-full border flex items-center justify-center ${selectedPackage === pkg.packageType ? "border-orange-500" : "border-gray-300"}`}
+                              className={`w-5 h-5 rounded-full border flex items-center justify-center ${selectedPackage === pkg?.packageType ? "border-orange-500" : "border-gray-300"}`}
                             >
-                              {selectedPackage === pkg.packageType && (
+                              {selectedPackage === pkg?.packageType && (
                                 <div className="w-3 h-3 rounded-full bg-orange-500"></div>
                               )}
                             </div>
                             <span className="font-bold text-gray-900">
-                              {pkg.packageType}
+                              {pkg?.packageType}
                             </span>
                           </div>
                           <span className="font-bold text-gray-900 flex items-center">
                             <IndianRupee className="h-4 w-4" />
-                            {pkg.price}
+                            {pkg?.price === 0 ? "Varies" : pkg.price}
                           </span>
                         </div>
                         <p className="text-sm text-gray-600 text-left ml-8">
-                          {pkg.shortDescription}
+                          {pkg?.shortDescription}
                         </p>
                       </label>
                     </button>
                   ))}
-
-                  <button
-                    id={"custom"}
-                    onClick={() => setSelectedPackage("custom")}
-                    className="w-full"
-                  >
-                    <label
-                      className={` relative flex flex-col p-5 rounded-2xl cursor-pointer transition-all duration-200 border-2 ${selectedPackage === "custom" ? "border-orange-500 bg-orange-50 shadow-md" : "border-gray-200 bg-white hover:border-orange-200"} `}
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`w-5 h-5 rounded-full border flex items-center justify-center ${selectedPackage === "custom" ? "border-orange-500" : "border-gray-300"}`}
-                          >
-                            {selectedPackage === "custom" && (
-                              <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-                            )}
-                          </div>
-                          <span className="font-bold text-gray-900">
-                            Custom
-                          </span>
-                        </div>
-                        <span className="font-bold text-gray-900 flex items-center">
-                          <IndianRupee className="h-4 w-4" />
-                          Varies
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600 text-left ml-8">
-                        Tailored to your specific needs
-                      </p>
-                    </label>
-                  </button>
                 </div>
 
                 {/* Package Inclusions Summary */}
@@ -266,17 +234,13 @@ export default function ServiceDetails() {
                 {/* Booking Action */}
                 <div className="pt-2">
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-gray-600">
-                      {currentPackage == "custom"
-                        ? "Estimated Price"
-                        : "Total Price"}
-                    </span>
+                    <span className="text-gray-600">Total Price</span>
                     <div className="flex shrink-0 items-end gap-1">
                       <span className="text-3xl font-bold text-gray-900 flex items-center">
                         {!currentPackage?.isCustom && (
                           <IndianRupee className="h-6 w-6" />
                         )}
-                        {selectedPackage == "custom"
+                        {currentPackage?.price == 0
                           ? "Varies"
                           : currentPackage?.price}
                       </span>
@@ -286,25 +250,15 @@ export default function ServiceDetails() {
                     </div>
                   </div>
 
-                  {selectedPackage == "custom" ? (
-                    <button
-                      onClick={() => handleWhatsapp(details)}
-                      className="w-full bg-gray-900 hover:bg-black text-white font-bold text-lg py-4 rounded-xl shadow-lg transition-all flex justify-center items-center gap-2"
-                    >
-                      <MessageCircle className="h-5 w-5" />
-                      Contact Support
+                  <Link
+                    to={`/checkout/${currentPackage?.id}/${currentPackage?.packageType}`}
+                    className="w-full"
+                  >
+                    <button className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold text-lg py-4 rounded-xl shadow-lg shadow-orange-600/20 transition-all flex justify-center items-center gap-2">
+                      <Calendar className="h-5 w-5" />
+                      Proceed to Book
                     </button>
-                  ) : (
-                    <Link
-                      to={`/checkout/${currentPackage?.id}`}
-                      className="w-full"
-                    >
-                      <button className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold text-lg py-4 rounded-xl shadow-lg shadow-orange-600/20 transition-all flex justify-center items-center gap-2">
-                        <Calendar className="h-5 w-5" />
-                        Proceed to Book
-                      </button>
-                    </Link>
-                  )}
+                  </Link>
 
                   <div className="mt-4 flex items-center justify-center gap-2 text-xs text-gray-500">
                     <ShieldCheck className="h-4 w-4 text-green-500" />

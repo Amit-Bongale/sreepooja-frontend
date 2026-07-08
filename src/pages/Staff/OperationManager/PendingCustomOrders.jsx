@@ -15,8 +15,7 @@ import { formatDate } from "../../../utils/formatter";
 import { getStatusBadge } from "../../../utils/getStatusBadge";
 import CustomOrderDetails from "../../../components/staff/operationManager/CustomOrderDetails";
 
-
-function CustomOrder() {
+function PendingCustomOrders() {
   const [selectedService, setSelectedService] = useState(null);
   const [latestBookngs, setLatestBookings] = useState([]);
   const [totalPages, setTotalPage] = useState();
@@ -35,7 +34,7 @@ function CustomOrder() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const baseurl = `/admin/bookings/custom-requests`;
+      const baseurl = `/admin/bookings/custom/pending`;
       const queryParams = [];
 
       if (currentPage) {
@@ -56,7 +55,7 @@ function CustomOrder() {
   }, [currentPage, debouncedSearch]);
 
   const fetchLatestData = async () => {
-    const baseurl = `/admin/bookings/custom-requests`;
+    const baseurl = `/admin/bookings/custom/pending`;
     const data = await getData(baseurl);
     setLatestBookings(data?.content);
     setTotalPage(data?.totalPages);
@@ -66,7 +65,7 @@ function CustomOrder() {
     <div className="text-gray-800 antialiased min-h-screen bg-gray-50">
       <header className="h-18 bg-white border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 mt-18 md:mt-0 shrink-0">
         <h1 className="text-xl font-serif font-bold text-gray-900 hidden md:block">
-          Custom Order Query
+          Review Custom Order
         </h1>
 
         <div className="flex items-center gap-4">
@@ -98,7 +97,7 @@ function CustomOrder() {
                       <span className="text-xs font-medium text-gray-500">
                         {booking?.bookingNumber}
                       </span>
-                      {getStatusBadge(booking?.packageType)} 
+                      {getStatusBadge(booking?.packageType)}
                     </div>
 
                     {/* Pooja Name */}
@@ -143,7 +142,7 @@ function CustomOrder() {
                   <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between gap-3">
                     <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 text-xs font-medium">
                       <CircleAlert className="size-3" />
-                      Unassigned
+                      Unpaid
                     </span>
 
                     <button
@@ -197,7 +196,7 @@ function CustomOrder() {
         ) : (
           <div className="flex flex-col h-[80vh] items-center justify-center gap-2">
             <Calendar className="size-12 text-brand-400" />
-            <h3 className="text-xl text-gray-500"> No Requests Found </h3>
+            <h3 className="text-xl text-gray-500"> No Bookings Found </h3>
           </div>
         )}
       </main>
@@ -216,5 +215,4 @@ function CustomOrder() {
   );
 }
 
-export default CustomOrder
-
+export default PendingCustomOrders;

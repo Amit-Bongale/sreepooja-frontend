@@ -75,6 +75,7 @@ function AddService() {
     communityIds: [],
     cityIds: [],
     packages: [],
+    enableCustomPackage: false,
   });
 
   const [files, setFiles] = useState({
@@ -786,6 +787,19 @@ function AddService() {
                     </div>
                   </div>
                 ))}
+                
+                <label className="flex mt-4 items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="enableCustomPackage"
+                    checked={formData.enableCustomPackage}
+                    onChange={handleInputChange}
+                    className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+                  />
+                  <span className="text-sm font-medium text-gray-700">
+                    Custom Package Enabled
+                  </span>
+                </label>
               </div>
             </div>
             <div className="flex justify-center">
