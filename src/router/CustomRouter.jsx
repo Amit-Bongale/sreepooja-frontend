@@ -45,6 +45,7 @@ import AboutUs from "../pages/Website/Aboutus.jsx";
 import CustomOrder from "../pages/Staff/OperationManager/CustomOrder.jsx"
 import CreateCustomBooking from "../components/staff/operationManager/CreateCustomBooking.jsx";
 import PendingCustomOrders from "../pages/Staff/OperationManager/PendingCustomOrders.jsx";
+import AppLogin from "../pages/AppLogin.jsx";
 
 
 function CustomRouter() {
@@ -60,6 +61,8 @@ function CustomRouter() {
         <Route path="/about" element={<AboutUs />} />
 
         <Route path="/login" element={<Login />} />
+        <Route path="/portal/login" element={<AppLogin />} />
+
         <Route path="/signup" element={<Signup />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
 

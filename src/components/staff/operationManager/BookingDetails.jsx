@@ -12,6 +12,7 @@ import {
   IndianRupee,
   Clock,
   Check,
+  List,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
@@ -101,8 +102,6 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
     setOpenModal(false);
   };
 
-  
-
   return (
     <div className="fixed inset-0 z-60 bg-black/30 backdrop-blur-xs flex items-center justify-center p-4">
       <div className="w-full max-w-4xl max-h-[95vh] bg-white rounded-2xl overflow-y-auto ">
@@ -149,7 +148,7 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
         </div>
 
         {/* Content */}
-        <div className="p-6 grid lg:grid-cols-2 gap-8">
+        <div className="p-6 grid lg:grid-cols-2 gap-4">
           {/* Customer */}
           <div>
             <h3 className="font-semibold text-gray-400 uppercase text-sm mb-4">
@@ -193,7 +192,9 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
                   Language
                 </div>
 
-                <span className="font-bold">{data?.preferredLanguage}</span>
+                <span className="font-bold">
+                  {data?.preferredLanguage ? data?.preferredLanguage : "-"}
+                </span>
               </div>
 
               <div className="flex justify-between border border-gray-300 bg-gray-50 rounded-xl p-3">
@@ -202,21 +203,36 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
                   Community
                 </div>
                 <span className="font-bold text-black">
-                  {data?.preferredCommunity}
-                </span>
-              </div>
-
-              <div className="flex flex-col justify-between border border-gray-300 bg-gray-50 rounded-xl p-3">
-                <div className="flex gap-2 items-center">
-                  <Notebook size={18} />
-                  Special Instructions
-                </div>
-                <span className="font-semibold text-black">
-                  {data?.specialInstructions}{" "}
+                  {data?.preferredCommunity ? data?.preferredCommunity : "-"}
                 </span>
               </div>
             </div>
           </div>
+
+          {/* special instruction */}
+          {data?.specialInstructions && (
+            <div className="flex flex-col col-span-2 justify-between border border-gray-300 bg-gray-50 rounded-xl p-3">
+              <div className="flex gap-2 items-center">
+                <Notebook size={18} />
+                Special Instructions
+              </div>
+              <span className="font-semibold text-black">
+                {data?.specialInstructions}
+              </span>
+            </div>
+          )}
+
+          {data?.customDescription && (
+            <div className="flex flex-col col-span-2 justify-between border border-gray-300 bg-gray-50 rounded-xl p-3">
+              <div className="flex gap-2 items-center">
+                <List size={18} />
+                Custom Description
+              </div>
+              <span className="font-semibold text-black">
+                {data?.customDescription}
+              </span>
+            </div>
+          )}
 
           {data?.bookingStatus == "CONFIRMED" && (
             <div className="space-y-2">

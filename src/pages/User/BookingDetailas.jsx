@@ -14,12 +14,15 @@ import {
   Info,
   ShieldCheck,
   CreditCard,
+  Notebook,
+  List,
+  Book,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getData } from "../../api/Api";
 import { useNavigate, useParams } from "react-router";
 import { PayPendingBalance, startPayment } from "../../utils/Payment";
-import { formatCurrency, formatDate } from "../../utils/formatter";
+import { formatCurrency, formatDate, formatTime } from "../../utils/formatter";
 import { notify } from "../../Utils/notify";
 
 const BookingDetails = () => {
@@ -125,7 +128,7 @@ const BookingDetails = () => {
             {/* Pooja Information Card */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <FileText className="w-5 h-5 text-orange-500" />
+                <Book className="w-5 h-5 text-orange-500" />
                 Booking Details
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -183,7 +186,9 @@ const BookingDetails = () => {
                     <Clock className="w-4 h-4" /> Time
                   </p>
                   <p className="font-medium text-gray-900 capitalize">
-                    {data?.confirmedTime ? data?.confirmedTime : "-"}
+                    {data?.confirmedTime
+                      ? formatTime(data?.confirmedTime)
+                      : "-"}
                   </p>
                 </div>
                 <div>
@@ -191,11 +196,40 @@ const BookingDetails = () => {
                     <User className="w-4 h-4" /> Priest Name
                   </p>
                   <p className="font-medium text-gray-900 capitalize">
-                    {data?.priestName ? data?.priestName : "Not yet Assigned"}
+                    {data?.priestName ?  data?.priestName : "Not yet Assigned"}
                   </p>
                 </div>
               </div>
             </div>
+
+            {/* special instruction */}
+            {data?.specialInstructions && (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <Notebook className="w-5 h-5 text-orange-500" />
+                  Note / Special Instruction
+                </h2>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <p className="text-gray-800 font-medium">
+                    {data?.specialInstructions}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {data?.customDescription && (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <List className="w-5 h-5 text-orange-500" />
+                  Custom Description
+                </h2>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <p className="text-gray-800 font-medium">
+                    {data?.customDescription}
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Location Card */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
