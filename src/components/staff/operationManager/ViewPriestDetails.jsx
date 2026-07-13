@@ -263,7 +263,7 @@ function ViewPriestDetails({ onClose, priestId, status }) {
                         .join(", ")}
                     />
 
-                    <DetailItem label="Community" value={priest?.community} />
+                    <DetailItem label="Community" value={priest?.communityName} />
                     <DetailItem
                       label="Referred By"
                       value={priest?.referredBy}

@@ -4,20 +4,22 @@ export const getStatusBadge = (status) => {
 
   const statusStyles = {
     ACTIVE: "bg-green-100 text-green-700 border-green-200",
-    CONFIRMED: "bg-green-100 text-green-700 border-green-200",
+    CONFIRMED: "bg-green-50 text-green-700 border-green-500",
     SENT: "bg-green-100 text-green-700 border-green-200",
+    COMPLETED: "bg-green-100 text-green-700 border-green-500",
     true: "bg-green-100 text-green-700 border-green-200",
 
     CUSTOM : "bg-brand-100 text-brand-700 border-brand-200",
+    CUSTOM_RESPONSE: "bg-brand-50 text-brand-700 border-brand-500",
     PLATINUM : "bg-blue-100 text-blue-700 border-blue-200",
 
     DRAFT: "bg-amber-100 text-amber-700 border-amber-200",
     SCHEDULED: "bg-amber-100 text-amber-700 border-amber-200",
-    PENDING_PAYMENT: "bg-amber-100 text-amber-700 border-amber-200",
+    PENDING_PAYMENT: "bg-amber-50 text-amber-700 border-amber-500",
 
     INACTIVE: "bg-red-100 text-red-700 border-red-200",
     false : "bg-red-100 text-red-700 border-red-200",
-    CANCELLED : "bg-red-100 text-red-700 border-red-200"
+    CANCELLED : "bg-red-50 text-red-700 border-red-500"
 
   };
 

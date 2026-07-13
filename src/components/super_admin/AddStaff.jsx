@@ -27,6 +27,7 @@ function AddStaff({ onClose, onSuccess, initialData, mode }) {
     lastName: "",
     mobileNo: "",
     email: "",
+    password: "",
     dob: "",
     status: "",
     roles: [],
@@ -43,6 +44,7 @@ function AddStaff({ onClose, onSuccess, initialData, mode }) {
         firstName: "",
         lastName: "",
         mobileNo: "",
+        password: "",
         email: "",
         status: "",
         dob: "",
@@ -74,6 +76,7 @@ function AddStaff({ onClose, onSuccess, initialData, mode }) {
       firstName: formData.firstName,
       lastName: formData.lastName,
       mobileNo: formData.mobileNo,
+      password: formData.password,
       email: formData.email,
       dob: formData.dob,
       roles: formData.roles,
@@ -81,11 +84,6 @@ function AddStaff({ onClose, onSuccess, initialData, mode }) {
 
     // If editing, you'd typically pass ID in URL. Including it here for state update logic.
     if (mode === "edit") payload.id = formData.id;
-
-    console.log(
-      `Submitting ${mode === "add" ? "POST /admin/staff" : `PUT /admin/staff/${payload.id}`} :`,
-      payload,
-    );
 
     const url = mode === "add" ? "/admin/staff" : `/admin/staff/${formData.id}`;
     const method = mode == "add" ? "POST" : "PUT";
@@ -113,6 +111,7 @@ function AddStaff({ onClose, onSuccess, initialData, mode }) {
         firstName: "",
         lastName: "",
         mobileNo: "",
+        password: "",
         email: "",
         dob: "",
         roles: [],
@@ -246,6 +245,15 @@ function AddStaff({ onClose, onSuccess, initialData, mode }) {
                 <Shield className="w-4 h-4 mr-2 text-orange-500" /> Access &
                 Permissions
               </h3>
+              <FormGroup
+                label="Password"
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="assign password"
+              />
+
               <MultiSelectDropdown
                 label="Assign Roles"
                 options={AVAILABLE_ROLES}

@@ -198,9 +198,10 @@ function DashboardNav() {
     );
 
   const handleLogout = () => {
+    console.log("logout called")
     localStorage.removeItem("token");
     dispatch(userLogout());
-    navigate("/");
+    navigate("/" ,{ replace: true });
   };
 
   return (

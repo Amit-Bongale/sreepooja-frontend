@@ -4,7 +4,6 @@ import {
   Command,
   MapPin,
   Phone,
-  Plus,
   Users,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -151,20 +150,8 @@ function PriestRequest() {
             <div className="flex flex-col items-center min-h-[70vh] justify-center gap-2 py-10">
               <Users className="size-18 text-brand-500" />
               <h2 className="text-lg font-bold text-gray-900">
-                No Priest Found
+                No Requests Found
               </h2>
-              <p className="text-gray-500 text-center">
-                Try adjusting your search or add new Priest.
-              </p>
-
-              <div className=" md:flex gap-4 flex-wrap">
-                <button
-                  // onClick={() => setIsAddModalOpen(true)}
-                  className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shrink-0 mt-2"
-                >
-                  <Plus className="h-4 w-4" /> Add Priest
-                </button>
-              </div>
             </div>
           )}
         </div>

@@ -133,14 +133,6 @@ export default function PriestRegistration() {
     setSelectedLanguage(selectedLanguage.filter((l) => l !== label));
   };
 
-  useEffect(() => {
-    console.log("Languages:", languages);
-  }, [languages]);
-
-  useEffect(() => {
-    console.log("Selected Languages:", selectedLanguage);
-  }, [selectedLanguage]);
-
   const handleMobileChange = (e) => {
     const mobileNumber = e.target.value;
     setFormData((prev) => ({

@@ -1,21 +1,70 @@
-import { Briefcase, Edit, MapPin, Phone, Save, User, X } from "lucide-react";
+import {
+  Briefcase,
+  Edit,
+  Landmark,
+  MapPin,
+  Phone,
+  Save,
+  User,
+  X,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
 import { notify } from "../../../utils/notify";
+import Select from "react-select";
 
-function EditPriest({ priest, onClose , onSucess }) {
-  const [formData, setFormData] = useState({ ...priest });
+
+
+function EditPriest({ priest, onClose, onSucess }) {
+  // eslint-disable-next-line no-unused-vars
+  const { aadhaarPdfUrl, priestPhotoUrl, communityName, ...priestData } =
+    priest;
+  console.log(priest);
+  const [formData, setFormData] = useState({ ...priestData });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [communities, setCommunities] = useState([]);
+  const [languages, setLanguages] = useState(priest.languageIds);
+  const [selectedLanguage, setSelectedLanguage] = useState(priest.languages);
+
+  const [STATES, setStates] = useState([]);
+  const [CITIES, setCities] = useState([]);
+  const [PINCODES, setPincodes] = useState([]);
+  const [LANGUAGES, setLanguages2] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const community = await getData("/masters/communities");
-      setCommunities(community);
+      try {
+        const community = await getData("/masters/communities");
+        setCommunities(community || []);
+
+        const states = await getData("/masters/states");
+        setStates(states);
+
+        const languages = await getData("/masters/languages");
+        setLanguages2(languages);
+
+        const city = await getData(`/masters/states/${priest.stateId}`);
+        setCities(city?.cities);
+
+        const pin = await getData(`/masters/cities/${priest.cityId}`);
+        setPincodes(pin?.pincodes);
+      } catch (error) {
+        console.error("Failed to fetch communities", error);
+      }
     };
     fetchData();
   }, []);
+
+  const fetchCities = async (id) => {
+    const data = await getData(`/masters/states/${id}`);
+    setCities(data?.cities);
+  };
+
+  const fetchPincodes = async (id) => {
+    const data = await getData(`/masters/cities/${id}`);
+    setPincodes(data?.pincodes);
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -25,19 +74,73 @@ function EditPriest({ priest, onClose , onSucess }) {
     }));
   };
 
+  const addLanguage = (value, label) => {
+    if (!value) return;
+
+    setLanguages((prev) => (prev.includes(value) ? prev : [...prev, value]));
+
+    setSelectedLanguage((prev) =>
+      prev.includes(label) ? prev : [...prev, label],
+    );
+  };
+
+  const removeLanguage = (value, label) => {
+    console.log("Removing language:", value, label);
+
+    setLanguages(languages.filter((id) => String(id) !== String(value)));
+    setSelectedLanguage(selectedLanguage.filter((l) => l !== label));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      const submitData = new FormData();
+
+      const request = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        dob: formData.dob,
+        mobileNumber: formData.mobileNumber,
+        whatsappNumber: formData.whatsappNumber,
+        email: formData.email,
+        gothra: formData.gothra,
+        pravara: formData.pravara,
+        communityId: formData.communityId,
+        nativePlace: formData.nativePlace,
+        aadhaarNumber: formData.aadhaarNumber,
+        addressLine1: formData.addressLine1,
+        addressLine2: formData.addressLine2,
+        stateId: formData.stateId,
+        cityId: formData.cityId,
+        pincodeId: formData.pincodeId,
+        experience: formData.experience,
+        languageIds: languages,
+        referredBy: formData.referredBy,
+        bankName: formData.bankName,
+        bankingName: formData.bankingName,
+        bankBranchName: formData.bankBranchName,
+        bankAccountNumber: formData.bankAccountNumber,
+        bankIfscCode: formData.bankIfscCode,
+        upiId: formData.upiId,
+        active : formData.active
+      };
+
+      submitData.append(
+        "request",
+        new Blob([JSON.stringify(request)], {
+          type: "application/json",
+        }),
+      );
+
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/admin/priests/${priest?.priestId}`,
         {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json",
             Authorization: localStorage.getItem("token"),
           },
-          body: JSON.stringify(formData),
+          body: submitData,
         },
       );
 
@@ -47,7 +150,7 @@ function EditPriest({ priest, onClose , onSucess }) {
         throw new Error("Failed to create priest");
       }
 
-      notify("Priest Details Upated" , "success")
+      notify("Priest Details Upated", "success");
       onSucess();
       onClose();
     } catch (error) {
@@ -55,6 +158,22 @@ function EditPriest({ priest, onClose , onSucess }) {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  
+  const selectStyles = {
+    control: (base, state) => ({
+      ...base,
+      borderColor: state.isFocused ? "#f97316" : "#e5e7eb",
+      boxShadow: state.isFocused
+        ? "0 0 0 0.5px #f97316, 0 0 0 2px rgba(253, 186, 116, 0.25)"
+        : "none",
+      "&:hover": {
+        borderColor: "#f97316",
+      },
+      borderRadius: "8px",
+      padding: "2px",
+    }),
   };
 
   return (
@@ -204,12 +323,52 @@ function EditPriest({ priest, onClose , onSucess }) {
                     { label: "10 - 20+ Years", value: "UPTO_TWENTY" },
                   ]}
                 />
-                <FormGroup
-                  label="Languages Spoken (comma separated)"
-                  name="languagesSpoken"
-                  value={formData.languagesSpoken}
-                  onChange={handleChange}
-                />
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Languages Spoken (Select multiple)
+                  </label>
+                  <select
+                    onChange={(e) =>
+                      addLanguage(
+                        e.target.value,
+                        e.target.options[e.target.selectedIndex].text,
+                      )
+                    }
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none"
+                    value=""
+                  >
+                    <option value="">-- Choose a Language --</option>
+                    {LANGUAGES.map((lang) => (
+                      <option key={lang.id} value={lang.id}>
+                        {lang.languageName}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {selectedLanguage.map((lang) => (
+                      <div
+                        key={lang}
+                        className="bg-orange-50 border border-orange-200 text-orange-700 rounded-full px-3 py-1 flex items-center gap-2 text-sm font-medium"
+                      >
+                        {lang}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const language = LANGUAGES.find(
+                              (l) => l.languageName === lang,
+                            );
+
+                            removeLanguage(language?.id, lang);
+                          }}
+                          className="hover:text-red-500 transition-colors"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
                 <div>
                   <label className="text-sm font-medium mb-1 block">
@@ -219,7 +378,7 @@ function EditPriest({ priest, onClose , onSucess }) {
                     className=" w-full border border-gray-300 rounded-lg px-3 py-2.5  focus:border-orange-500  outline-none"
                     name="communityId"
                     onChange={handleChange}
-                    value={priest?.communityId}
+                    value={formData?.communityId}
                   >
                     <option value="">Select</option>
                     {communities.map((option, idx) => (
@@ -254,18 +413,71 @@ function EditPriest({ priest, onClose , onSucess }) {
                   onChange={handleChange}
                 />
                 <div className="grid grid-cols-2 gap-4">
-                  <FormGroup
-                    label="City"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                  />
-                  <FormGroup
-                    label="Pincode"
-                    name="pincode"
-                    value={formData.pincode}
-                    onChange={handleChange}
-                  />
+                  <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">
+                  State
+                </label>
+                <Select
+                  placeholder={"select state"}
+                  styles={selectStyles}
+                  isClearable={true}
+                  options={STATES?.map((data) => ({
+                    value: data.id,
+                    label: data.stateName,
+                  }))}
+                  onChange={(option) => {
+                    setFormData((data) => ({
+                      ...data,
+                      stateId: option?.value,
+                    }));
+                    fetchCities(option?.value);
+                  }}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">
+                  City
+                </label>
+                <Select
+                  placeholder={"select city"}
+                  styles={selectStyles}
+                  isDisabled={!formData.stateId}
+                  isClearable={true}
+                  options={CITIES?.map((data) => ({
+                    value: data.id,
+                    label: data.cityName,
+                  }))}
+                  onChange={(option) => {
+                    setFormData((data) => ({
+                      ...data,
+                      cityId: option?.value,
+                    }));
+                    fetchPincodes(option?.value);
+                  }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">
+                  Pincode
+                </label>
+                <Select
+                  placeholder={"select pincode"}
+                  isDisabled={!formData.cityId}
+                  isClearable={true}
+                  styles={selectStyles}
+                  options={PINCODES?.map((data) => ({
+                    value: data.id,
+                    label: data.pincode,
+                  }))}
+                  onChange={(option) => {
+                    setFormData((data) => ({
+                      ...data,
+                      pincodeId: option?.value,
+                    }));
+                  }}
+                />
+              </div>
                 </div>
                 <FormGroup
                   label="Native Place"
@@ -273,6 +485,53 @@ function EditPriest({ priest, onClose , onSucess }) {
                   value={formData.nativePlace}
                   onChange={handleChange}
                 />
+              </div>
+
+              <div className="space-y-4">
+                <SectionHeader icon={Landmark} title="Bank Details" />
+                <FormGroup
+                  label="Account Holder Name"
+                  type="text"
+                  name="bankingName"
+                  value={formData.bankingName}
+                  onChange={handleChange}
+                />
+                <div className="grid grid-cols-2 gap-4">
+                  <FormGroup
+                    label="Account no."
+                    name="bankAccountNumber"
+                    value={formData.bankAccountNumber}
+                    onChange={handleChange}
+                  />
+
+                  <FormGroup
+                    label="Bank Name"
+                    name="bankName"
+                    value={formData.bankName}
+                    onChange={handleChange}
+                  />
+
+                  <FormGroup
+                    label="Branch"
+                    name="bankBranchName"
+                    value={formData.bankBranchName}
+                    onChange={handleChange}
+                  />
+
+                  <FormGroup
+                    label="IFSC Code"
+                    name="bankIfscCode"
+                    value={formData.bankIfscCode}
+                    onChange={handleChange}
+                  />
+
+                  <FormGroup
+                    label="UPI Id"
+                    name="upiId"
+                    value={formData.upiId}
+                    onChange={handleChange}
+                  />
+                </div>
               </div>
             </div>
           </form>

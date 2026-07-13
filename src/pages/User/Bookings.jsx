@@ -167,7 +167,7 @@ function Bookings() {
                         </span>
                         <span className="font-bold text-gray-900 flex items-center text-lg">
                           <IndianRupee className="h-4 w-4" />{" "}
-                          {booking?.totalAmount}
+                          {booking?.totalAmount == 0 ? "Requested" : booking?.totalAmount }
                         </span>
                       </div>
 

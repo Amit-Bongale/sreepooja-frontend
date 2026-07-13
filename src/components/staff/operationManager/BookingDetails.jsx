@@ -193,7 +193,7 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
                 </div>
 
                 <span className="font-bold">
-                  {data?.preferredLanguage ? data?.preferredLanguage : "-"}
+                  {data?.preferredLanguage ? data?.preferredLanguage : "any"}
                 </span>
               </div>
 
@@ -203,7 +203,7 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
                   Community
                 </div>
                 <span className="font-bold text-black">
-                  {data?.preferredCommunity ? data?.preferredCommunity : "-"}
+                  {data?.preferredCommunity ? data?.preferredCommunity : "any"}
                 </span>
               </div>
             </div>
@@ -237,7 +237,7 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
           {data?.bookingStatus == "CONFIRMED" && (
             <div className="space-y-2">
               <h3 className="font-semibold text-gray-400 uppercase text-sm mb-4">
-                Assignment
+                Current Assignment
               </h3>
               <div className="flex gap-3">
                 <Calendar size={18} className="text-gray-400 mt-1" />
@@ -303,6 +303,15 @@ function BookingDetails({ bookingId, setOpenModal, onSucess }) {
                 </div>
               </>
             )}
+
+            <div className="flex gap-3">
+              Transaction Id:
+              <div>
+                {data?.payments?.map((p) => (
+                  <p>{p?.razorpayPaymentId}</p>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 

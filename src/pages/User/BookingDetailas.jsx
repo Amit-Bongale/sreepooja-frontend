@@ -111,7 +111,7 @@ const BookingDetails = () => {
             </p>
           </div>
           <div
-            className={`px-4 py-2 rounded-full border text-sm font-semibold flex items-center gap-2 ${getStatusColor(data?.bookingStatus)}`}
+            className={`px-4 py-2 rounded-full border text-sm font-semibold flex items-center gap-2 ${getStatusColor(data?.packageType)}`}
           >
             {data?.bookingStatus === "PENDING_PAYMENT" ? (
               <AlertCircle className="w-4 h-4" />
@@ -246,7 +246,7 @@ const BookingDetails = () => {
             </div>
           </div>
 
-          {data?.paymentStatus === "PENDING" ? (
+          {data?.bookingStatus === "CUSTOM_RESPONSE" && data.paymentStatus === "PENDING" ? (
             <div className="">
               <div className="sticky top-24 bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden flex flex-col">
                 <div className="p-6 bg-gray-50 border-b border-gray-200">

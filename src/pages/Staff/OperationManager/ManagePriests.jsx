@@ -146,13 +146,13 @@ function ManagePriests() {
           >
             <Filter />
           </button>
-
+          {/* 
           <button
             onClick={() => setIsAddModalOpen(true)}
             className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-colors shrink-0"
           >
             <Plus className="h-4 w-4" /> Add Priest
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -347,6 +347,18 @@ const PriestCard = ({ priest, selected, onClick }) => {
             <h3 className="font-semibold text-lg">
               {priest?.firstName} {priest?.lastName}
             </h3>
+
+            <div>
+              {priest?.active ? (
+                <span className="bg-green-200  w-fit py-1 px-2 rounded-2xl flex shrink-0 text-xs items-center justify-center border border-green-700">
+                  Active
+                </span>
+              ) : (
+                <span className="bg-red-200  w-fit py-1 px-2 rounded-2xl flex shrink-0 text-xs items-center justify-center border border-red-700">
+                  Inactive
+                </span>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center gap-2 text-slate-600 mt-2">
@@ -367,17 +379,6 @@ const PriestCard = ({ priest, selected, onClick }) => {
         </div>
 
         <div className="self-start gap-2 sm:self-center">
-          <div>
-            {priest?.active ? (
-              <span className="bg-green-200 w-fit py-1 px-4 mb-4 rounded-2xl flex shrink-0 text-xs items-center justify-center border border-green-700">
-                <Dot className="size-6" /> Active
-              </span>
-            ) : (
-              <span className="bg-red-200 w-fit py-1 px-4 mb-4 rounded-2xl flex shrink-0 text-xs items-center justify-center border border-red-700">
-                <Dot className="size-6" /> Inactive
-              </span>
-            )}
-          </div>
           <button
             onClick={onClick}
             className="bg-brand-500 text-white px-4 py-2 rounded-md"

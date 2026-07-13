@@ -154,7 +154,7 @@ export default function CheckOut() {
           notify(data.message, "error");
         }
 
-        await startPayment(data.bookingId, data.packageType);
+        await startPayment(data.bookingId, data.paymentOption);
 
         notify("Booking Successfull", "success");
         navigate("/user/bookings");

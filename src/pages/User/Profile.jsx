@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { notify } from "../../utils/notify";
+import { useSelector } from "react-redux";
+import ChangePasswordModal from "../../components/ChangePasswordModal";
 
 function Profile() {
   const [userData, setUserData] = useState();
+  const [changePass, setChangePass] = useState(false);
+  const currentuser = useSelector((state) => state.user.user);
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_BASE_URL}/user/userDetails`, {
@@ -131,13 +135,21 @@ function Profile() {
                 disabled
                 className="w-full focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none"
               />
-              <button
-                // onClick={handleUpdateProfile}
-                className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm md:text-md font-medium rounded-xl shadow-md transition-all shrink-0 "
-              >
+              <button className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm md:text-md font-medium rounded-xl shadow-md transition-all shrink-0 ">
                 Change Number
               </button>
             </div>
+
+            {!currentuser.roles.includes("USER") && (
+              <div className="mt-4">
+                <button
+                  onClick={() => setChangePass(true)}
+                  className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm md:text-md font-medium rounded-xl shadow-md transition-all shrink-0 "
+                >
+                  Change Password
+                </button>
+              </div>
+            )}
           </div>
         </div>
         <div className="mt-8 pt-6 border-t border-gray-100 flex justify-end gap-3">
@@ -149,6 +161,13 @@ function Profile() {
           </button>
         </div>
       </div>
+
+      {changePass && (
+        <ChangePasswordModal
+          isOpen={changePass}
+          onClose={() => setChangePass(false)}
+        />
+      )}
     </div>
   );
 }
