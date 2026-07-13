@@ -46,6 +46,7 @@ import CustomOrder from "../pages/Staff/OperationManager/CustomOrder.jsx"
 import CreateCustomBooking from "../components/staff/operationManager/CreateCustomBooking.jsx";
 import PendingCustomOrders from "../pages/Staff/OperationManager/PendingCustomOrders.jsx";
 import AppLogin from "../pages/AppLogin.jsx";
+import PriestRequest from "../pages/Staff/OperationManager/PriestRequest.jsx";
 
 
 function CustomRouter() {
@@ -124,6 +125,8 @@ function CustomRouter() {
               <Route path="/staff/bookings/pending/custom" element={<PendingCustomOrders />}/>
               <Route path="/staff/bookings/custom/create" element={<CreateCustomBooking />}/>
               <Route path="/staff/manage/priest" element={<ManagePriests />}/>
+              <Route path="/staff/priest/requests" element={<PriestRequest />}/>
+
             </Route>
 
             <Route element={<ProtectedRoutes allowedRoles={["SUPER_ADMIN"]} />}>

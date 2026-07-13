@@ -17,15 +17,15 @@ export const PriestCard = ({ priest, selected, onClick }) => {
         {/* Avatar */}
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 rounded-full bg-slate-200 overflow-hidden shrink-0">
-            {priest.avatar ? (
+            {priest.priestPhotoUrl ? (
               <img
-                src={priest.avatar}
-                alt={priest.firstName}
+                src={`${import.meta.env.VITE_API_BASE_URL}${priest?.priestPhotoUrl}`}
+                alt={priest?.firstName}
                 className="w-full h-full object-cover"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center font-semibold">
-                {priest.firstName?.charAt(0)?.toUpperCase()}
+                {priest?.firstName?.charAt(0)?.toUpperCase()}
               </div>
             )}
           </div>
@@ -43,7 +43,7 @@ export const PriestCard = ({ priest, selected, onClick }) => {
           </div>
 
           <div className="flex flex-wrap gap-2 mt-3">
-            <Badge icon={<Languages size={14} />} label={priest.lastName} />
+            <Badge icon={<Languages size={14} />} label={priest.languages.join(", ")} />
 
             <Badge icon={<Users size={14} />} label={priest.communityName} />
 

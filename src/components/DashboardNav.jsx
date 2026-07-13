@@ -19,6 +19,7 @@ import {
   CircleAlert,
   SquarePen,
   OctagonAlert,
+  FileUser,
   // Bell,
   // Image,
   // MessageCircleQuestionMark,
@@ -96,13 +97,19 @@ function DashboardNav() {
         path: "/staff/bookings/pending/custom",
       },
       {
-        name: "Priests Management",
+        name: "Manage Priests",
         icon: Users2,
         path: "/staff/manage/priest",
       },
+      {
+        name: "Priests Requests",
+        icon: FileUser,
+        path: "/staff/priest/requests",
+      },
       { name: "My Profile",
         icon: User,
-        path: "/user/profile" },
+        path: "/user/profile" 
+      },
     ],
 
     CONTENT_MANAGER: [

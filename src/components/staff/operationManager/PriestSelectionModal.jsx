@@ -38,7 +38,11 @@ const PriestSelectionModal = ({ onClose, onSelect }) => {
       }
 
       if (debouncedSearch) {
-        queryParams.push(`mobileNumber=${debouncedSearch}`);
+        if (/^\d+$/.test(debouncedSearch)) {
+          queryParams.push(`mobileNumber=${debouncedSearch}`);
+        } else {
+          queryParams.push(`name=${debouncedSearch}`);
+        }
       }
 
       if (selectedCommunity) {

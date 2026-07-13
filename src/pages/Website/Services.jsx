@@ -225,7 +225,7 @@ export default function Services() {
         <aside
           className={`
                 fixed inset-y-0 left-0 z-50 w-72 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out
-                md:sticky md:top-36 md:translate-x-0 md:z-10 md:w-64 md:bg-transparent md:shadow-none md:shrink-0 md:block
+                md:sticky md:top-28 md:translate-x-0 md:z-10 md:w-64 md:bg-transparent md:shadow-none md:shrink-0 md:block
                 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
             `}
         >

@@ -1,24 +1,15 @@
 import { useEffect, useState } from "react";
-import { Upload, CheckCircle2 } from "lucide-react";
+import { Upload, CheckCircle2, FileText } from "lucide-react";
 import { notify } from "../../utils/notify";
 import { getData } from "../../api/Api";
 import logo from "../../assets/logo.jpg";
+import Select from "react-select";
 
 const EXPERIENCE_OPTIONS = [
   { label: "0 - 5 Years", value: "ZERO_TO_FIVE" },
   { label: "5 - 7 Years", value: "FIVE_TO_SEVEN" },
   { label: "8 - 10 Years", value: "UPTO_TEN" },
   { label: "10 - 20+ Years", value: "UPTO_TWENTY" },
-];
-
-const LANGUAGE_OPTIONS = [
-  "Kannada",
-  "Sanskrit",
-  "English",
-  "Hindi",
-  "Tamil",
-  "Telugu",
-  "Malayalam",
 ];
 
 const REFERENCE_OPTIONS = [
@@ -28,12 +19,18 @@ const REFERENCE_OPTIONS = [
   { label: "Others / Person", value: "Others" },
 ];
 
-export default function PriestRegistration({ onSuccess }) {
+export default function PriestRegistration() {
   const [loading, setLoading] = useState(false);
   const [sameWhatsapp, setSameWhatsapp] = useState(true);
   const [languages, setLanguages] = useState([]);
+  const [selectedLanguage, setSelectedLanguage] = useState([]);
   const [communities, setCommunities] = useState([]);
   const [declaration, setDeclaration] = useState(false);
+
+  const [STATES, setStates] = useState([]);
+  const [CITIES, setCities] = useState([]);
+  const [PINCODES, setPincodes] = useState([]);
+  const [LANGUAGES, setLanguages2] = useState([]);
 
   const [previews, setPreviews] = useState({
     priestPhoto: null,
@@ -45,6 +42,12 @@ export default function PriestRegistration({ onSuccess }) {
       try {
         const community = await getData("/masters/communities");
         setCommunities(community || []);
+
+        const states = await getData("/masters/states");
+        setStates(states);
+
+        const languages = await getData("/masters/languages");
+        setLanguages2(languages);
       } catch (error) {
         console.error("Failed to fetch communities", error);
       }
@@ -52,13 +55,22 @@ export default function PriestRegistration({ onSuccess }) {
     fetchData();
   }, []);
 
+  const fetchCities = async (id) => {
+    const data = await getData(`/masters/states/${id}`);
+    setCities(data?.cities);
+  };
+
+  const fetchPincodes = async (id) => {
+    const data = await getData(`/masters/cities/${id}`);
+    setPincodes(data?.pincodes);
+  };
+
   const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     dob: "",
-    age: "",
     gothra: "",
     pravara: "",
     nativePlace: "",
@@ -68,42 +80,26 @@ export default function PriestRegistration({ onSuccess }) {
     email: "",
     addressLine1: "",
     addressLine2: "",
-    city: "",
-    state: "",
-    pincode: "",
+    cityId: "",
+    stateId: "",
+    pincodeId: "",
     communityId: "",
     experience: "",
     bankingName: "",
     bankName: "",
-    branchName: "",
-    ifscCode: "",
-    accountNumber: "",
+    bankBranchName: "",
+    bankIfscCode: "",
+    bankAccountNumber: "",
     upiId: "",
     referredBySource: "",
     referredByText: "",
     priestPhoto: null,
-    aadhaarFront: null,
+    aadhaarPdf: null,
   });
-
-  const calculateAge = (dobString) => {
-    if (!dobString) return "";
-    const today = new Date();
-    const birthDate = new Date(dobString);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-    return age;
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     let updatedData = { [name]: value };
-
-    if (name === "dob") {
-      updatedData.age = calculateAge(value);
-    }
 
     setFormData((prev) => ({ ...prev, ...updatedData }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
@@ -120,15 +116,30 @@ export default function PriestRegistration({ onSuccess }) {
     }
   };
 
-  const addLanguage = (lang) => {
-    if (!languages.includes(lang) && lang) {
-      setLanguages([...languages, lang]);
-    }
+  const addLanguage = (value, label) => {
+    if (!value) return;
+
+    setLanguages((prev) => (prev.includes(value) ? prev : [...prev, value]));
+
+    setSelectedLanguage((prev) =>
+      prev.includes(label) ? prev : [...prev, label],
+    );
   };
 
-  const removeLanguage = (lang) => {
-    setLanguages(languages.filter((l) => l !== lang));
+  const removeLanguage = (value, label) => {
+    console.log("Removing language:", value, label);
+
+    setLanguages(languages.filter((id) => String(id) !== String(value)));
+    setSelectedLanguage(selectedLanguage.filter((l) => l !== label));
   };
+
+  useEffect(() => {
+    console.log("Languages:", languages);
+  }, [languages]);
+
+  useEffect(() => {
+    console.log("Selected Languages:", selectedLanguage);
+  }, [selectedLanguage]);
 
   const handleMobileChange = (e) => {
     const mobileNumber = e.target.value;
@@ -177,10 +188,6 @@ export default function PriestRegistration({ onSuccess }) {
       newErrors.aadhaarNumber = "Aadhaar must contain 12 digits";
     }
 
-    if (formData.pincode && !/^\d{6}$/.test(formData.pincode)) {
-      newErrors.pincode = "Enter valid pincode";
-    }
-
     if (!declaration) {
       notify("Please accept the declaration to proceed", "error");
       return false;
@@ -203,41 +210,53 @@ export default function PriestRegistration({ onSuccess }) {
 
       const submitData = new FormData();
 
-      Object.keys(formData).forEach((key) => {
-        if (
-          ![
-            "priestPhoto",
-            "aadhaarFront",
-            "referredBySource",
-            "referredByText",
-          ].includes(key)
-        ) {
-          if (formData[key]) submitData.append(key, formData[key]);
-        }
-      });
+      const request = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        dob: formData.dob,
+        mobileNumber: formData.mobileNumber,
+        whatsappNumber: formData.whatsappNumber,
+        email: formData.email,
+        gothra: formData.gothra,
+        pravara: formData.pravara,
+        communityId: formData.communityId,
+        nativePlace: formData.nativePlace,
+        aadhaarNumber: formData.aadhaarNumber,
+        addressLine1: formData.addressLine1,
+        addressLine2: formData.addressLine2,
+        stateId: formData.stateId,
+        cityId: formData.cityId,
+        pincodeId: formData.pincodeId,
+        experience: formData.experience,
+        languageIds: languages,
+        referredBy:
+          formData.referredBySource === "Others"
+            ? formData.referredByText
+            : formData.referredBySource,
+        bankName: formData.bankName,
+        bankingName: formData.bankingName,
+        bankBranchName: formData.bankBranchName,
+        bankAccountNumber: formData.bankAccountNumber,
+        bankIfscCode: formData.bankIfscCode,
+        upiId: formData.upiId,
+      };
 
-      const finalReferredBy =
-        formData.referredBySource === "Others"
-          ? formData.referredByText
-          : formData.referredBySource;
-      if (finalReferredBy) submitData.append("referredBy", finalReferredBy);
-
-      if (languages.length > 0)
-        submitData.append("languagesSpoken", languages.join(","));
-      submitData.append("age", Number(formData.age));
+      submitData.append(
+        "request",
+        new Blob([JSON.stringify(request)], {
+          type: "application/json",
+        }),
+      );
 
       if (formData.priestPhoto)
         submitData.append("priestPhoto", formData.priestPhoto);
-      if (formData.aadhaarFront)
-        submitData.append("aadhaarFront", formData.aadhaarFront);
+      if (formData.aadhaarPdf)
+        submitData.append("aadhaarPdf", formData.aadhaarPdf);
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/admin/priests`,
+        `${import.meta.env.VITE_API_BASE_URL}/public/priest-registration`,
         {
           method: "POST",
-          headers: {
-            Authorization: localStorage.getItem("token"),
-          },
           body: submitData,
         },
       );
@@ -247,14 +266,63 @@ export default function PriestRegistration({ onSuccess }) {
         throw new Error(data.message || "Failed to create priest");
       }
 
-      notify("Priest registered successfully!", "success");
-      if (onSuccess) onSuccess();
+      notify("registration successfully!", "success");
+
+      setFormData({
+        firstName: "",
+        lastName: "",
+        dob: "",
+        gothra: "",
+        pravara: "",
+        nativePlace: "",
+        aadhaarNumber: "",
+        mobileNumber: "",
+        whatsappNumber: "",
+        email: "",
+        addressLine1: "",
+        addressLine2: "",
+        cityId: "",
+        stateId: "",
+        pincodeId: "",
+        communityId: "",
+        experience: "",
+        bankingName: "",
+        bankName: "",
+        bankBranchName: "",
+        bankIfscCode: "",
+        bankAccountNumber: "",
+        upiId: "",
+        referredBySource: "",
+        referredByText: "",
+        priestPhoto: null,
+        aadhaarPdf: null,
+      });
+      setPreviews({
+        priestPhoto: null,
+        aadhaarFront: null,
+      });
+      setSelectedLanguage([]);
     } catch (error) {
       console.error(error);
       notify(error.message, "error");
     } finally {
       setLoading(false);
     }
+  };
+
+  const selectStyles = {
+    control: (base, state) => ({
+      ...base,
+      borderColor: state.isFocused ? "#f97316" : "#e5e7eb",
+      boxShadow: state.isFocused
+        ? "0 0 0 0.5px #f97316, 0 0 0 2px rgba(253, 186, 116, 0.25)"
+        : "none",
+      "&:hover": {
+        borderColor: "#f97316",
+      },
+      borderRadius: "8px",
+      padding: "2px",
+    }),
   };
 
   return (
@@ -309,15 +377,7 @@ export default function PriestRegistration({ onSuccess }) {
                 onChange={handleChange}
                 required
               />
-              <Input
-                label="Age"
-                name="age"
-                type="number"
-                disabled
-                value={formData.age}
-                readOnly
-                className="bg-gray-50 text-gray-500"
-              />
+
               <Input
                 label="Mobile Number"
                 name="mobileNumber"
@@ -402,7 +462,7 @@ export default function PriestRegistration({ onSuccess }) {
                 </select>
               </div>
 
-              <Select
+              <SelectBox
                 label="Years of Experience"
                 name="experience"
                 value={formData.experience}
@@ -426,26 +486,73 @@ export default function PriestRegistration({ onSuccess }) {
                 onChange={handleChange}
                 placeholder="Street, Area, Landmark"
               />
-              <Input
-                label="City"
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-              />
-              <Input
-                label="State"
-                name="state"
-                value={formData.state}
-                onChange={handleChange}
-              />
-              <Input
-                label="Pincode"
-                name="pincode"
-                value={formData.pincode}
-                onChange={handleChange}
-                error={errors.pincode}
-                required
-              />
+
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">
+                  State
+                </label>
+                <Select
+                  placeholder={"select state"}
+                  styles={selectStyles}
+                  isClearable={true}
+                  options={STATES?.map((data) => ({
+                    value: data.id,
+                    label: data.stateName,
+                  }))}
+                  onChange={(option) => {
+                    setFormData((data) => ({
+                      ...data,
+                      stateId: option?.value,
+                    }));
+                    fetchCities(option?.value);
+                  }}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">
+                  City
+                </label>
+                <Select
+                  placeholder={"select city"}
+                  styles={selectStyles}
+                  isDisabled={!formData.stateId}
+                  isClearable={true}
+                  options={CITIES?.map((data) => ({
+                    value: data.id,
+                    label: data.cityName,
+                  }))}
+                  onChange={(option) => {
+                    setFormData((data) => ({
+                      ...data,
+                      cityId: option?.value,
+                    }));
+                    fetchPincodes(option?.value);
+                  }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">
+                  Pincode
+                </label>
+                <Select
+                  placeholder={"select pincode"}
+                  isDisabled={!formData.cityId}
+                  isClearable={true}
+                  styles={selectStyles}
+                  options={PINCODES?.map((data) => ({
+                    value: data.id,
+                    label: data.pincode,
+                  }))}
+                  onChange={(option) => {
+                    setFormData((data) => ({
+                      ...data,
+                      pincodeId: option?.value,
+                    }));
+                  }}
+                />
+              </div>
+
               <Input
                 label="Native Place"
                 name="nativePlace"
@@ -471,22 +578,21 @@ export default function PriestRegistration({ onSuccess }) {
               />
               <Input
                 label="Branch Name"
-                name="branchName"
-                value={formData.branchName}
+                name="bankBranchName"
+                value={formData.bankBranchName}
                 onChange={handleChange}
               />
               <Input
                 label="IFSC Code"
-                name="ifscCode"
-                value={formData.ifscCode}
+                name="bankIfscCode"
+                value={formData.bankIfscCode}
                 onChange={handleChange}
                 placeholder="e.g. SBIN0001234"
               />
               <Input
                 label="Account Number"
-                name="accountNumber"
-                type="password"
-                value={formData.accountNumber}
+                name="bankAccountNumber"
+                value={formData.bankAccountNumber}
                 onChange={handleChange}
               />
               <Input
@@ -506,12 +612,20 @@ export default function PriestRegistration({ onSuccess }) {
                   preview={previews.priestPhoto}
                   onChange={handleFileChange}
                 />
-                <FileUploadBox
-                  label="Aadhaar (Front)"
-                  fieldName="aadhaarFront"
-                  preview={previews.aadhaarFront}
-                  onChange={handleFileChange}
-                />
+                <div>
+                  <PdfUploadBox
+                    label="Aadhaar PDF"
+                    fieldName="aadhaarPdf"
+                    file={formData.aadhaarPdf}
+                    onChange={handleFileChange}
+                  />
+                  <div className="mt-2 rounded-md bg-amber-50 border border-amber-200 px-3 py-2">
+                    <p className="text-xs text-amber-800">
+                      <strong>Note:</strong> Upload only unencrypted
+                      (non-password-protected) PDF files.
+                    </p>
+                  </div>
+                </div>
               </div>
 
               <div className="md:col-span-2 mt-4">
@@ -532,19 +646,24 @@ export default function PriestRegistration({ onSuccess }) {
                   Languages Spoken (Select multiple)
                 </label>
                 <select
-                  onChange={(e) => addLanguage(e.target.value)}
+                  onChange={(e) =>
+                    addLanguage(
+                      e.target.value,
+                      e.target.options[e.target.selectedIndex].text,
+                    )
+                  }
                   className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none"
                   value=""
                 >
                   <option value="">-- Choose a Language --</option>
-                  {LANGUAGE_OPTIONS.map((lang) => (
-                    <option key={lang} value={lang}>
-                      {lang}
+                  {LANGUAGES.map((lang) => (
+                    <option key={lang.id} value={lang.id}>
+                      {lang.languageName}
                     </option>
                   ))}
                 </select>
                 <div className="flex flex-wrap gap-2 mt-3">
-                  {languages.map((lang) => (
+                  {selectedLanguage.map((lang) => (
                     <div
                       key={lang}
                       className="bg-orange-50 border border-orange-200 text-orange-700 rounded-full px-3 py-1 flex items-center gap-2 text-sm font-medium"
@@ -552,7 +671,13 @@ export default function PriestRegistration({ onSuccess }) {
                       {lang}
                       <button
                         type="button"
-                        onClick={() => removeLanguage(lang)}
+                        onClick={() => {
+                          const language = LANGUAGES.find(
+                            (l) => l.languageName === lang,
+                          );
+
+                          removeLanguage(language?.id, lang);
+                        }}
                         className="hover:text-red-500 transition-colors"
                       >
                         ✕
@@ -562,7 +687,7 @@ export default function PriestRegistration({ onSuccess }) {
                 </div>
               </div>
 
-              <Select
+              <SelectBox
                 label="Referred By"
                 name="referredBySource"
                 value={formData.referredBySource}
@@ -620,7 +745,7 @@ export default function PriestRegistration({ onSuccess }) {
                 </span>
               ) : (
                 <span className="flex items-center gap-2">
-                  <CheckCircle2 size={22} /> Register  
+                  <CheckCircle2 size={22} /> Register
                 </span>
               )}
             </button>
@@ -675,7 +800,7 @@ const FullInput = ({ label, ...props }) => (
   </div>
 );
 
-const Select = ({ label, options, ...props }) => (
+const SelectBox = ({ label, options, ...props }) => (
   <div className="w-full">
     <label className="text-sm font-medium text-gray-700 mb-1.5 block">
       {label}
@@ -725,6 +850,51 @@ const FileUploadBox = ({ label, fieldName, preview, onChange }) => (
         <input
           type="file"
           accept="image/*"
+          onChange={(e) => onChange(e, fieldName)}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+        />
+      </>
+    )}
+  </div>
+);
+
+const PdfUploadBox = ({ label, fieldName, file, onChange }) => (
+  <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 flex flex-col items-center justify-center bg-gray-50 hover:bg-orange-50 hover:border-orange-300 transition-colors relative h-40">
+    {file ? (
+      <div className="flex flex-col items-center justify-center text-center h-full w-full">
+        <div className="bg-red-100 p-3 rounded-full mb-3">
+          <FileText className="text-red-600" size={32} />
+        </div>
+
+        <p
+          className="text-sm font-semibold text-gray-700 truncate w-full px-2"
+          title={file.name}
+        >
+          {file.name}
+        </p>
+
+        <p className="text-xs text-gray-500 mt-1">Click to replace PDF</p>
+
+        <input
+          type="file"
+          accept="application/pdf"
+          onChange={(e) => onChange(e, fieldName)}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+        />
+      </div>
+    ) : (
+      <>
+        <div className="bg-white p-2 rounded-full shadow-sm mb-3">
+          <Upload className="text-orange-400" size={24} />
+        </div>
+
+        <p className="text-sm font-semibold text-gray-700">{label}</p>
+
+        <p className="text-xs text-gray-500 mt-1">Click to browse PDF</p>
+
+        <input
+          type="file"
+          accept="application/pdf"
           onChange={(e) => onChange(e, fieldName)}
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
         />

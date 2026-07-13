@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   Filter,
   X,
+  Dot,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getData } from "../../../api/Api";
@@ -327,9 +328,9 @@ const PriestCard = ({ priest, selected, onClick }) => {
         {/* Avatar */}
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 rounded-full bg-slate-200 overflow-hidden shrink-0">
-            {priest.avatar ? (
+            {priest.priestPhotoUrl ? (
               <img
-                src={priest?.avatar}
+                src={`${import.meta.env.VITE_API_BASE_URL}${priest?.priestPhotoUrl}`}
                 alt={priest?.firstName}
                 className="w-full h-full object-cover"
               />
@@ -356,7 +357,7 @@ const PriestCard = ({ priest, selected, onClick }) => {
           <div className="flex flex-wrap gap-2 mt-3">
             <Badge
               icon={<Languages size={14} />}
-              label={priest?.languagesSpoken}
+              label={priest?.languages.join(", ")}
             />
 
             <Badge icon={<Users size={14} />} label={priest.communityName} />
@@ -365,7 +366,18 @@ const PriestCard = ({ priest, selected, onClick }) => {
           </div>
         </div>
 
-        <div className="self-start sm:self-center">
+        <div className="self-start gap-2 sm:self-center">
+          <div>
+            {priest?.active ? (
+              <span className="bg-green-200 w-fit py-1 px-4 mb-4 rounded-2xl flex shrink-0 text-xs items-center justify-center border border-green-700">
+                <Dot className="size-6" /> Active
+              </span>
+            ) : (
+              <span className="bg-red-200 w-fit py-1 px-4 mb-4 rounded-2xl flex shrink-0 text-xs items-center justify-center border border-red-700">
+                <Dot className="size-6" /> Inactive
+              </span>
+            )}
+          </div>
           <button
             onClick={onClick}
             className="bg-brand-500 text-white px-4 py-2 rounded-md"

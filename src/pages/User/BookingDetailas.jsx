@@ -196,7 +196,7 @@ const BookingDetails = () => {
                     <User className="w-4 h-4" /> Priest Name
                   </p>
                   <p className="font-medium text-gray-900 capitalize">
-                    {data?.priestName ?  data?.priestName : "Not yet Assigned"}
+                    Pt. {data?.priestName ?  data?.priestName : "Not yet Assigned"}
                   </p>
                 </div>
               </div>
