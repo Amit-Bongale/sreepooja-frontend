@@ -27,11 +27,20 @@ function UserInitializer() {
   const location = useLocation();
 
   const user = useSelector((state) => state.user.user);
+  const hasToken = !!localStorage.getItem("token");
 
-  const [loading, setLoading] = useState(!user);
+  const [loading, setLoading] = useState(hasToken && !user);
 
   useEffect(() => {
     if (user) {
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLoading(false);
       return;
     }
 

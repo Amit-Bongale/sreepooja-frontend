@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   BadgeCheck,
   CalendarCheck,
-  ChevronDown,
   CreditCard,
   Headphones,
   Languages,
@@ -118,7 +117,7 @@ function AboutUs() {
           </span>
           <h1
             id="about-title"
-            className="mx-auto mt-5 max-w-4xl font-serif text-[clamp(2.5rem,5.8vw,5rem)] leading-[1.05] tracking-normal text-slate-900"
+            className="mx-auto mt-5 max-w-4xl font-serif text-[clamp(2.5rem,5.8vw,5rem)] leading-[1.05] tracking-normal text-brand-900"
           >
             Connecting Devotees with Authentic Vedic Traditions
           </h1>
@@ -133,7 +132,7 @@ function AboutUs() {
         className={`${sectionWrap} grid gap-[clamp(24px,5vw,64px)] py-[clamp(64px,10vw,80px)] max-md:grid-cols-1`}
         aria-label="Sree Pooja introduction"
       >
-        <div className="grid gap-5 text-[clamp(1.02rem,1.5vw,1.18rem)] text-brand-800 text-justify">
+        <div className="grid gap-5 text-[clamp(1.02rem,1.5vw,1.18rem)] text-black text-justify">
           <p>
             Sree Pooja is transforming how devotees connect with spiritual
             traditions by combining centuries-old Vedic wisdom with the
@@ -185,7 +184,7 @@ function AboutUs() {
           <h2 id="priest-network-title" className={`${heading} mt-2.5`}>
             Curated priests, seamless bookings
           </h2>
-          <p className="mx-auto mt-5 max-w-6xl text-[clamp(1.02rem,1.6vw,1.18rem)] leading-8 text-brand-800">
+          <p className="mx-auto mt-5 max-w-6xl text-[clamp(1.02rem,1.6vw,1.18rem)] leading-8 text-black">
             Our carefully curated network of Vedic priests represents diverse
             traditions and regional practices, allowing devotees to book
             services with confidence. Every booking is supported by a seamless
@@ -238,7 +237,7 @@ function AboutUs() {
               {currentPillar.label}
             </span>
             <h3 className={`${heading} my-3`}>{currentPillar.title}</h3>
-            <p className="max-w-190 text-[1.1rem] text-brand-800">
+            <p className="max-w-190 text-[1.1rem] text-black">
               {currentPillar.text}
             </p>
           </article>
@@ -255,7 +254,7 @@ function AboutUs() {
           <h2 id="difference-title" className={`${heading} my-3`}>
             Confidence at every step of the ceremony
           </h2>
-          <p className="text-[1.05rem] text-brand-800">
+          <p className="text-[1.05rem] text-black">
             A carefully curated priest network, transparent booking flow, and
             attentive support help devotees perform rituals with peace of mind.
           </p>
@@ -272,7 +271,7 @@ function AboutUs() {
               <h3 className="mb-2 mt-4 text-[1.05rem] font-extrabold text-brand-900">
                 {title}
               </h3>
-              <p className="text-[0.96rem] text-brand-800">{text}</p>
+              <p className="text-[0.96rem] text-black">{text}</p>
             </article>
           ))}
         </div>
@@ -288,7 +287,7 @@ function AboutUs() {
           <h2 id="ecosystem-title" className={`${heading} my-3`}>
             A comprehensive digital ecosystem for devotees
           </h2>
-          <p className="text-[1.05rem] text-brand-800">
+          <p className="text-[1.05rem] text-black">
             Sree Pooja is building services that make faith more accessible
             without compromising tradition. Technology should strengthen
             spiritual connections, not replace them.
@@ -310,20 +309,20 @@ function AboutUs() {
                   onClick={() => setOpenFuture(isOpen ? -1 : index)}
                 >
                   <span>{item}</span>
-                  <ChevronDown
+                  {/* <ChevronDown
                     className={`shrink-0 transition ${isOpen ? "rotate-180" : ""}`}
                     size={20}
                     aria-hidden="true"
-                  />
+                  /> */}
                 </button>
-                <div
-                  className={`${isOpen ? "block" : "hidden"} px-4.5 pb-4 text-brand-800`}
+                {/* <div
+                  className={`${isOpen ? "block" : "hidden"} px-4.5 pb-4 text-black`}
                 >
                   <p>
                     Designed to help devotees plan, learn, consult, and
                     participate in sacred practices with clarity and respect.
                   </p>
-                </div>
+                </div> */}
               </div>
             );
           })}
@@ -335,7 +334,7 @@ function AboutUs() {
         aria-label="Sree Pooja closing statement"
       >
         <Sparkles className="text-brand-700" size={30} aria-hidden="true" />
-        <p className="max-w-205 text-[clamp(1.05rem,2vw,1.2rem)] text-brand-800">
+        <p className="max-w-205 text-[clamp(1.05rem,2vw,1.2rem)] text-black">
           Every booking is an opportunity to uphold sacred traditions, celebrate
           culture, and help devotees perform rituals with confidence,
           convenience, and complete peace of mind.

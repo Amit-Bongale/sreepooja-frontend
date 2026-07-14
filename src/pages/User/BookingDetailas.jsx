@@ -6,7 +6,6 @@ import {
   FileText,
   AlertCircle,
   CheckCircle2,
-  Languages,
   Star,
   User,
   CheckCircle,
@@ -80,14 +79,35 @@ const BookingDetails = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "PENDING_PAYMENT":
-      case "PENDING":
+      case ("PENDING_PAYMENT", "CUSTOM_REQUEST"):
         return "bg-amber-50 text-amber-700 border-amber-200";
-      case "CONFIRMED":
-      case "COMPLETED":
+      case ("COMPLETED", "PAYMENT_RECEIVED"):
         return "bg-emerald-50 text-emerald-700 border-emerald-200";
+      case "CUSTOM_RESPONSE":
+        return "bg-brand-50 text-brand-700 border-brand-200";
+      case "CANCELLED":
+        return "bg-red-50 text-red-700 border-red-200";
       default:
         return "bg-gray-50 text-gray-700 border-gray-200";
+    }
+  };
+
+  const getStatusLabel = (status) => {
+    switch (status) {
+      case "PAYMENT_RECEIVED":
+        return "Payment Confirmed";
+      case "CONFIRMED":
+        return "Booking Confirmed";
+      case "PRIEST_ASSIGNED":
+        return "Priest Assigned";
+      case "COMPLETED":
+        return "Pooja Completed";
+      case "CANCELLED":
+        return "Booking Cancelled";
+      case "CUSTOM_REQUEST":
+        return "Awaiting Response";
+      case "CUSTOM_RESPONSE":
+        return "Payment Confirmed";
     }
   };
 
@@ -111,14 +131,15 @@ const BookingDetails = () => {
             </p>
           </div>
           <div
-            className={`px-4 py-2 rounded-full border text-sm font-semibold flex items-center gap-2 ${getStatusColor(data?.packageType)}`}
+            className={`px-4 py-2 rounded-full border text-sm font-semibold flex items-center gap-2 ${getStatusColor(data?.bookingStatus)}`}
           >
-            {data?.bookingStatus === "PENDING_PAYMENT" ? (
+            {data?.bookingStatus === "PENDING_PAYMENT" ||
+            data?.bookingStatus === "CUSTOM_RESPONSE" ? (
               <AlertCircle className="w-4 h-4" />
             ) : (
               <CheckCircle2 className="w-4 h-4" />
             )}
-            {data?.bookingStatus?.replace("_", " ")}
+            {getStatusLabel(data?.bookingStatus)}
           </div>
         </div>
 
@@ -156,14 +177,14 @@ const BookingDetails = () => {
                     {data?.packageType?.toLowerCase()}
                   </p>
                 </div>
-                <div>
+                {/* <div>
                   <p className="text-sm text-gray-500 flex items-center gap-2 mb-1">
                     <Languages className="w-4 h-4" /> Language
                   </p>
                   <p className="font-medium text-gray-900 capitalize">
                     {data?.preferredLanguage?.toLowerCase()}
                   </p>
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -196,7 +217,8 @@ const BookingDetails = () => {
                     <User className="w-4 h-4" /> Priest Name
                   </p>
                   <p className="font-medium text-gray-900 capitalize">
-                    Pt. {data?.priestName ?  data?.priestName : "Not yet Assigned"}
+                    Pt.{" "}
+                    {data?.priestName ? data?.priestName : "Not yet Assigned"}
                   </p>
                 </div>
               </div>
@@ -246,7 +268,8 @@ const BookingDetails = () => {
             </div>
           </div>
 
-          {data?.bookingStatus === "CUSTOM_RESPONSE" && data.paymentStatus === "PENDING" ? (
+          {data?.bookingStatus === "CUSTOM_RESPONSE" &&
+          data.paymentStatus === "PENDING" ? (
             <div className="">
               <div className="sticky top-24 bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden flex flex-col">
                 <div className="p-6 bg-gray-50 border-b border-gray-200">
@@ -371,76 +394,78 @@ const BookingDetails = () => {
               </div>
             </div>
           ) : (
-            <div className="space-y-6">
-              {/* Payment Summary Card */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sticky top-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                  <IndianRupee className="w-5 h-5 text-orange-500" />
-                  Payment Summary
-                </h2>
+            data.bookingStatus !== "CUSTOM_REQUEST" && (
+              <div className="space-y-6">
+                {/* Payment Summary Card */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sticky top-6">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <IndianRupee className="w-5 h-5 text-orange-500" />
+                    Payment Summary
+                  </h2>
 
-                <div className="space-y-3 text-sm">
-                  <div className="flex justify-between text-gray-600">
-                    <span>Package Price</span>
-                    <span>{formatCurrency(data?.packagePrice)}</span>
-                  </div>
-                  {data?.taxAmount > 0 && (
+                  <div className="space-y-3 text-sm">
                     <div className="flex justify-between text-gray-600">
-                      <span>Taxes</span>
-                      <span>{formatCurrency(data?.taxAmount)}</span>
+                      <span>Package Price</span>
+                      <span>{formatCurrency(data?.packagePrice)}</span>
                     </div>
-                  )}
+                    {data?.taxAmount > 0 && (
+                      <div className="flex justify-between text-gray-600">
+                        <span>Taxes</span>
+                        <span>{formatCurrency(data?.taxAmount)}</span>
+                      </div>
+                    )}
 
-                  <div className="pt-3 border-t border-gray-200">
-                    <div className="flex justify-between font-semibold text-gray-900 text-base">
-                      <span>Total Amount</span>
-                      <span>{formatCurrency(data?.totalAmount)}</span>
+                    <div className="pt-3 border-t border-gray-200">
+                      <div className="flex justify-between font-semibold text-gray-900 text-base">
+                        <span>Total Amount</span>
+                        <span>{formatCurrency(data?.totalAmount)}</span>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 mt-4 bg-orange-50/50 rounded-lg p-4 border border-orange-100">
+                      <div className="flex justify-between text-sm mb-2">
+                        <span className="text-gray-600">
+                          Advance ({data?.advancePercentage}%)
+                        </span>
+                        <span className="font-medium text-gray-900">
+                          {formatCurrency(data?.advanceAmount)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">Balance</span>
+                        <span className="font-medium text-gray-900">
+                          {formatCurrency(data?.balanceAmount)}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="pt-4 mt-4 bg-orange-50/50 rounded-lg p-4 border border-orange-100">
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-600">
-                        Advance ({data?.advancePercentage}%)
-                      </span>
-                      <span className="font-medium text-gray-900">
-                        {formatCurrency(data?.advanceAmount)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Balance</span>
-                      <span className="font-medium text-gray-900">
-                        {formatCurrency(data?.balanceAmount)}
-                      </span>
-                    </div>
+                  {/* Call to Action Buttons */}
+                  <div className="mt-6">
+                    {data?.showPayBalanceButton && (
+                      <div>
+                        <button
+                          className="w-full bg-orange-600 hover:bg-orange-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-200 mt-3"
+                          onClick={handlePayment}
+                        >
+                          Pay Balance Amount
+                        </button>
+
+                        {data?.confirmedDate && (
+                          <div className="mt-4 p-3 bg-amber-50 rounded-xl border border-blue-100 flex gap-3 text-sm text-orange-800">
+                            <Info className="h-5 w-5 shrink-0 mt-0.5" />
+                            <p>
+                              pay before atleast 3 days of{" "}
+                              {formatDate(data?.confirmedDate)}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
-                </div>
-
-                {/* Call to Action Buttons */}
-                <div className="mt-6">
-                  {data?.showPayBalanceButton && (
-                    <div>
-                      <button
-                        className="w-full bg-orange-600 hover:bg-orange-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors duration-200 mt-3"
-                        onClick={handlePayment}
-                      >
-                        Pay Balance Amount
-                      </button>
-
-                      {data?.confirmedDate && (
-                        <div className="mt-4 p-3 bg-amber-50 rounded-xl border border-blue-100 flex gap-3 text-sm text-orange-800">
-                          <Info className="h-5 w-5 shrink-0 mt-0.5" />
-                          <p>
-                            pay before atleast 3 days of{" "}
-                            {formatDate(data?.confirmedDate)}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  )}
                 </div>
               </div>
-            </div>
+            )
           )}
         </div>
       </div>

@@ -21,14 +21,14 @@ const isTokenValid = (token) => {
 function Auth({ children }) {
   const location = useLocation();
 
+  const token = getToken();
   const isAuthenticated = useMemo(() => {
-    const token = getToken();
     if (!token) return false;
 
     const valid = isTokenValid(token);
     if (!valid) localStorage.removeItem("token");
     return valid;
-  }, []);
+  }, [token]);
 
   if (!isAuthenticated) {
     notify("Please log in to Continue.", "error");

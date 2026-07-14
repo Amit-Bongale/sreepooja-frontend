@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Menu,
   X,
@@ -35,15 +35,8 @@ function DashboardNav() {
   const dispatch = useDispatch();
 
   const user = useSelector((state) => state.user.user);
-  const isAuth = useSelector((state) => state.user.isAuthenticated);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  useEffect(() => {
-    if (!isAuth) {
-      navigate("/login");
-    }
-  }, [isAuth, navigate]);
 
   const roleMenus = {
     USER: [
@@ -198,10 +191,9 @@ function DashboardNav() {
     );
 
   const handleLogout = () => {
-    console.log("logout called")
     localStorage.removeItem("token");
-    dispatch(userLogout());
     navigate("/" ,{ replace: true });
+    dispatch(userLogout());
   };
 
   return (

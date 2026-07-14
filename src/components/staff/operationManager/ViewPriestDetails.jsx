@@ -15,7 +15,7 @@ import { formatDate } from "../../../utils/formatter";
 import EditPriest from "./EditPriest";
 import { notify } from "../../../Utils/notify";
 
-function ViewPriestDetails({ onClose, priestId, status }) {
+function ViewPriestDetails({ onClose, priestId, status, fetchPriests }) {
   const [priest, setPriest] = useState();
   const [editPriest, setEditPriest] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -263,7 +263,10 @@ function ViewPriestDetails({ onClose, priestId, status }) {
                         .join(", ")}
                     />
 
-                    <DetailItem label="Community" value={priest?.communityName} />
+                    <DetailItem
+                      label="Community"
+                      value={priest?.communityName}
+                    />
                     <DetailItem
                       label="Referred By"
                       value={priest?.referredBy}
@@ -334,6 +337,7 @@ function ViewPriestDetails({ onClose, priestId, status }) {
           onSucess={() => {
             fetchData();
             setEditPriest(false);
+            fetchPriests();
           }}
         />
       )}

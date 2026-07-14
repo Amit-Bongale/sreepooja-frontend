@@ -298,6 +298,7 @@ function ManagePriests() {
             setIsAddModalOpen(false);
             fetchPriests();
           }}
+          
         />
       )}
 
@@ -305,6 +306,7 @@ function ManagePriests() {
         <ViewPriestDetails
           onClose={() => setSelectedId(null)}
           priestId={selectedId}
+          fetchPriests={fetchPriests()}
         />
       )}
     </div>
@@ -316,7 +318,7 @@ export default ManagePriests;
 const PriestCard = ({ priest, selected, onClick }) => {
   return (
     <div
-      className={`w-full text-left rounded-xl border transition-all
+      className={`w-full text-left rounded-xl border transition-all bg-white
         ${
           selected
             ? "border-orange-500 bg-orange-50 shadow-md ring-2 ring-orange-200"
@@ -350,11 +352,11 @@ const PriestCard = ({ priest, selected, onClick }) => {
 
             <div>
               {priest?.active ? (
-                <span className="bg-green-200  w-fit py-1 px-2 rounded-2xl flex shrink-0 text-xs items-center justify-center border border-green-700">
+                <span className="bg-green-100  w-fit py-1 px-2 rounded-2xl flex shrink-0 text-xs items-center justify-center border border-green-7 text-green-900">
                   Active
                 </span>
               ) : (
-                <span className="bg-red-200  w-fit py-1 px-2 rounded-2xl flex shrink-0 text-xs items-center justify-center border border-red-700">
+                <span className="bg-red-100 w-fit py-1 px-2 rounded-2xl flex shrink-0 text-xs items-center justify-center border border-red-700 text-red-900">
                   Inactive
                 </span>
               )}
