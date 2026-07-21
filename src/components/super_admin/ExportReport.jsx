@@ -84,7 +84,7 @@ const ExportReport = ({ onClose }) => {
       const blob = await response.blob();
 
       // Extract filename from Content-Disposition header
-      let fileName = "report";
+      let fileName = `${formData.type}-report`;
 
       const disposition = response.headers.get("Content-Disposition");
       if (disposition) {
@@ -268,7 +268,7 @@ const ExportReport = ({ onClose }) => {
               disabled={loding}
               className="rounded-lg bg-orange-600 px-5 py-2.5 text-white hover:bg-orange-700"
             >
-              Export
+              { loding ? "Downloading..." : "Export"}
             </button>
           </div>
         </form>
