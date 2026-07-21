@@ -9,9 +9,11 @@ import {
 import { useEffect, useState } from "react";
 import { getData } from "../../api/Api";
 import { StatCard } from "../../components/super_admin/StatCard";
+import ExportReport from "../../components/super_admin/ExportReport";
 
 function SuperAdminDashboard() {
   const [dashboardData, setDashboardData] = useState();
+  const [isReportModalOpen, setIsReportModalOpen] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,7 +27,7 @@ function SuperAdminDashboard() {
     <div className="min-h-screen bg-gray-50 flex font-sans overflow-hidden">
       <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50/50 p-4 sm:p-8">
         <div className="max-w-7xl mx-auto space-y-8">
-          <h2 className="text-xl font-bold text-gray-900 lg:hidden mb-4">
+          <h2 className="text-xl font-bold text-gray-900 lg:hidden mt-18 mb-4">
             Overview
           </h2>
 
@@ -65,7 +67,7 @@ function SuperAdminDashboard() {
 
             {/* Secondary Metrics */}
             <StatCard
-              title="Total Customers"
+              title="Total Users"
               value={dashboardData?.totalCustomers}
               icon={Users}
               colorClass="text-indigo-600"
@@ -89,6 +91,17 @@ function SuperAdminDashboard() {
             />
           </div>
         </div>
+
+        <button
+          className="bg-brand-500 py-2 px-4 rounded-2xl text-white mt-6"
+          onClick={() => setIsReportModalOpen(true)}
+        >
+          Download Report
+        </button>
+
+        {isReportModalOpen && (
+          <ExportReport onClose={() => setIsReportModalOpen(false)} />
+        )}
       </main>
     </div>
   );

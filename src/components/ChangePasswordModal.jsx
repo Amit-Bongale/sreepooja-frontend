@@ -70,7 +70,8 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
     try {
       setLoading(true);
       let payload = {
-        password: form.newPassword,
+        currentPassword: form.currentPassword,
+        newPassword: form.newPassword,
       };
 
       const res = await fetch(
@@ -107,16 +108,12 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
     }
   };
 
-    return (
+  return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
       <div className="w-full max-w-md rounded-2xl bg-white shadow-xl overflow-hidden">
         <div className="mb-6 bg-brand-500 p-4 text-white ">
-          <h2 className="text-2xl font-semibold">
-            Change Password
-          </h2>
-          <p className="mt-1 text-sm">
-            Update your account password.
-          </p>
+          <h2 className="text-2xl font-semibold">Change Password</h2>
+          <p className="mt-1 text-sm">Update your account password.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5 p-6">
@@ -188,9 +185,7 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
             </div>
 
             {errors.newPassword && (
-              <p className="mt-1 text-sm text-red-500">
-                {errors.newPassword}
-              </p>
+              <p className="mt-1 text-sm text-red-500">{errors.newPassword}</p>
             )}
           </div>
 
@@ -244,7 +239,7 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
             <button
               type="submit"
               disabled={loading}
-              className="rounded-lg bg-brand-600 px-5 py-2 font-medium text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:bg-blue-400"
+              className="rounded-lg bg-brand-600 px-5 py-2 font-medium text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:bg-brand-100"
             >
               {loading ? "Updating..." : "Update Password"}
             </button>

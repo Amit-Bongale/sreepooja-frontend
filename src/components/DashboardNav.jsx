@@ -163,11 +163,11 @@ function DashboardNav() {
     ],
 
     SUPER_ADMIN: [
-      // {
-      //   name: "Dashboard",
-      //   icon: LayoutDashboard,
-      //   path: "/superadmin/dashboard",
-      // },
+      {
+        name: "Dashboard",
+        icon: LayoutDashboard,
+        path: "/superadmin/dashboard",
+      },
       {
         name: "Manage Staff",
         icon: Users2,
